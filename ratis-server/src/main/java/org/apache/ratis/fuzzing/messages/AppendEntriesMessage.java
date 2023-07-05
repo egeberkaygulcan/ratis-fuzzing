@@ -1,14 +1,17 @@
-package org.github.fuzzing.messages;
+package org.apache.ratis.fuzzing.messages;
 
-import org.apache.ratis.proto.RaftProtos.RequestVoteRequestProto;
+// import org.apache.ratis.grpc.server.GrpcLogAppender.AppendEntriesRequest;
+import org.apache.ratis.proto.RaftProtos.AppendEntriesRequestProto;
 
-public class RequestVoteMessage extends Message {
+public class AppendEntriesMessage extends Message {
 
-    private RequestVoteRequestProto request;
+    private AppendEntriesRequestProto proto;
+    // private AppendEntriesRequest request;
 
-    public RequestVoteMessage(RequestVoteRequestProto r) {
-        this.request = r;
-        this.setType("request_vote_request");
+    public AppendEntriesMessage(AppendEntriesRequestProto p) {
+        this.proto = p;
+        // this.request = r;
+        this.setType("append_entries_request");
         this.setId(this.client.generateId());
     }
 
@@ -29,6 +32,5 @@ public class RequestVoteMessage extends Message {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'toJsonString'");
     }
-
     
 }

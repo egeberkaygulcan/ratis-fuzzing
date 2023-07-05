@@ -1,4 +1,4 @@
-package org.github.fuzzing;
+package org.apache.ratis.fuzzing;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.ratis.server.impl.comm.messages.Message;
+import org.apache.ratis.fuzzing.messages.Message;
 
 public class FuzzerClient extends Thread{
     public static FuzzerClient fuzzerClient;

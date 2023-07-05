@@ -97,7 +97,7 @@ import static org.apache.ratis.util.LifeCycle.State.STARTING;
 import com.codahale.metrics.Timer;
 import org.apache.ratis.util.function.CheckedSupplier;
 
-class RaftServerImpl implements RaftServer.Division,
+public class RaftServerImpl implements RaftServer.Division,
     RaftServerProtocol, RaftServerAsynchronousProtocol,
     RaftClientProtocol, RaftClientAsynchronousProtocol {
   private static final String CLASS_NAME = JavaUtils.getClassSimpleName(RaftServerImpl.class);
@@ -645,7 +645,7 @@ class RaftServerImpl implements RaftServer.Division,
     return roleInfo.build();
   }
 
-  synchronized void changeToCandidate(boolean forceStartLeaderElection) {
+  public synchronized void changeToCandidate(boolean forceStartLeaderElection) {
     Preconditions.assertTrue(getInfo().isFollower());
     role.shutdownFollowerState();
     setRole(RaftPeerRole.CANDIDATE, "changeToCandidate");

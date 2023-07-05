@@ -38,8 +38,8 @@ tmp="${TMPDIR:-/tmp}"
 echo "Starting 3 Ratis servers with '${example}' with directories in '${tmp}' as local storage"
 
 # The ID needs to be kept in sync with QUORUM_OPTS
-$DIR/server.sh "$example" "$subcommand" --id n0 --storage "${tmp}/n0" $QUORUM_OPTS &
-$DIR/server.sh "$example" "$subcommand" --id n1 --storage "${tmp}/n1" $QUORUM_OPTS &
-$DIR/server.sh "$example" "$subcommand" --id n2 --storage "${tmp}/n2" $QUORUM_OPTS &
+$DIR/server.sh "$example" "$subcommand" --id n0 --random-exec true --storage "${tmp}/n0" $QUORUM_OPTS &
+$DIR/server.sh "$example" "$subcommand" --id n1 --random-exec true --storage "${tmp}/n1" $QUORUM_OPTS &
+$DIR/server.sh "$example" "$subcommand" --id n2 --random-exec true --storage "${tmp}/n2" $QUORUM_OPTS &
 
 echo "Waiting for the servers"

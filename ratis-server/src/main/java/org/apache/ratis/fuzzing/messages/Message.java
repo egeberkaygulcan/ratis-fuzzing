@@ -1,6 +1,6 @@
-package org.github.fuzzing.messages;
+package org.apache.ratis.fuzzing.messages;
 
-import org.apache.ratis.server.impl.comm.FuzzerClient;
+import org.apache.ratis.fuzzing.FuzzerClient;
 
 public abstract class Message {
     protected long messageId;

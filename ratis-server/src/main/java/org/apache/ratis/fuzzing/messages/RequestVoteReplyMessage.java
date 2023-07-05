@@ -1,15 +1,15 @@
-package org.github.fuzzing.messages;
+package org.apache.ratis.fuzzing.messages;
 
-import org.apache.ratis.proto.RaftProtos.AppendEntriesReplyProto;
 import org.apache.ratis.proto.RaftProtos.RequestVoteReplyProto;
+import org.apache.ratis.proto.RaftProtos.RequestVoteRequestProto;
 
-public class AppendEntriesReplyMessage extends Message {
+public class RequestVoteReplyMessage extends Message {
 
-    private AppendEntriesReplyProto request;
+    private RequestVoteReplyProto request;
 
-    public AppendEntriesReplyMessage(AppendEntriesReplyProto r) {
+    public RequestVoteReplyMessage(RequestVoteReplyProto r) {
         this.request = r;
-        this.setType("append_entries_response");
+        this.setType("request_vote_response");
         this.setId(this.client.generateId());
     }
 

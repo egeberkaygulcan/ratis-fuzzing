@@ -23,6 +23,9 @@ import org.apache.ratis.util.Daemon;
 import org.apache.ratis.util.JavaUtils;
 import org.apache.ratis.util.TimeDuration;
 import org.apache.ratis.util.Timestamp;
+import org.apache.ratis.fuzzing.FuzzerClient;
+import org.apache.ratis.fuzzing.messages.Message;
+import org.apache.ratis.fuzzing.messages.TimeoutMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,7 +125,7 @@ class FollowerState extends Daemon {
 
   private void interceptTimeout(Message m) {
     this.client.interceptMessage(m);
-    LOG.info("------ Timeout on server {} ------", server.getId());
+    LOG.debug("------ Timeout on server {} ------", server.getId());
   }
 
   @Override

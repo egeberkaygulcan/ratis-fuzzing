@@ -1,4 +1,4 @@
-package org.github.fuzzing.messages;
+package org.apache.ratis.fuzzing.messages;
 
 import org.apache.ratis.proto.RaftProtos.RequestVoteReplyProto;
 import org.apache.ratis.protocol.RaftPeer;

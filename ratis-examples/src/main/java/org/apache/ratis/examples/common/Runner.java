@@ -41,9 +41,8 @@ public final class Runner {
       return;
     }
 
-    // Initialize Netrix client
-    NetrixClientConfig c = new NetrixClientConfig("0", "127.0.0.1:6024", "127.0.0.1:4000", new HashMap<>());
-    NetrixClient client = NetrixClientSingleton.getClient(c);
+    // Initialize fuzzer client
+
 
     // TODO - Write MiniRaftCluster based test program
 

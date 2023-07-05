@@ -260,7 +260,7 @@ public class GrpcLogAppender extends LogAppenderBase {
   public Comparator<Long> getCallIdComparator() {
     return CALL_ID_COMPARATOR;
   }
-  private void recordAppendEntries(RaftPeerId sender, RaftPeerId receiver, long term, long leaderCommit, List<LogEntryProto> entries, RaftLog log) {
+  private void recordAppendEntries() {
     // TODO - Update function definition, fill and add logging
   }
 
@@ -725,7 +725,7 @@ public class GrpcLogAppender extends LogAppenderBase {
     return null;
   }
 
-  static class AppendEntriesRequest {
+  public static class AppendEntriesRequest {
     private final Timer timer;
     private volatile Timer.Context timerContext;
 

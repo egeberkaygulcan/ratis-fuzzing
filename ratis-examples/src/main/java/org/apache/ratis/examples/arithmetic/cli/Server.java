@@ -60,9 +60,6 @@ public class Server extends SubCommandBase {
   public void run() throws Exception {
     RaftPeerId peerId = RaftPeerId.valueOf(id);
     RaftProperties properties = new RaftProperties();
-    NetrixClient nc = NetrixClientSingleton.getClient();
-    System.out.println("Random value: " + isRandomExecution);
-    nc.setRandomExecution(true);
 
     final int port = NetUtils.createSocketAddr(getPeer(peerId).getAddress()).getPort();
     GrpcConfigKeys.Server.setPort(properties, port);
