@@ -62,6 +62,7 @@ class FollowerState extends Daemon {
   private volatile Timestamp lastRpcTime = creationTime;
   private volatile boolean isRunning = true;
   private final AtomicInteger outstandingOp = new AtomicInteger();
+  private final FuzzerClient client = FuzzerClient.getInstance();
 
   FollowerState(RaftServerImpl server, Object reason) {
     super(newBuilder()
@@ -119,6 +120,11 @@ class FollowerState extends Daemon {
     return run;
   }
 
+  private void interceptTimeout(Message m) {
+    this.client.interceptMessage(m);
+    LOG.info("------ Timeout on server {} ------", server.getId());
+  }
+
   @Override
   public  void run() {
     final TimeDuration sleepDeviationThreshold = server.getSleepDeviationThreshold();
@@ -140,11 +146,12 @@ class FollowerState extends Daemon {
               && isRunning && server.getInfo().isFollower()
               && lastRpcTime.elapsedTime().compareTo(electionTimeout) >= 0
               && !lostMajorityHeartbeatsRecently()) {
-            LOG.info("{}: change to CANDIDATE, lastRpcElapsedTime:{}, electionTimeout:{}",
-                this, lastRpcTime.elapsedTime(), electionTimeout);
-            server.getLeaderElectionMetrics().onLeaderElectionTimeout(); // Update timeout metric counters.
+            // LOG.info("{}: change to CANDIDATE, lastRpcElapsedTime:{}, electionTimeout:{}",
+            //     this, lastRpcTime.elapsedTime(), electionTimeout);
+            // server.getLeaderElectionMetrics().onLeaderElectionTimeout(); // Update timeout metric counters.
             // election timeout, should become a candidate
-            server.changeToCandidate(false);
+            interceptTimeout(new TimeoutMessage(server));
+            //server.changeToCandidate(false); 
             break;
           }
         }

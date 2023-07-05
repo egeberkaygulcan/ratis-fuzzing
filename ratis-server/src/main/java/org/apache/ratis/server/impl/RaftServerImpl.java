@@ -1284,14 +1284,20 @@ class RaftServerImpl implements RaftServer.Division,
         && role.getLeaderState().map(ls -> !ls.isBootStrappingPeer(candidateId)).orElse(false);
   }
 
+  private void recordVoteRequestReply(RaftPeerId sender, RaftPeerId receiver, boolean isPreVote, long currentTerm, long candidateTerm, boolean voteGranted) {
+    // TODO - Update function definition, fill and add logging
+  }
+
   @Override
   public RequestVoteReplyProto requestVote(RequestVoteRequestProto r) throws IOException {
     final RaftRpcRequestProto request = r.getServerRequest();
-    return requestVote(r.getPreVote() ? Phase.PRE_VOTE : Phase.ELECTION,
+    RequestVoteReplyProto reply = requestVote(r.getPreVote() ? Phase.PRE_VOTE : Phase.ELECTION,
         RaftPeerId.valueOf(request.getRequestorId()),
         ProtoUtils.toRaftGroupId(request.getRaftGroupId()),
         r.getCandidateTerm(),
         TermIndex.valueOf(r.getCandidateLastEntry()));
+    // TODO - Intercept RequestVoteProto
+    return reply;
   }
 
   private RequestVoteReplyProto requestVote(Phase phase,
@@ -1382,6 +1388,11 @@ class RaftServerImpl implements RaftServer.Division,
     }
   }
 
+  private void recordAppendEntriesReply(RaftPeerId sender, RaftPeerId receiver, long term, boolean success, CompletableFuture<AppendEntriesReplyProto> reply) {
+    // TODO - Update function decleration, fill and add logging
+  }
+
+  // TODO - Pass to message queue for controlled scheduling
   @Override
   public CompletableFuture<AppendEntriesReplyProto> appendEntriesAsync(AppendEntriesRequestProto r)
       throws IOException {
@@ -1393,8 +1404,10 @@ class RaftServerImpl implements RaftServer.Division,
     preAppendEntriesAsync(requestorId, ProtoUtils.toRaftGroupId(request.getRaftGroupId()), r.getLeaderTerm(),
         previous, r.getLeaderCommit(), r.getInitializing(), entries);
     try {
-      return appendEntriesAsync(requestorId, r.getLeaderTerm(), previous, r.getLeaderCommit(),
+        // TODO - Intercept
+        CompletableFuture<AppendEntriesReplyProto> reply = appendEntriesAsync(requestorId, r.getLeaderTerm(), previous, r.getLeaderCommit(),
           request.getCallId(), r.getInitializing(), r.getCommitInfosList(), entries);
+        return reply;
     } catch(Exception t) {
       LOG.error("{}: Failed appendEntriesAsync {}", getMemberId(), r, t);
       throw t;

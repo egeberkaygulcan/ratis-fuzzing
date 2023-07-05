@@ -40,6 +40,14 @@ public final class Runner {
       System.err.println("No command type specified: ");
       return;
     }
+
+    // Initialize Netrix client
+    NetrixClientConfig c = new NetrixClientConfig("0", "127.0.0.1:6024", "127.0.0.1:4000", new HashMap<>());
+    NetrixClient client = NetrixClientSingleton.getClient(c);
+
+    // TODO - Write MiniRaftCluster based test program
+
+
     List<SubCommandBase> commands = initializeCommands(args[0]);
     Runner runner = new Runner();
 

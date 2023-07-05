@@ -260,6 +260,9 @@ public class GrpcLogAppender extends LogAppenderBase {
   public Comparator<Long> getCallIdComparator() {
     return CALL_ID_COMPARATOR;
   }
+  private void recordAppendEntries(RaftPeerId sender, RaftPeerId receiver, long term, long leaderCommit, List<LogEntryProto> entries, RaftLog log) {
+    // TODO - Update function definition, fill and add logging
+  }
 
   private void appendLog(boolean heartbeat) throws IOException {
     final AppendEntriesRequestProto pending;
@@ -267,6 +270,7 @@ public class GrpcLogAppender extends LogAppenderBase {
     try (AutoCloseableLock writeLock = lock.writeLock(caller, LOG::trace)) {
       // Prepare and send the append request.
       // Note changes on follower's nextIndex and ops on pendingRequests should always be done under the write-lock
+      // TODO - Intercept
       pending = newAppendEntriesRequest(callId.getAndIncrement(), heartbeat);
       if (pending == null) {
         return;
@@ -291,9 +295,10 @@ public class GrpcLogAppender extends LogAppenderBase {
       }
     }
     if (isRunning()) {
+      // TODO - Pass to message queue for controll scheduling
       sendRequest(request, pending);
     }
-  }
+  } 
 
   private void sendRequest(AppendEntriesRequest request, AppendEntriesRequestProto proto) {
     CodeInjectionForTesting.execute(GrpcService.GRPC_SEND_SERVER_REQUEST,

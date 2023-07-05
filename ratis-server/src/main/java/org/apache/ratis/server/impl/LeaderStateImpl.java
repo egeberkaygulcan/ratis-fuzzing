@@ -378,7 +378,7 @@ class LeaderStateImpl implements LeaderState {
         server.getId().toString(), null);
     raftLog.append(Collections.singletonList(placeHolder));
     processor.start();
-    senders.forEach(LogAppender::start);
+    senders.forEach(LogAppender::start); // LogAppenders automatically sends append entries
     return placeHolder;
   }
 
@@ -1116,7 +1116,7 @@ class LeaderStateImpl implements LeaderState {
     }
 
     if (supplier.isInitialized()) {
-      senders.forEach(LogAppender::triggerHeartbeat);
+      senders.forEach(LogAppender::triggerHeartbeat); // Heartbeat trigger
     }
 
     return listener.getFuture();

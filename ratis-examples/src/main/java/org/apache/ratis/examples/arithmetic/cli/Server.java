@@ -51,12 +51,18 @@ public class Server extends SubCommandBase {
   @Parameter(names = {"--storage",
       "-s"}, description = "Storage dir", required = true)
   private File storageDir;
-
+  // TODO - Fix incorrect argument read bug
+  @Parameter(names = {"--random-exec",
+      "-rne"}, description = "Random execution", required = true)
+  private String isRandomExecution;
 
   @Override
   public void run() throws Exception {
     RaftPeerId peerId = RaftPeerId.valueOf(id);
     RaftProperties properties = new RaftProperties();
+    NetrixClient nc = NetrixClientSingleton.getClient();
+    System.out.println("Random value: " + isRandomExecution);
+    nc.setRandomExecution(true);
 
     final int port = NetUtils.createSocketAddr(getPeer(peerId).getAddress()).getPort();
     GrpcConfigKeys.Server.setPort(properties, port);

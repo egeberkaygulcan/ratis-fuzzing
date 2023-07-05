@@ -347,12 +347,19 @@ class LeaderElection implements Runnable {
     }
   }
 
+  private void recordVoteRequest(RaftPeerId sender, RaftPeerId receiver, boolean isPreVote, long term, TermIndex lastEntry) {
+    // TODO - Update function definition, fill and add logging
+  }
+
+
   private int submitRequests(Phase phase, long electionTerm, TermIndex lastEntry,
       Collection<RaftPeer> others, Executor voteExecutor) {
     int submitted = 0;
     for (final RaftPeer peer : others) {
+      // TODO - Intercept
       final RequestVoteRequestProto r = ServerProtoUtils.toRequestVoteRequestProto(
           server.getMemberId(), peer.getId(), electionTerm, lastEntry, phase == Phase.PRE_VOTE);
+      // TODO - Write wrapper function for controlled scheduling
       voteExecutor.submit(() -> server.getServerRpc().requestVote(r));
       submitted++;
     }
