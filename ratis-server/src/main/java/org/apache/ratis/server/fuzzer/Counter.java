@@ -1,4 +1,4 @@
-package org.apache.ratis.fuzzing;
+package org.apache.ratis.server.fuzzer;
 
 import java.util.concurrent.locks.ReentrantLock;
 

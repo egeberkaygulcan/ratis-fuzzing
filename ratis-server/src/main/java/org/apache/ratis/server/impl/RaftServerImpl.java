@@ -321,7 +321,7 @@ public class RaftServerImpl implements RaftServer.Division,
     return transferLeadership;
   }
 
-  RaftServerRpc getServerRpc() {
+  public RaftServerRpc getServerRpc() {
     return proxy.getServerRpc();
   }
 
@@ -1284,10 +1284,6 @@ public class RaftServerImpl implements RaftServer.Division,
         && role.getLeaderState().map(ls -> !ls.isBootStrappingPeer(candidateId)).orElse(false);
   }
 
-  private void recordVoteRequestReply(RaftPeerId sender, RaftPeerId receiver, boolean isPreVote, long currentTerm, long candidateTerm, boolean voteGranted) {
-    // TODO - Update function definition, fill and add logging
-  }
-
   @Override
   public RequestVoteReplyProto requestVote(RequestVoteRequestProto r) throws IOException {
     final RaftRpcRequestProto request = r.getServerRequest();
@@ -1296,7 +1292,6 @@ public class RaftServerImpl implements RaftServer.Division,
         ProtoUtils.toRaftGroupId(request.getRaftGroupId()),
         r.getCandidateTerm(),
         TermIndex.valueOf(r.getCandidateLastEntry()));
-    // TODO - Intercept RequestVoteProto
     return reply;
   }
 

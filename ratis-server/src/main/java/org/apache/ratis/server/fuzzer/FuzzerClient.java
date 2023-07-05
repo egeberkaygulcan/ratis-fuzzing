@@ -1,9 +1,9 @@
-package org.apache.ratis.fuzzing;
+package org.apache.ratis.server.fuzzer;
 
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.ratis.fuzzing.messages.Message;
+import org.apache.ratis.server.fuzzer.messages.Message;
 
 public class FuzzerClient extends Thread{
     public static FuzzerClient fuzzerClient;

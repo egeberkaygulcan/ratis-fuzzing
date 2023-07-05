@@ -18,6 +18,8 @@
 package org.apache.ratis.grpc.server;
 
 import org.apache.ratis.conf.RaftProperties;
+import org.apache.ratis.server.fuzzer.FuzzerClient;
+import org.apache.ratis.server.fuzzer.messages.Message;
 import org.apache.ratis.grpc.GrpcConfigKeys;
 import org.apache.ratis.grpc.GrpcUtil;
 import org.apache.ratis.grpc.metrics.GrpcServerMetrics;
@@ -81,6 +83,8 @@ public class GrpcLogAppender extends LogAppenderBase {
 
   private final AutoCloseableReadWriteLock lock;
   private final StackTraceElement caller;
+
+  private final FuzzerClient client = FuzzerClient.getInstance();
 
   public GrpcLogAppender(RaftServer.Division server, LeaderState leaderState, FollowerInfo f) {
     super(server, leaderState, f);
@@ -260,22 +264,20 @@ public class GrpcLogAppender extends LogAppenderBase {
   public Comparator<Long> getCallIdComparator() {
     return CALL_ID_COMPARATOR;
   }
-  private void recordAppendEntries() {
-    // TODO - Update function definition, fill and add logging
+  
+  private void interceptVoteRequest(Message m) {
+    this.client.interceptMessage(m);
+    LOG.debug("------ AppendEntries on server {} to {} ------", this.getServer().getId().toString(), m.getReceiver());
   }
 
-  private void appendLog(boolean heartbeat) throws IOException {
-    final AppendEntriesRequestProto pending;
-    final AppendEntriesRequest request;
+  public void appendControlledLog(AppendEntriesRequest request, AppendEntriesRequestProto pending, boolean heartbeat) throws IOException{
     try (AutoCloseableLock writeLock = lock.writeLock(caller, LOG::trace)) {
       // Prepare and send the append request.
       // Note changes on follower's nextIndex and ops on pendingRequests should always be done under the write-lock
       // TODO - Intercept
-      pending = newAppendEntriesRequest(callId.getAndIncrement(), heartbeat);
       if (pending == null) {
         return;
       }
-      request = new AppendEntriesRequest(pending, getFollowerId(), grpcServerMetrics);
       pendingRequests.put(request);
       increaseNextIndex(pending);
       if (appendLogRequestObserver == null) {
@@ -295,8 +297,20 @@ public class GrpcLogAppender extends LogAppenderBase {
       }
     }
     if (isRunning()) {
-      // TODO - Pass to message queue for controll scheduling
       sendRequest(request, pending);
+    }
+  }
+
+  private void appendLog(boolean heartbeat) throws IOException {
+    final AppendEntriesRequestProto pending;
+    final AppendEntriesRequest request;
+    try (AutoCloseableLock writeLock = lock.writeLock(caller, LOG::trace)) {
+      // Prepare and send the append request.
+      // Note changes on follower's nextIndex and ops on pendingRequests should always be done under the write-lock
+      // TODO - Intercept
+      pending = newAppendEntriesRequest(callId.getAndIncrement(), heartbeat);
+      request = new AppendEntriesRequest(pending, getFollowerId(), grpcServerMetrics);
+      interceptVoteRequest(new AppendEntriesMessage(pending, request, heartbeat, this));
     }
   } 
 
@@ -725,7 +739,7 @@ public class GrpcLogAppender extends LogAppenderBase {
     return null;
   }
 
-  public static class AppendEntriesRequest {
+  static class AppendEntriesRequest {
     private final Timer timer;
     private volatile Timer.Context timerContext;
 

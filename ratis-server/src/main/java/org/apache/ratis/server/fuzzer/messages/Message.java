@@ -1,6 +1,6 @@
-package org.apache.ratis.fuzzing.messages;
+package org.apache.ratis.server.fuzzer.messages;
 
-import org.apache.ratis.fuzzing.FuzzerClient;
+import org.apache.ratis.server.fuzzer.FuzzerClient;
 
 public abstract class Message {
     protected long messageId;

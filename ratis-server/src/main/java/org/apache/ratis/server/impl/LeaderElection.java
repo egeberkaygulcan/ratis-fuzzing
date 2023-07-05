@@ -17,6 +17,9 @@
  */
 package org.apache.ratis.server.impl;
 
+import org.apache.ratis.server.fuzzer.FuzzerClient;
+import org.apache.ratis.server.fuzzer.messages.Message;
+import org.apache.ratis.server.fuzzer.messages.RequestVoteMessage;
 import org.apache.ratis.proto.RaftProtos.RequestVoteReplyProto;
 import org.apache.ratis.proto.RaftProtos.RequestVoteRequestProto;
 import org.apache.ratis.protocol.RaftPeer;
@@ -51,6 +54,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -76,7 +80,7 @@ import com.codahale.metrics.Timer;
  * Ongaro, D. Consensus: Bridging Theory and Practice. PhD thesis, Stanford University, 2014.
  * Available at https://github.com/ongardie/dissertation
  */
-class LeaderElection implements Runnable {
+public class LeaderElection implements Runnable {
   public static final Logger LOG = LoggerFactory.getLogger(LeaderElection.class);
 
   private ResultAndTerm logAndReturn(Phase phase, Result result, Map<RaftPeerId, RequestVoteReplyProto> responses,
@@ -130,7 +134,7 @@ class LeaderElection implements Runnable {
     }
   }
 
-  static class Executor {
+  public static class Executor {
     private final ExecutorCompletionService<RequestVoteReplyProto> service;
     private final ExecutorService executor;
 
@@ -147,7 +151,7 @@ class LeaderElection implements Runnable {
       executor.shutdown();
     }
 
-    void submit(Callable<RequestVoteReplyProto> task) {
+    public void submit(Callable<RequestVoteReplyProto> task) {
       service.submit(task);
     }
 
@@ -188,6 +192,9 @@ class LeaderElection implements Runnable {
   private final RaftServerImpl server;
   private final boolean skipPreVote;
   private final ConfAndTerm round0;
+  private final FuzzerClient client = FuzzerClient.getInstance();
+  private ReentrantLock lock;
+  private int remainingRequests;
 
   LeaderElection(RaftServerImpl server, boolean force) {
     this.name = server.getMemberId() + "-" + JavaUtils.getClassSimpleName(getClass()) + COUNT.incrementAndGet();
@@ -195,6 +202,8 @@ class LeaderElection implements Runnable {
     this.daemon = Daemon.newBuilder().setName(name).setRunnable(this)
         .setThreadGroup(server.getThreadGroup()).build();
     this.server = server;
+    this.lock = new ReentrantLock();
+    this.remainingRequests = 0;
     this.skipPreVote = force ||
         !RaftServerConfigKeys.LeaderElection.preVote(
             server.getRaftServer().getProperties());
@@ -243,8 +252,8 @@ class LeaderElection implements Runnable {
 
     try (Timer.Context ignored = server.getLeaderElectionMetrics().getLeaderElectionTimer().time()) {
       for (int round = 0; shouldRun(); round++) {
-        if (skipPreVote || askForVotes(Phase.PRE_VOTE, round)) {
-          if (askForVotes(Phase.ELECTION, round)) {
+        if (skipPreVote || askForVotes(Phase.PRE_VOTE, round)) { // Ask for prevote results or skip prevote
+          if (askForVotes(Phase.ELECTION, round)) { // Ask for election results
             server.changeToLeader();
           }
         }
@@ -279,6 +288,13 @@ class LeaderElection implements Runnable {
     return shouldRun() && server.getState().getCurrentTerm() == electionTerm;
   }
 
+  public void unlock() {
+    if (this.remainingRequests > 1)
+      remainingRequests--;
+    else
+      this.lock.unlock();
+  }
+
   private ResultAndTerm submitRequestAndWaitResult(Phase phase, RaftConfigurationImpl conf, long electionTerm)
       throws InterruptedException {
     if (!conf.containsInConf(server.getId())) {
@@ -292,7 +308,9 @@ class LeaderElection implements Runnable {
       final TermIndex lastEntry = server.getState().getLastEntry();
       final Executor voteExecutor = new Executor(this, others.size());
       try {
+        // 
         final int submitted = submitRequests(phase, electionTerm, lastEntry, others, voteExecutor);
+        this.lock.lock();
         r = waitForResults(phase, electionTerm, submitted, conf, voteExecutor);
       } finally {
         voteExecutor.shutdown();
@@ -319,6 +337,7 @@ class LeaderElection implements Runnable {
     }
 
     LOG.info("{} {} round {}: submit vote requests at term {} for {}", this, phase, round, electionTerm, conf);
+    // Submits requests and blocks while waiting for results
     final ResultAndTerm r = submitRequestAndWaitResult(phase, conf, electionTerm);
     LOG.info("{} {} round {}: result {}", this, phase, round, r);
 
@@ -347,10 +366,11 @@ class LeaderElection implements Runnable {
     }
   }
 
-  private void recordVoteRequest(RaftPeerId sender, RaftPeerId receiver, boolean isPreVote, long term, TermIndex lastEntry) {
-    // TODO - Update function definition, fill and add logging
+  private void interceptVoteRequest(Message m) {
+    this.remainingRequests++;
+    this.client.interceptMessage(m);
+    LOG.debug("------ VoteRequest on server {} to {} ------", server.getId(), m.getReceiver());
   }
-
 
   private int submitRequests(Phase phase, long electionTerm, TermIndex lastEntry,
       Collection<RaftPeer> others, Executor voteExecutor) {
@@ -360,7 +380,8 @@ class LeaderElection implements Runnable {
       final RequestVoteRequestProto r = ServerProtoUtils.toRequestVoteRequestProto(
           server.getMemberId(), peer.getId(), electionTerm, lastEntry, phase == Phase.PRE_VOTE);
       // TODO - Write wrapper function for controlled scheduling
-      voteExecutor.submit(() -> server.getServerRpc().requestVote(r));
+      interceptVoteRequest(new RequestVoteMessage(r, this, voteExecutor, server));
+      // voteExecutor.submit(() -> server.getServerRpc().requestVote(r));
       submitted++;
     }
     return submitted;
@@ -377,6 +398,7 @@ class LeaderElection implements Runnable {
 
   private ResultAndTerm waitForResults(Phase phase, long electionTerm, int submitted,
       RaftConfigurationImpl conf, Executor voteExecutor) throws InterruptedException {
+    this.lock.unlock();
     final Timestamp timeout = Timestamp.currentTime().addTime(server.getRandomElectionTimeout());
     final Map<RaftPeerId, RequestVoteReplyProto> responses = new HashMap<>();
     final List<Exception> exceptions = new ArrayList<>();

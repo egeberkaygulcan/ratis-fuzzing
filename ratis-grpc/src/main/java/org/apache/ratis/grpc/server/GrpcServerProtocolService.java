@@ -20,6 +20,9 @@ package org.apache.ratis.grpc.server;
 import org.apache.ratis.grpc.GrpcUtil;
 import org.apache.ratis.protocol.RaftPeerId;
 import org.apache.ratis.server.RaftServer;
+import org.apache.ratis.server.fuzzer.FuzzerClient;
+import org.apache.ratis.server.fuzzer.messages.Message;
+import org.apache.ratis.server.fuzzer.messages.RequestVoteReplyMessage;
 import org.apache.ratis.server.protocol.RaftServerProtocol;
 import org.apache.ratis.server.util.ServerStringUtils;
 import org.apache.ratis.thirdparty.io.grpc.Status;
@@ -40,6 +43,7 @@ import java.util.function.Supplier;
 
 class GrpcServerProtocolService extends RaftServerProtocolServiceImplBase {
   public static final Logger LOG = LoggerFactory.getLogger(GrpcServerProtocolService.class);
+  public final FuzzerClient client = FuzzerClient.getInstance();
 
   static class PendingServerRequest<REQUEST> {
     private final REQUEST request;
@@ -183,13 +187,20 @@ class GrpcServerProtocolService extends RaftServerProtocolServiceImplBase {
     return idSupplier.get();
   }
 
+  private void interceptTimeout(Message m) {
+    this.client.interceptMessage(m);
+    LOG.debug("------ RequestVoteReply on server {} ------", server.getId());
+  }
+
+  // TODO - Intercept
   @Override
   public void requestVote(RequestVoteRequestProto request,
       StreamObserver<RequestVoteReplyProto> responseObserver) {
     try {
       final RequestVoteReplyProto reply = server.requestVote(request);
-      responseObserver.onNext(reply);
-      responseObserver.onCompleted();
+      interceptTimeout(new RequestVoteReplyMessage(reply, responseObserver));
+      //responseObserver.onNext(reply);
+      //responseObserver.onCompleted();
     } catch (Exception e) {
       GrpcUtil.warn(LOG, () -> getId() + ": Failed requestVote " + ProtoUtils.toString(request.getServerRequest()), e);
       responseObserver.onError(GrpcUtil.wrapException(e));

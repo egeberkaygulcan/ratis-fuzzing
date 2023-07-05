@@ -23,9 +23,9 @@ import org.apache.ratis.util.Daemon;
 import org.apache.ratis.util.JavaUtils;
 import org.apache.ratis.util.TimeDuration;
 import org.apache.ratis.util.Timestamp;
-import org.apache.ratis.fuzzing.FuzzerClient;
-import org.apache.ratis.fuzzing.messages.Message;
-import org.apache.ratis.fuzzing.messages.TimeoutMessage;
+import org.apache.ratis.server.fuzzer.FuzzerClient;
+import org.apache.ratis.server.fuzzer.messages.Message;
+import org.apache.ratis.server.fuzzer.messages.TimeoutMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

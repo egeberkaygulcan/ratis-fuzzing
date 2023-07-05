@@ -1,4 +1,4 @@
-package org.apache.ratis.fuzzing.messages;
+package org.apache.ratis.server.fuzzer.messages;
 
 import org.apache.ratis.proto.RaftProtos.RequestVoteReplyProto;
 import org.apache.ratis.server.impl.RaftServerImpl;

@@ -1,7 +1,6 @@
-package org.apache.ratis.fuzzing.messages;
+package org.apache.ratis.server.fuzzer.messages;
 
 import org.apache.ratis.proto.RaftProtos.RequestVoteRequestProto;
-import org.apache.ratis.protocol.RaftPeerId;
 import org.apache.ratis.server.impl.LeaderElection;
 import org.apache.ratis.server.impl.RaftServerImpl;
 import org.apache.ratis.server.impl.LeaderElection.Executor;
@@ -20,6 +19,8 @@ public class RequestVoteMessage extends Message {
         this.server = s;
         this.setType("request_vote_request");
         this.setId(this.client.generateId());
+
+        isControlledExecution();
     }
 
     @Override
