@@ -1,17 +1,15 @@
 package org.apache.ratis.fuzzing.messages;
 
-// import org.apache.ratis.grpc.server.GrpcLogAppender.AppendEntriesRequest;
-import org.apache.ratis.proto.RaftProtos.AppendEntriesRequestProto;
+import org.apache.ratis.proto.RaftProtos.RequestVoteReplyProto;
+import org.apache.ratis.proto.RaftProtos.RequestVoteRequestProto;
 
-public class AppendEntriesMessage extends Message {
+public class RequestVoteReplyMessage extends Message {
 
-    private AppendEntriesRequestProto proto;
-    // private AppendEntriesRequest request;
+    private RequestVoteReplyProto request;
 
-    public AppendEntriesMessage(AppendEntriesRequestProto p) {
-        this.proto = p;
-        // this.request = r;
-        this.setType("append_entries_request");
+    public RequestVoteReplyMessage(RequestVoteReplyProto r) {
+        this.request = r;
+        this.setType("request_vote_response");
         this.setId(this.client.generateId());
     }
 
@@ -25,6 +23,11 @@ public class AppendEntriesMessage extends Message {
     public void send() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'send'");
+    }
+
+    @Override
+    public String getReceiver() {
+        return null;
     }
 
     @Override

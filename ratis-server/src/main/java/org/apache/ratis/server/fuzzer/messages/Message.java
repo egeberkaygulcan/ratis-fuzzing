@@ -11,6 +11,8 @@ public abstract class Message {
 
     public abstract void send();
 
+    public abstract String getReceiver();
+
     protected abstract String toJsonString();
 
     protected void isControlledExecution() {

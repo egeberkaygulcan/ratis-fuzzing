@@ -1,10 +1,7 @@
 package org.apache.ratis.fuzzing;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.ratis.fuzzing.messages.Message;
 
@@ -41,6 +38,10 @@ public class FuzzerClient extends Thread{
 
     public boolean isControlledExecution() {
         return false;
+    }
+
+    public ReentrantLock getLock() {
+        return new ReentrantLock();
     }
 
 

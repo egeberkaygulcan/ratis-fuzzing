@@ -1,14 +1,17 @@
 package org.apache.ratis.fuzzing.messages;
 
-import org.apache.ratis.proto.RaftProtos.RequestVoteRequestProto;
+import org.apache.ratis.proto.RaftProtos.AppendEntriesRequestProto;
+import org.apache.ratis.server.fuzzer.messages.Message;
 
-public class RequestVoteMessage extends Message {
+public class AppendEntriesMessage extends Message {
 
-    private RequestVoteRequestProto request;
+    private AppendEntriesRequestProto proto;
+    private Object request;
 
-    public RequestVoteMessage(RequestVoteRequestProto r) {
+    public AppendEntriesMessage(AppendEntriesRequestProto p, Object request) {
+        this.proto = p;
         this.request = r;
-        this.setType("request_vote_request");
+        this.setType("append_entries_request");
         this.setId(this.client.generateId());
     }
 
@@ -30,5 +33,9 @@ public class RequestVoteMessage extends Message {
         throw new UnsupportedOperationException("Unimplemented method 'toJsonString'");
     }
 
+    @Override
+    public String getReceiver() {
+        return this.proto.getServerRequest().getReplyId().toString();
+    }
     
 }

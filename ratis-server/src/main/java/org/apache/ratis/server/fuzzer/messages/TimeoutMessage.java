@@ -1,22 +1,23 @@
 package org.apache.ratis.fuzzing.messages;
 
 import org.apache.ratis.proto.RaftProtos.RequestVoteReplyProto;
-import org.apache.ratis.proto.RaftProtos.RequestVoteRequestProto;
+import org.apache.ratis.server.impl.RaftServerImpl;
 
-public class RequestVoteReplyMessage extends Message {
+public class TimeoutMessage extends Message {
 
-    private RequestVoteReplyProto request;
+    RaftServerImpl server;
 
-    public RequestVoteReplyMessage(RequestVoteReplyProto r) {
-        this.request = r;
-        this.setType("request_vote_response");
+    public TimeoutMessage(RaftServerImpl s) {
+        this.server = s;
+        this.setType("timeout");
         this.setId(this.client.generateId());
+    
+        isControlledExecution();
     }
 
     @Override
     public void invoke() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'invoke'");
+        this.server.changeToCandidate(false);
     }
 
     @Override
@@ -29,6 +30,12 @@ public class RequestVoteReplyMessage extends Message {
     protected String toJsonString() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'toJsonString'");
+    }
+
+    @Override
+    public String getReceiver() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getReceiver'");
     }
     
 }
