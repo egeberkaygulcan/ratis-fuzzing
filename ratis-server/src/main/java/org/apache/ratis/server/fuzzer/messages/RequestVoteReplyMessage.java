@@ -2,8 +2,13 @@ package org.apache.ratis.server.fuzzer.messages;
 
 import org.apache.ratis.proto.RaftProtos.RequestVoteReplyProto;
 import org.apache.ratis.proto.RaftProtos.RequestVoteRequestProto;
+import org.apache.ratis.server.fuzzer.comm.GsonHelper;
+import org.apache.ratis.server.fuzzer.comm.JsonMessage;
 import org.apache.ratis.thirdparty.io.grpc.internal.GrpcUtil;
 import org.apache.ratis.thirdparty.io.grpc.stub.StreamObserver;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 public class RequestVoteReplyMessage extends Message {
 
@@ -32,20 +37,29 @@ public class RequestVoteReplyMessage extends Message {
     }
 
     @Override
-    public void send() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'send'");
-    }
-
-    @Override
     public String getReceiver() {
         return null;
     }
 
     @Override
-    protected String toJsonString() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'toJsonString'");
+    public String toJsonString() {
+        String to = request.getServerReply().getRequestorId().toStringUtf8();
+        String from = request.getServerReply().getReplyId().toStringUtf8();
+
+        JsonObject json = new JsonObject();
+        json.addProperty("type", type);
+        json.addProperty("term", (double) request.getTerm());
+        json.addProperty("prevote", false);
+        json.addProperty("request_term", (double) request.getTerm());
+        json.addProperty("vote_granted", request.getServerReply().getSuccess());
+
+        Gson gson = GsonHelper.gson;
+
+        JsonMessage msg = new JsonMessage(Integer.toString(client.getServerId(to)), type, gson.toJson(json).getBytes());
+        msg.setFrom(Integer.toString(client.getServerId(from)));
+        msg.setId(Integer.toString(this.getId()));
+
+        return gson.toJson(msg);
     }
     
 }

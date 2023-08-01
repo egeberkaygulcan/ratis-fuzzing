@@ -70,7 +70,7 @@ public class SegmentedRaftLogInputStream implements Closeable {
   private final SizeInBytes maxOpSize;
   private final SegmentedRaftLogMetrics raftLogMetrics;
 
-  SegmentedRaftLogInputStream(File log, long startIndex, long endIndex, boolean isOpen,
+  public SegmentedRaftLogInputStream(File log, long startIndex, long endIndex, boolean isOpen,
       SizeInBytes maxOpSize, SegmentedRaftLogMetrics raftLogMetrics) {
     this.maxOpSize = maxOpSize;
     if (isOpen) {

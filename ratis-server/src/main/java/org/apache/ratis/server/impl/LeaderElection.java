@@ -54,7 +54,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -192,9 +191,7 @@ public class LeaderElection implements Runnable {
   private final RaftServerImpl server;
   private final boolean skipPreVote;
   private final ConfAndTerm round0;
-  private final FuzzerClient client = FuzzerClient.getInstance();
-  private ReentrantLock lock;
-  private int remainingRequests;
+  private final FuzzerClient client = FuzzerClient.getInstance("LeaderElection");
 
   LeaderElection(RaftServerImpl server, boolean force) {
     this.name = server.getMemberId() + "-" + JavaUtils.getClassSimpleName(getClass()) + COUNT.incrementAndGet();
@@ -202,8 +199,6 @@ public class LeaderElection implements Runnable {
     this.daemon = Daemon.newBuilder().setName(name).setRunnable(this)
         .setThreadGroup(server.getThreadGroup()).build();
     this.server = server;
-    this.lock = new ReentrantLock();
-    this.remainingRequests = 0;
     this.skipPreVote = force ||
         !RaftServerConfigKeys.LeaderElection.preVote(
             server.getRaftServer().getProperties());
@@ -288,13 +283,6 @@ public class LeaderElection implements Runnable {
     return shouldRun() && server.getState().getCurrentTerm() == electionTerm;
   }
 
-  public void unlock() {
-    if (this.remainingRequests > 1)
-      remainingRequests--;
-    else
-      this.lock.unlock();
-  }
-
   private ResultAndTerm submitRequestAndWaitResult(Phase phase, RaftConfigurationImpl conf, long electionTerm)
       throws InterruptedException {
     if (!conf.containsInConf(server.getId())) {
@@ -310,7 +298,6 @@ public class LeaderElection implements Runnable {
       try {
         // 
         final int submitted = submitRequests(phase, electionTerm, lastEntry, others, voteExecutor);
-        this.lock.lock();
         r = waitForResults(phase, electionTerm, submitted, conf, voteExecutor);
       } finally {
         voteExecutor.shutdown();
@@ -367,7 +354,6 @@ public class LeaderElection implements Runnable {
   }
 
   private void interceptVoteRequest(Message m) {
-    this.remainingRequests++;
     this.client.interceptMessage(m);
     LOG.debug("------ VoteRequest on server {} to {} ------", server.getId(), m.getReceiver());
   }
@@ -380,7 +366,7 @@ public class LeaderElection implements Runnable {
       final RequestVoteRequestProto r = ServerProtoUtils.toRequestVoteRequestProto(
           server.getMemberId(), peer.getId(), electionTerm, lastEntry, phase == Phase.PRE_VOTE);
       // TODO - Write wrapper function for controlled scheduling
-      interceptVoteRequest(new RequestVoteMessage(r, this, voteExecutor, server));
+      interceptVoteRequest(new RequestVoteMessage(r, voteExecutor, server));
       // voteExecutor.submit(() -> server.getServerRpc().requestVote(r));
       submitted++;
     }
@@ -398,7 +384,7 @@ public class LeaderElection implements Runnable {
 
   private ResultAndTerm waitForResults(Phase phase, long electionTerm, int submitted,
       RaftConfigurationImpl conf, Executor voteExecutor) throws InterruptedException {
-    this.lock.unlock();
+    // this.lock.unlock();
     final Timestamp timeout = Timestamp.currentTime().addTime(server.getRandomElectionTimeout());
     final Map<RaftPeerId, RequestVoteReplyProto> responses = new HashMap<>();
     final List<Exception> exceptions = new ArrayList<>();

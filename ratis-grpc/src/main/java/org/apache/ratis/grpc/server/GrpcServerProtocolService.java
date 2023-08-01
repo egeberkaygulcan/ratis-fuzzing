@@ -41,9 +41,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
-class GrpcServerProtocolService extends RaftServerProtocolServiceImplBase {
+public class GrpcServerProtocolService extends RaftServerProtocolServiceImplBase {
   public static final Logger LOG = LoggerFactory.getLogger(GrpcServerProtocolService.class);
-  public final FuzzerClient client = FuzzerClient.getInstance();
+  public final FuzzerClient client = FuzzerClient.getInstance("GrpcProtocolService");
 
   static class PendingServerRequest<REQUEST> {
     private final REQUEST request;
@@ -187,7 +187,7 @@ class GrpcServerProtocolService extends RaftServerProtocolServiceImplBase {
     return idSupplier.get();
   }
 
-  private void interceptTimeout(Message m) {
+  private void interceptVoteReply(Message m) {
     this.client.interceptMessage(m);
     LOG.debug("------ RequestVoteReply on server {} ------", server.getId());
   }
@@ -198,7 +198,7 @@ class GrpcServerProtocolService extends RaftServerProtocolServiceImplBase {
       StreamObserver<RequestVoteReplyProto> responseObserver) {
     try {
       final RequestVoteReplyProto reply = server.requestVote(request);
-      interceptTimeout(new RequestVoteReplyMessage(reply, responseObserver));
+      interceptVoteReply(new RequestVoteReplyMessage(reply, responseObserver));
       //responseObserver.onNext(reply);
       //responseObserver.onCompleted();
     } catch (Exception e) {

@@ -84,7 +84,7 @@ public class GrpcLogAppender extends LogAppenderBase {
   private final AutoCloseableReadWriteLock lock;
   private final StackTraceElement caller;
 
-  private final FuzzerClient client = FuzzerClient.getInstance();
+  private final FuzzerClient client = FuzzerClient.getInstance("GrpcLogAppender");
 
   public GrpcLogAppender(RaftServer.Division server, LeaderState leaderState, FollowerInfo f) {
     super(server, leaderState, f);
@@ -265,16 +265,17 @@ public class GrpcLogAppender extends LogAppenderBase {
     return CALL_ID_COMPARATOR;
   }
   
-  private void interceptVoteRequest(Message m) {
-    this.client.interceptMessage(m);
-    LOG.debug("------ AppendEntries on server {} to {} ------", this.getServer().getId().toString(), m.getReceiver());
+  private void interceptAppendEntries(Message m, boolean heartbeat) {
+    if(!heartbeat) {
+      this.client.interceptMessage(m);
+      LOG.debug("------ AppendEntries on server {} to {} ------", this.getServer().getId().toString(), m.getReceiver());
+    }
   }
 
   public void appendControlledLog(AppendEntriesRequest request, AppendEntriesRequestProto pending, boolean heartbeat) throws IOException{
     try (AutoCloseableLock writeLock = lock.writeLock(caller, LOG::trace)) {
       // Prepare and send the append request.
       // Note changes on follower's nextIndex and ops on pendingRequests should always be done under the write-lock
-      // TODO - Intercept
       if (pending == null) {
         return;
       }
@@ -307,10 +308,9 @@ public class GrpcLogAppender extends LogAppenderBase {
     try (AutoCloseableLock writeLock = lock.writeLock(caller, LOG::trace)) {
       // Prepare and send the append request.
       // Note changes on follower's nextIndex and ops on pendingRequests should always be done under the write-lock
-      // TODO - Intercept
       pending = newAppendEntriesRequest(callId.getAndIncrement(), heartbeat);
       request = new AppendEntriesRequest(pending, getFollowerId(), grpcServerMetrics);
-      interceptVoteRequest(new AppendEntriesMessage(pending, request, heartbeat, this));
+      interceptAppendEntries(new AppendEntriesMessage(pending, request, heartbeat, this), heartbeat);
     }
   } 
 
@@ -360,8 +360,9 @@ public class GrpcLogAppender extends LogAppenderBase {
   /**
    * StreamObserver for handling responses from the follower
    */
-  private class AppendLogResponseHandler implements StreamObserver<AppendEntriesReplyProto> {
+  public class AppendLogResponseHandler implements StreamObserver<AppendEntriesReplyProto> {
     private final String name = getFollower().getName() + "-" + JavaUtils.getClassSimpleName(getClass());
+    private final FuzzerClient client = FuzzerClient.getInstance("AppendLogResponseHandler");
 
     /**
      * After receiving a appendEntries reply, do the following:
@@ -371,8 +372,13 @@ public class GrpcLogAppender extends LogAppenderBase {
      * 3. If the reply is INCONSISTENCY, increase/ decrease the follower's next
      *    index based on the response
      */
-    @Override
-    public void onNext(AppendEntriesReplyProto reply) {
+
+    private void interceptAppendEntriesReply(Message m) {
+      this.client.interceptMessage(m);
+      LOG.debug("------ AppendEntriesReply received from {} ------", getFollowerId().toString());
+    }
+
+    public void onNextInvoke(AppendEntriesReplyProto reply) {
       AppendEntriesRequest request = pendingRequests.remove(reply);
       if (request != null) {
         request.stopRequestTimer(); // Update completion time
@@ -390,6 +396,11 @@ public class GrpcLogAppender extends LogAppenderBase {
         LOG.error("Failed onNext request=" + request
             + ", reply=" + ServerStringUtils.toAppendEntriesReplyString(reply), t);
       }
+    }
+
+    @Override
+    public void onNext(AppendEntriesReplyProto reply) {
+      interceptAppendEntriesReply(new AppendEntriesReplyMessage(reply, this));
     }
 
     private void onNextImpl(AppendEntriesReplyProto reply) {

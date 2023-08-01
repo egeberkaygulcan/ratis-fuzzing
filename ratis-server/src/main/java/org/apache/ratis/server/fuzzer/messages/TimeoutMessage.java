@@ -21,13 +21,7 @@ public class TimeoutMessage extends Message {
     }
 
     @Override
-    public void send() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'send'");
-    }
-
-    @Override
-    protected String toJsonString() {
+    public String toJsonString() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'toJsonString'");
     }

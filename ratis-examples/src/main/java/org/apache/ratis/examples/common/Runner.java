@@ -19,12 +19,24 @@ package org.apache.ratis.examples.common;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+
+import org.apache.ratis.conf.RaftProperties;
 import org.apache.ratis.examples.arithmetic.cli.Arithmetic;
 import org.apache.ratis.examples.filestore.cli.FileStore;
+import org.apache.ratis.grpc.MiniRaftClusterWithGrpc;
+import org.apache.ratis.server.RaftServerConfigKeys;
+import org.apache.ratis.server.fuzzer.FuzzerClient;
+import org.apache.ratis.server.impl.MiniRaftCluster;
+import org.apache.ratis.statemachine.StateMachine;
+import org.apache.ratis.statemachine.impl.SimpleStateMachine4Testing;
+import org.apache.ratis.statemachine.impl.SimpleStateMachineStorage;
 import org.apache.ratis.util.JavaUtils;
+import org.apache.ratis.util.SizeInBytes;
+import org.apache.ratis.util.TimeDuration;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Standalone arithmetic raft server.
@@ -36,45 +48,46 @@ public final class Runner {
   }
 
   public static void main(String[] args) throws Exception {
-    if (args.length == 0) {
-      System.err.println("No command type specified: ");
-      return;
-    }
+    System.out.println("Runner main.");
 
-    // Initialize fuzzer client
+    FuzzerClient client = FuzzerClient.getInstance("Runner.java");
 
+    ExperimentRunner runner = new ExperimentRunner(3);
+    runner.startExperiment();
 
-    // TODO - Write MiniRaftCluster based test program
+    // if (args.length == 0) {
+    //   System.err.println("No command type specified: ");
+    //   return;
+    // }
 
+    // List<SubCommandBase> commands = initializeCommands(args[0]);
+    // Runner runner = new Runner();
 
-    List<SubCommandBase> commands = initializeCommands(args[0]);
-    Runner runner = new Runner();
+    // if (commands == null) {
+    //   System.err.println("Wrong command type: " + args[0]);
+    //   return;
+    // }
+    // String[] newArgs = new String[args.length - 1];
+    // System.arraycopy(args, 1, newArgs, 0, args.length - 1);
 
-    if (commands == null) {
-      System.err.println("Wrong command type: " + args[0]);
-      return;
-    }
-    String[] newArgs = new String[args.length - 1];
-    System.arraycopy(args, 1, newArgs, 0, args.length - 1);
-
-    JCommander.Builder builder = JCommander.newBuilder().addObject(runner);
-    commands.forEach(command -> builder
-        .addCommand(JavaUtils.getClassSimpleName(command.getClass()).toLowerCase(), command));
-    JCommander jc = builder.build();
-    try {
-      jc.parse(newArgs);
-      final Optional<SubCommandBase> selectedCommand = commands.stream()
-          .filter(command -> JavaUtils.getClassSimpleName(command.getClass()).equalsIgnoreCase(jc.getParsedCommand()))
-          .findFirst();
-      if (selectedCommand.isPresent()) {
-        selectedCommand.get().run();
-      } else {
-        jc.usage();
-      }
-    } catch (ParameterException exception) {
-      System.err.println("Wrong parameters: " + exception.getMessage());
-      jc.usage();
-    }
+    // JCommander.Builder builder = JCommander.newBuilder().addObject(runner);
+    // commands.forEach(command -> builder
+    //     .addCommand(JavaUtils.getClassSimpleName(command.getClass()).toLowerCase(), command));
+    // JCommander jc = builder.build();
+    // try {
+    //   jc.parse(newArgs);
+    //   final Optional<SubCommandBase> selectedCommand = commands.stream()
+    //       .filter(command -> JavaUtils.getClassSimpleName(command.getClass()).equalsIgnoreCase(jc.getParsedCommand()))
+    //       .findFirst();
+    //   if (selectedCommand.isPresent()) {
+    //     selectedCommand.get().run();
+    //   } else {
+    //     jc.usage();
+    //   }
+    // } catch (ParameterException exception) {
+    //   System.err.println("Wrong parameters: " + exception.getMessage());
+    //   jc.usage();
+    // }
 
   }
 

@@ -30,7 +30,7 @@ public class TestLeaderElectionWithGrpc
   public void testEnforceLeader() throws Exception {
     super.testEnforceLeader();
 
-    MiniRaftClusterWithGrpc.sendServerRequestInjection.clear();
+    // MiniRaftClusterWithGrpc.sendServerRequestInjection.clear();
     BlockRequestHandlingInjection.getInstance().unblockAll();
   }
 

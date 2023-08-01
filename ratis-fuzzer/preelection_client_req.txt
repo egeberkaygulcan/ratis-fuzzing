@@ -1,0 +1,547 @@
+Runner main.
+RUNNING FUZZERCLIENT
+2023-07-28 06:33:36 INFO  LogUtils:38 - Successfully set org.apache.ratis.server.raftlog.RaftLog log level to INFO
+2023-07-28 06:33:36 INFO  LogUtils:38 - Successfully set org.apache.ratis.grpc.server.GrpcLogAppender log level to DEBUG
+2023-07-28 06:33:36 INFO  LogUtils:38 - Successfully set org.apache.ratis.server.impl.LeaderElection log level to DEBUG
+2023-07-28 06:33:36 INFO  LogUtils:38 - Successfully set org.apache.ratis.grpc.server.GrpcServerProtocolService log level to DEBUG
+2023-07-28 06:33:36 INFO  LogUtils:38 - Successfully set org.apache.ratis.server.impl.FollowerState log level to DEBUG
+Running Experiments
+2023-07-28 06:33:36 INFO  MiniRaftCluster:132 - Running runWithNewCluster
+2023-07-28 06:33:36 INFO  MiniRaftCluster:316 - new MiniRaftClusterWithGrpc with group-9C1B38F098C3:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]
+2023-07-28 06:33:36 INFO  MiniRaftCluster:349 - .............................................................. 
+2023-07-28 06:33:36 INFO  MiniRaftCluster:350 - ... 
+2023-07-28 06:33:36 INFO  MiniRaftCluster:351 - ...     Starting MiniRaftClusterWithGrpc
+2023-07-28 06:33:36 INFO  MiniRaftCluster:352 - ... 
+2023-07-28 06:33:36 INFO  MiniRaftCluster:353 - .............................................................. 
+2023-07-28 06:33:36 INFO  MiniRaftCluster:328 - servers = {}
+2023-07-28 06:33:36 INFO  MiniRaftCluster:392 - newRaftServer: n0, group-9C1B38F098C3:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER], format? true
+2023-07-28 06:33:36 INFO  MiniRaftCluster:397 - Formatted directory /Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp/836af831/MiniRaftClusterWithGrpcbd60001a/n0
+2023-07-28 06:33:36 INFO  RaftServer:46 - raft.rpc.type = GRPC (default)
+2023-07-28 06:33:36 INFO  LoggingHandler:148 - [id: 0x5aa49d42] REGISTERED
+2023-07-28 06:33:36 INFO  LoggingHandler:148 - [id: 0x5aa49d42] BIND: /127.0.0.1:7075
+2023-07-28 06:33:36 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] ACTIVE
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:53 - raft.grpc.admin.host = null (fallback to raft.grpc.server.host)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:46 - raft.grpc.admin.port = 64737 (custom)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:53 - raft.grpc.client.host = null (fallback to raft.grpc.server.host)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:46 - raft.grpc.client.port = 64738 (custom)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:46 - raft.grpc.server.host = null (default)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:46 - raft.grpc.server.port = 64736 (custom)
+2023-07-28 06:33:36 INFO  GrpcService:46 - raft.grpc.message.size.max = 64MB (=67108864) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-07-28 06:33:36 INFO  GrpcService:46 - raft.grpc.flow.control.window = 1MB (=1048576) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.rpc.request.timeout = 3000ms (default)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:46 - raft.grpc.server.heartbeat.channel = true (default)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:46 - raft.grpc.server.async.request.thread.pool.cached = true (default)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:46 - raft.grpc.server.async.request.thread.pool.size = 32 (default)
+2023-07-28 06:33:36 INFO  DataStreamServerImpl:46 - raft.datastream.type = DISABLED (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.proxy.cached = true (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.proxy.size = 0 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.rpc.slowness.timeout = 60s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.leader.step-down.wait-time = 10s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.storage.dir = [/Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp/836af831/MiniRaftClusterWithGrpcbd60001a/n0] (custom)
+2023-07-28 06:33:36 INFO  RaftServer:98 - n0: addNew group-9C1B38F098C3:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER] returns group-9C1B38F098C3:java.util.concurrent.CompletableFuture@130e116b[Not completed]
+2023-07-28 06:33:36 INFO  MiniRaftCluster:392 - newRaftServer: n1, group-9C1B38F098C3:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER], format? true
+2023-07-28 06:33:36 INFO  MiniRaftCluster:397 - Formatted directory /Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp/836af831/MiniRaftClusterWithGrpcbd60001a/n1
+2023-07-28 06:33:36 INFO  RaftServer:46 - raft.rpc.type = GRPC (default)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:53 - raft.grpc.admin.host = null (fallback to raft.grpc.server.host)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:46 - raft.grpc.admin.port = 64741 (custom)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:53 - raft.grpc.client.host = null (fallback to raft.grpc.server.host)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:46 - raft.grpc.client.port = 64742 (custom)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:46 - raft.grpc.server.host = null (default)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:46 - raft.grpc.server.port = 64740 (custom)
+2023-07-28 06:33:36 INFO  GrpcService:46 - raft.grpc.message.size.max = 64MB (=67108864) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-07-28 06:33:36 INFO  GrpcService:46 - raft.grpc.flow.control.window = 1MB (=1048576) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.rpc.request.timeout = 3000ms (default)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:46 - raft.grpc.server.heartbeat.channel = true (default)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:46 - raft.grpc.server.async.request.thread.pool.cached = true (default)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:46 - raft.grpc.server.async.request.thread.pool.size = 32 (default)
+2023-07-28 06:33:36 INFO  DataStreamServerImpl:46 - raft.datastream.type = DISABLED (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.proxy.cached = true (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.proxy.size = 0 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.rpc.slowness.timeout = 60s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.leader.step-down.wait-time = 10s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.storage.dir = [/Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp/836af831/MiniRaftClusterWithGrpcbd60001a/n1] (custom)
+2023-07-28 06:33:36 INFO  RaftServer:98 - n1: addNew group-9C1B38F098C3:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER] returns group-9C1B38F098C3:java.util.concurrent.CompletableFuture@3abada5a[Not completed]
+2023-07-28 06:33:36 INFO  MiniRaftCluster:392 - newRaftServer: n2, group-9C1B38F098C3:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER], format? true
+2023-07-28 06:33:36 INFO  MiniRaftCluster:397 - Formatted directory /Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp/836af831/MiniRaftClusterWithGrpcbd60001a/n2
+2023-07-28 06:33:36 INFO  RaftServer:46 - raft.rpc.type = GRPC (default)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:53 - raft.grpc.admin.host = null (fallback to raft.grpc.server.host)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:46 - raft.grpc.admin.port = 64745 (custom)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:53 - raft.grpc.client.host = null (fallback to raft.grpc.server.host)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:46 - raft.grpc.client.port = 64746 (custom)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:46 - raft.grpc.server.host = null (default)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:46 - raft.grpc.server.port = 64744 (custom)
+2023-07-28 06:33:36 INFO  GrpcService:46 - raft.grpc.message.size.max = 64MB (=67108864) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.size.max = 8MB (=8388608) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.size.max = 8MB (=8388608) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.preallocated.size = 4MB (=4194304) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.preallocated.size = 4MB (=4194304) (default)
+2023-07-28 06:33:36 INFO  GrpcService:46 - raft.grpc.flow.control.window = 1MB (=1048576) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.write.buffer.size = 64KB (=65536) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.rpc.request.timeout = 3000ms (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.write.buffer.size = 64KB (=65536) (default)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:46 - raft.grpc.server.heartbeat.channel = true (default)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:46 - raft.grpc.server.async.request.thread.pool.cached = true (default)
+2023-07-28 06:33:36 INFO  GrpcConfigKeys:46 - raft.grpc.server.async.request.thread.pool.size = 32 (default)
+2023-07-28 06:33:36 INFO  DataStreamServerImpl:46 - raft.datastream.type = DISABLED (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.proxy.cached = true (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.proxy.size = 0 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.rpc.slowness.timeout = 60s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.leader.step-down.wait-time = 10s (default)
+2023-07-28 06:33:36 INFO  RaftServer$Division:198 - n1: new RaftServerImpl for group-9C1B38F098C3:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER] with SimpleStateMachine4Testing:uninitialized
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.storage.dir = [/Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp/836af831/MiniRaftClusterWithGrpcbd60001a/n2] (custom)
+2023-07-28 06:33:36 INFO  RaftServer$Division:198 - n0: new RaftServerImpl for group-9C1B38F098C3:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER] with SimpleStateMachine4Testing:uninitialized
+2023-07-28 06:33:36 INFO  RaftServer:98 - n2: addNew group-9C1B38F098C3:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER] returns group-9C1B38F098C3:java.util.concurrent.CompletableFuture@265adfad[Not completed]
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.size.max = 8MB (=8388608) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.preallocated.size = 4MB (=4194304) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.write.buffer.size = 64KB (=65536) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.rpc.timeout.min = 500ms (custom)
+2023-07-28 06:33:36 INFO  RaftServer$Division:198 - n2: new RaftServerImpl for group-9C1B38F098C3:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER] with SimpleStateMachine4Testing:uninitialized
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.rpc.timeout.max = 1000ms (custom)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.rpc.timeout.min = 500ms (custom)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.rpc.sleep.time = 25ms (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.rpc.timeout.min = 500ms (custom)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.rpc.slowness.timeout = 60s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.rpc.timeout.max = 1000ms (custom)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.leader.step-down.wait-time = 10s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.rpc.timeout.max = 1000ms (custom)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.sleep.deviation.threshold = 300ms (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.rpc.sleep.time = 25ms (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.rpc.sleep.time = 25ms (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.rpc.slowness.timeout = 60s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.rpc.slowness.timeout = 60s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.leader.step-down.wait-time = 10s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.leader.step-down.wait-time = 10s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.sleep.deviation.threshold = 300ms (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.sleep.deviation.threshold = 300ms (default)
+2023-07-28 06:33:36 INFO  RaftServer$Division:120 - n0@group-9C1B38F098C3: ConfigurationManager, init=-1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null, confs=<EMPTY_MAP>
+2023-07-28 06:33:36 INFO  RaftServer$Division:120 - n1@group-9C1B38F098C3: ConfigurationManager, init=-1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null, confs=<EMPTY_MAP>
+2023-07-28 06:33:36 INFO  RaftServer$Division:120 - n2@group-9C1B38F098C3: ConfigurationManager, init=-1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null, confs=<EMPTY_MAP>
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.storage.dir = [/Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp/836af831/MiniRaftClusterWithGrpcbd60001a/n0] (custom)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.storage.dir = [/Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp/836af831/MiniRaftClusterWithGrpcbd60001a/n2] (custom)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.storage.dir = [/Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp/836af831/MiniRaftClusterWithGrpcbd60001a/n1] (custom)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.corruption.policy = EXCEPTION (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.corruption.policy = EXCEPTION (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.corruption.policy = EXCEPTION (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.storage.free-space.min = 0MB (=0) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.storage.free-space.min = 0MB (=0) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.storage.free-space.min = 0MB (=0) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.notification.no-leader.timeout = 60s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.notification.no-leader.timeout = 60s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.notification.no-leader.timeout = 60s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.read.timeout = 10s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.read.timeout = 10s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.read.timeout = 10s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.retrycache.expirytime = 60s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.retrycache.expirytime = 60s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.retrycache.expirytime = 60s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.retrycache.statistics.expirytime = 100μs (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.retrycache.statistics.expirytime = 100μs (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.retrycache.statistics.expirytime = 100μs (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.read.option = DEFAULT (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.read.option = DEFAULT (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.read.option = DEFAULT (default)
+2023-07-28 06:33:36 INFO  MetricRegistries:64 - Loaded MetricRegistries class org.apache.ratis.metrics.impl.MetricRegistriesImpl
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.rpc.request.timeout = 3000ms (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.rpc.request.timeout = 3000ms (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.rpc.request.timeout = 3000ms (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.install.snapshot.enabled = true (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.install.snapshot.enabled = true (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.install.snapshot.enabled = true (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.server.cached = true (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.server.cached = true (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.server.cached = true (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.server.size = 0 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.server.size = 0 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.server.size = 0 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.client.cached = true (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.client.cached = true (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.client.cached = true (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.client.size = 0 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.client.size = 0 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.client.size = 0 (default)
+2023-07-28 06:33:36 INFO  RaftStorageDirectory:137 - The storage directory /Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp/836af831/MiniRaftClusterWithGrpcbd60001a/n0/e6e89afd-3464-49e6-a062-9c1b38f098c3 does not exist. Creating ...
+2023-07-28 06:33:36 INFO  RaftStorageDirectory:231 - Lock on /Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp/836af831/MiniRaftClusterWithGrpcbd60001a/n0/e6e89afd-3464-49e6-a062-9c1b38f098c3/in_use.lock acquired by nodename 19939@eges-mbp.home
+2023-07-28 06:33:36 INFO  RaftStorage:96 - Storage directory /Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp/836af831/MiniRaftClusterWithGrpcbd60001a/n0/e6e89afd-3464-49e6-a062-9c1b38f098c3 has been successfully formatted.
+2023-07-28 06:33:36 INFO  SimpleStateMachine4Testing:212 - Initializing SimpleStateMachine4Testing:uninitialized
+2023-07-28 06:33:36 INFO  SimpleStateMachine4Testing:292 - Loading snapshot null
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.use.memory = false (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.gap = 1024 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.read.timeout = 1000ms (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.preservation.log.num = 0 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.size.max = 8KB (=8192) (custom)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.cache.num.max = 6 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.cache.size.max = 200MB (=209715200) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-07-28 06:33:36 INFO  SegmentedRaftLogWorker:188 - new n0@group-9C1B38F098C3-SegmentedRaftLogWorker for RaftStorageImpl:Storage Directory /Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp/836af831/MiniRaftClusterWithGrpcbd60001a/n0/e6e89afd-3464-49e6-a062-9c1b38f098c3
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.queue.byte-limit = 64MB (=67108864) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.queue.element-limit = 4096 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.size.max = 8KB (=8192) (custom)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.preallocated.size = 4MB (=4194304) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.force.sync.num = 128 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync = true (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync.timeout = 10s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync.timeout.retry = -1 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.write.buffer.size = 64KB (=65536) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.unsafe-flush.enabled = false (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.async-flush.enabled = false (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.caching.enabled = false (default)
+2023-07-28 06:33:36 INFO  SegmentedRaftLogWorker:135 - n0@group-9C1B38F098C3-SegmentedRaftLogWorker: flushIndex: setUnconditionally 0 -> -1
+2023-07-28 06:33:36 INFO  SegmentedRaftLogWorker:135 - n0@group-9C1B38F098C3-SegmentedRaftLogWorker: safeCacheEvictIndex: setUnconditionally 0 -> -1
+2023-07-28 06:33:36 INFO  RaftServer$Division:342 - n0@group-9C1B38F098C3: start as a follower, conf=-1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-07-28 06:33:36 INFO  RaftServer$Division:329 - n0@group-9C1B38F098C3: changes role from      null to FOLLOWER at term 0 for startAsFollower
+2023-07-28 06:33:36 INFO  RoleInfo:139 - n0: start n0@group-9C1B38F098C3-FollowerState
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 500ms (fallback to raft.server.rpc.timeout.min)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 1000ms (fallback to raft.server.rpc.timeout.max)
+2023-07-28 06:33:36 INFO  JmxRegister:44 - Successfully registered JMX Bean with object name Ratis:service=RaftServer,group=group-9C1B38F098C3,id=n0
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.snapshot.auto.trigger.enabled = false (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.snapshot.retention.file.num = -1 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.upto.snapshot.index = false (default)
+2023-07-28 06:33:36 INFO  RaftServer:400 - n0: start RPC server
+2023-07-28 06:33:36 INFO  GrpcService:302 - n0: GrpcService started, listening on 64738
+2023-07-28 06:33:36 INFO  GrpcService:302 - n0: GrpcService started, listening on 64736
+2023-07-28 06:33:36 INFO  GrpcService:302 - n0: GrpcService started, listening on 64737
+2023-07-28 06:33:36 INFO  JvmPauseMonitor:103 - JvmPauseMonitor-n0: Started
+2023-07-28 06:33:36 INFO  RaftStorageDirectory:137 - The storage directory /Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp/836af831/MiniRaftClusterWithGrpcbd60001a/n1/e6e89afd-3464-49e6-a062-9c1b38f098c3 does not exist. Creating ...
+2023-07-28 06:33:36 INFO  RaftStorageDirectory:231 - Lock on /Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp/836af831/MiniRaftClusterWithGrpcbd60001a/n1/e6e89afd-3464-49e6-a062-9c1b38f098c3/in_use.lock acquired by nodename 19939@eges-mbp.home
+2023-07-28 06:33:36 INFO  RaftStorage:96 - Storage directory /Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp/836af831/MiniRaftClusterWithGrpcbd60001a/n1/e6e89afd-3464-49e6-a062-9c1b38f098c3 has been successfully formatted.
+2023-07-28 06:33:36 INFO  SimpleStateMachine4Testing:212 - Initializing SimpleStateMachine4Testing:uninitialized
+2023-07-28 06:33:36 INFO  SimpleStateMachine4Testing:292 - Loading snapshot null
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.use.memory = false (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.gap = 1024 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.read.timeout = 1000ms (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.preservation.log.num = 0 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.size.max = 8KB (=8192) (custom)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.cache.num.max = 6 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.cache.size.max = 200MB (=209715200) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-07-28 06:33:36 INFO  SegmentedRaftLogWorker:188 - new n1@group-9C1B38F098C3-SegmentedRaftLogWorker for RaftStorageImpl:Storage Directory /Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp/836af831/MiniRaftClusterWithGrpcbd60001a/n1/e6e89afd-3464-49e6-a062-9c1b38f098c3
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.queue.byte-limit = 64MB (=67108864) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.queue.element-limit = 4096 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.size.max = 8KB (=8192) (custom)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.preallocated.size = 4MB (=4194304) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.force.sync.num = 128 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync = true (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync.timeout = 10s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync.timeout.retry = -1 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.write.buffer.size = 64KB (=65536) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.unsafe-flush.enabled = false (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.async-flush.enabled = false (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.caching.enabled = false (default)
+2023-07-28 06:33:36 INFO  SegmentedRaftLogWorker:135 - n1@group-9C1B38F098C3-SegmentedRaftLogWorker: flushIndex: setUnconditionally 0 -> -1
+2023-07-28 06:33:36 INFO  SegmentedRaftLogWorker:135 - n1@group-9C1B38F098C3-SegmentedRaftLogWorker: safeCacheEvictIndex: setUnconditionally 0 -> -1
+2023-07-28 06:33:36 INFO  RaftServer$Division:342 - n1@group-9C1B38F098C3: start as a follower, conf=-1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-07-28 06:33:36 INFO  RaftServer$Division:329 - n1@group-9C1B38F098C3: changes role from      null to FOLLOWER at term 0 for startAsFollower
+2023-07-28 06:33:36 INFO  RoleInfo:139 - n1: start n1@group-9C1B38F098C3-FollowerState
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 500ms (fallback to raft.server.rpc.timeout.min)
+2023-07-28 06:33:36 INFO  JmxRegister:44 - Successfully registered JMX Bean with object name Ratis:service=RaftServer,group=group-9C1B38F098C3,id=n1
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 1000ms (fallback to raft.server.rpc.timeout.max)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.snapshot.auto.trigger.enabled = false (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.snapshot.retention.file.num = -1 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.upto.snapshot.index = false (default)
+2023-07-28 06:33:36 INFO  RaftServer:400 - n1: start RPC server
+2023-07-28 06:33:36 INFO  GrpcService:302 - n1: GrpcService started, listening on 64742
+2023-07-28 06:33:36 INFO  GrpcService:302 - n1: GrpcService started, listening on 64740
+2023-07-28 06:33:36 INFO  GrpcService:302 - n1: GrpcService started, listening on 64741
+2023-07-28 06:33:36 INFO  JvmPauseMonitor:103 - JvmPauseMonitor-n1: Started
+2023-07-28 06:33:36 INFO  RaftStorageDirectory:137 - The storage directory /Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp/836af831/MiniRaftClusterWithGrpcbd60001a/n2/e6e89afd-3464-49e6-a062-9c1b38f098c3 does not exist. Creating ...
+2023-07-28 06:33:36 INFO  RaftStorageDirectory:231 - Lock on /Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp/836af831/MiniRaftClusterWithGrpcbd60001a/n2/e6e89afd-3464-49e6-a062-9c1b38f098c3/in_use.lock acquired by nodename 19939@eges-mbp.home
+2023-07-28 06:33:36 INFO  RaftStorage:96 - Storage directory /Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp/836af831/MiniRaftClusterWithGrpcbd60001a/n2/e6e89afd-3464-49e6-a062-9c1b38f098c3 has been successfully formatted.
+2023-07-28 06:33:36 INFO  SimpleStateMachine4Testing:212 - Initializing SimpleStateMachine4Testing:uninitialized
+2023-07-28 06:33:36 INFO  SimpleStateMachine4Testing:292 - Loading snapshot null
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.use.memory = false (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.gap = 1024 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.read.timeout = 1000ms (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.preservation.log.num = 0 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.size.max = 8KB (=8192) (custom)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.cache.num.max = 6 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.cache.size.max = 200MB (=209715200) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-07-28 06:33:36 INFO  SegmentedRaftLogWorker:188 - new n2@group-9C1B38F098C3-SegmentedRaftLogWorker for RaftStorageImpl:Storage Directory /Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp/836af831/MiniRaftClusterWithGrpcbd60001a/n2/e6e89afd-3464-49e6-a062-9c1b38f098c3
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.queue.byte-limit = 64MB (=67108864) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.queue.element-limit = 4096 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.size.max = 8KB (=8192) (custom)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.preallocated.size = 4MB (=4194304) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.force.sync.num = 128 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync = true (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync.timeout = 10s (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync.timeout.retry = -1 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.write.buffer.size = 64KB (=65536) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.unsafe-flush.enabled = false (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.async-flush.enabled = false (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.caching.enabled = false (default)
+2023-07-28 06:33:36 INFO  SegmentedRaftLogWorker:135 - n2@group-9C1B38F098C3-SegmentedRaftLogWorker: flushIndex: setUnconditionally 0 -> -1
+2023-07-28 06:33:36 INFO  SegmentedRaftLogWorker:135 - n2@group-9C1B38F098C3-SegmentedRaftLogWorker: safeCacheEvictIndex: setUnconditionally 0 -> -1
+2023-07-28 06:33:36 INFO  RaftServer$Division:342 - n2@group-9C1B38F098C3: start as a follower, conf=-1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-07-28 06:33:36 INFO  RaftServer$Division:329 - n2@group-9C1B38F098C3: changes role from      null to FOLLOWER at term 0 for startAsFollower
+2023-07-28 06:33:36 INFO  RoleInfo:139 - n2: start n2@group-9C1B38F098C3-FollowerState
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 500ms (fallback to raft.server.rpc.timeout.min)
+2023-07-28 06:33:36 INFO  JmxRegister:44 - Successfully registered JMX Bean with object name Ratis:service=RaftServer,group=group-9C1B38F098C3,id=n2
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 1000ms (fallback to raft.server.rpc.timeout.max)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.snapshot.auto.trigger.enabled = false (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.snapshot.retention.file.num = -1 (default)
+2023-07-28 06:33:36 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.upto.snapshot.index = false (default)
+2023-07-28 06:33:36 INFO  RaftServer:400 - n2: start RPC server
+2023-07-28 06:33:36 INFO  GrpcService:302 - n2: GrpcService started, listening on 64746
+2023-07-28 06:33:36 INFO  GrpcService:302 - n2: GrpcService started, listening on 64744
+2023-07-28 06:33:36 INFO  GrpcService:302 - n2: GrpcService started, listening on 64745
+2023-07-28 06:33:36 INFO  JvmPauseMonitor:103 - JvmPauseMonitor-n2: Started
+2023-07-28 06:33:37 DEBUG FollowerState:128 - ------ Timeout on server n0 ------
+2023-07-28 06:33:37 INFO  RoleInfo:110 - n0: shutdown n0@group-9C1B38F098C3-FollowerState
+2023-07-28 06:33:37 INFO  RaftServer$Division:329 - n0@group-9C1B38F098C3: changes role from  FOLLOWER to CANDIDATE at term 0 for changeToCandidate
+2023-07-28 06:33:37 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.pre-vote = true (default)
+2023-07-28 06:33:37 INFO  RoleInfo:139 - n0: start n0@group-9C1B38F098C3-LeaderElection1
+2023-07-28 06:33:37 INFO  LeaderElection:326 - n0@group-9C1B38F098C3-LeaderElection1 PRE_VOTE round 0: submit vote requests at term 0 for -1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-07-28 06:33:37 DEBUG LeaderElection:358 - ------ VoteRequest on server n0 to <ByteString@2c65fe39 size=2 contents="n1"> ------
+2023-07-28 06:33:37 DEBUG LeaderElection:358 - ------ VoteRequest on server n0 to <ByteString@4624eb size=2 contents="n2"> ------
+2023-07-28 06:33:37 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 500ms (fallback to raft.server.rpc.timeout.min)
+2023-07-28 06:33:37 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 1000ms (fallback to raft.server.rpc.timeout.max)
+2023-07-28 06:33:37 DEBUG FollowerState:128 - ------ Timeout on server n2 ------
+2023-07-28 06:33:37 INFO  RoleInfo:110 - n2: shutdown n2@group-9C1B38F098C3-FollowerState
+2023-07-28 06:33:37 INFO  RaftServer$Division:329 - n2@group-9C1B38F098C3: changes role from  FOLLOWER to CANDIDATE at term 0 for changeToCandidate
+2023-07-28 06:33:37 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.pre-vote = true (default)
+2023-07-28 06:33:37 INFO  RoleInfo:139 - n2: start n2@group-9C1B38F098C3-LeaderElection2
+2023-07-28 06:33:37 INFO  LeaderElection:326 - n2@group-9C1B38F098C3-LeaderElection2 PRE_VOTE round 0: submit vote requests at term 0 for -1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-07-28 06:33:37 DEBUG LeaderElection:358 - ------ VoteRequest on server n2 to <ByteString@6a56446e size=2 contents="n0"> ------
+2023-07-28 06:33:37 DEBUG LeaderElection:358 - ------ VoteRequest on server n2 to <ByteString@2c65fe39 size=2 contents="n1"> ------
+2023-07-28 06:33:37 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 500ms (fallback to raft.server.rpc.timeout.min)
+2023-07-28 06:33:37 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 1000ms (fallback to raft.server.rpc.timeout.max)
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ: [id: 0x99376e68, L:/127.0.0.1:7075 - R:/127.0.0.1:64755]
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ COMPLETE
+2023-07-28 06:33:37 INFO  GrpcServerProtocolClient:65 - Build channel for n0
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ: [id: 0xa8944726, L:/127.0.0.1:7075 - R:/127.0.0.1:64756]
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ COMPLETE
+2023-07-28 06:33:37 INFO  GrpcServerProtocolClient:65 - Build channel for n1
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ: [id: 0xb8564f34, L:/127.0.0.1:7075 - R:/127.0.0.1:64757]
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ COMPLETE
+2023-07-28 06:33:37 INFO  GrpcServerProtocolClient:65 - Build channel for n2
+2023-07-28 06:33:37 DEBUG FollowerState:128 - ------ Timeout on server n1 ------
+2023-07-28 06:33:37 INFO  RoleInfo:110 - n1: shutdown n1@group-9C1B38F098C3-FollowerState
+2023-07-28 06:33:37 INFO  RaftServer$Division:329 - n1@group-9C1B38F098C3: changes role from  FOLLOWER to CANDIDATE at term 0 for changeToCandidate
+2023-07-28 06:33:37 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.pre-vote = true (default)
+2023-07-28 06:33:37 INFO  RoleInfo:139 - n1: start n1@group-9C1B38F098C3-LeaderElection3
+2023-07-28 06:33:37 INFO  LeaderElection:326 - n1@group-9C1B38F098C3-LeaderElection3 PRE_VOTE round 0: submit vote requests at term 0 for -1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-07-28 06:33:37 DEBUG LeaderElection:358 - ------ VoteRequest on server n1 to <ByteString@6a56446e size=2 contents="n0"> ------
+2023-07-28 06:33:37 DEBUG LeaderElection:358 - ------ VoteRequest on server n1 to <ByteString@4624eb size=2 contents="n2"> ------
+2023-07-28 06:33:37 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 500ms (fallback to raft.server.rpc.timeout.min)
+2023-07-28 06:33:37 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 1000ms (fallback to raft.server.rpc.timeout.max)
+2023-07-28 06:33:37 INFO  RaftServer$Division:1303 - n2@group-9C1B38F098C3: receive requestVote(PRE_VOTE, n0, group-9C1B38F098C3, 0, (t:0, i:0))
+2023-07-28 06:33:37 INFO  RaftServer$Division:1303 - n0@group-9C1B38F098C3: receive requestVote(PRE_VOTE, n2, group-9C1B38F098C3, 0, (t:0, i:0))
+2023-07-28 06:33:37 INFO  RaftServer$Division:1303 - n1@group-9C1B38F098C3: receive requestVote(PRE_VOTE, n0, group-9C1B38F098C3, 0, (t:0, i:0))
+2023-07-28 06:33:37 INFO  VoteContext:49 - n0@group-9C1B38F098C3-CANDIDATE: accept PRE_VOTE from n2: our priority 0 <= candidate's priority 0
+2023-07-28 06:33:37 INFO  VoteContext:49 - n2@group-9C1B38F098C3-CANDIDATE: accept PRE_VOTE from n0: our priority 0 <= candidate's priority 0
+2023-07-28 06:33:37 INFO  VoteContext:49 - n1@group-9C1B38F098C3-CANDIDATE: accept PRE_VOTE from n0: our priority 0 <= candidate's priority 0
+2023-07-28 06:33:37 INFO  RaftServer$Division:1336 - n1@group-9C1B38F098C3 replies to PRE_VOTE vote request: n0<-n1#0:OK-t0. Peer's state: n1@group-9C1B38F098C3:t0, leader=null, voted=, raftlog=Memoized:n1@group-9C1B38F098C3-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-07-28 06:33:37 INFO  RaftServer$Division:1336 - n2@group-9C1B38F098C3 replies to PRE_VOTE vote request: n0<-n2#0:OK-t0. Peer's state: n2@group-9C1B38F098C3:t0, leader=null, voted=, raftlog=Memoized:n2@group-9C1B38F098C3-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-07-28 06:33:37 INFO  RaftServer$Division:1336 - n0@group-9C1B38F098C3 replies to PRE_VOTE vote request: n2<-n0#0:OK-t0. Peer's state: n0@group-9C1B38F098C3:t0, leader=null, voted=, raftlog=Memoized:n0@group-9C1B38F098C3-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-07-28 06:33:37 DEBUG GrpcServerProtocolService:192 - ------ RequestVoteReply on server n2 ------
+2023-07-28 06:33:37 DEBUG GrpcServerProtocolService:192 - ------ RequestVoteReply on server n1 ------
+2023-07-28 06:33:37 DEBUG GrpcServerProtocolService:192 - ------ RequestVoteReply on server n0 ------
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ: [id: 0x93e5efe0, L:/127.0.0.1:7075 - R:/127.0.0.1:64766]
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ COMPLETE
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ: [id: 0x109fb6e6, L:/127.0.0.1:7075 - R:/127.0.0.1:64767]
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ COMPLETE
+2023-07-28 06:33:37 INFO  LeaderElection:93 - n0@group-9C1B38F098C3-LeaderElection1: PRE_VOTE PASSED received 1 response(s) and 0 exception(s):
+2023-07-28 06:33:37 INFO  LeaderElection:97 -   Response 0: n0<-n2#0:OK-t0
+2023-07-28 06:33:37 INFO  LeaderElection:329 - n0@group-9C1B38F098C3-LeaderElection1 PRE_VOTE round 0: result PASSED
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ: [id: 0x7931bcbf, L:/127.0.0.1:7075 - R:/127.0.0.1:64768]
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ COMPLETE
+2023-07-28 06:33:37 INFO  GrpcServerProtocolClient:65 - Build channel for n0
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ: [id: 0xf0e98376, L:/127.0.0.1:7075 - R:/127.0.0.1:64769]
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ COMPLETE
+2023-07-28 06:33:37 INFO  LeaderElection:326 - n0@group-9C1B38F098C3-LeaderElection1 ELECTION round 0: submit vote requests at term 1 for -1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-07-28 06:33:37 DEBUG LeaderElection:358 - ------ VoteRequest on server n0 to <ByteString@2c65fe39 size=2 contents="n1"> ------
+2023-07-28 06:33:37 INFO  GrpcServerProtocolClient:65 - Build channel for n2
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ: [id: 0x81f47e87, L:/127.0.0.1:7075 - R:/127.0.0.1:64772]
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ COMPLETE
+2023-07-28 06:33:37 INFO  RaftServer$Division:1303 - n0@group-9C1B38F098C3: receive requestVote(PRE_VOTE, n1, group-9C1B38F098C3, 0, (t:0, i:0))
+2023-07-28 06:33:37 INFO  VoteContext:49 - n0@group-9C1B38F098C3-CANDIDATE: accept PRE_VOTE from n1: our priority 0 <= candidate's priority 0
+2023-07-28 06:33:37 INFO  RaftServer$Division:1336 - n0@group-9C1B38F098C3 replies to PRE_VOTE vote request: n1<-n0#0:OK-t1. Peer's state: n0@group-9C1B38F098C3:t1, leader=null, voted=n0, raftlog=Memoized:n0@group-9C1B38F098C3-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-07-28 06:33:37 DEBUG LeaderElection:358 - ------ VoteRequest on server n0 to <ByteString@4624eb size=2 contents="n2"> ------
+2023-07-28 06:33:37 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 500ms (fallback to raft.server.rpc.timeout.min)
+2023-07-28 06:33:37 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 1000ms (fallback to raft.server.rpc.timeout.max)
+2023-07-28 06:33:37 DEBUG GrpcServerProtocolService:192 - ------ RequestVoteReply on server n0 ------
+2023-07-28 06:33:37 INFO  GrpcServerProtocolClient:65 - Build channel for n1
+2023-07-28 06:33:37 INFO  RaftServer$Division:1303 - n2@group-9C1B38F098C3: receive requestVote(PRE_VOTE, n1, group-9C1B38F098C3, 0, (t:0, i:0))
+2023-07-28 06:33:37 INFO  VoteContext:49 - n2@group-9C1B38F098C3-CANDIDATE: accept PRE_VOTE from n1: our priority 0 <= candidate's priority 0
+2023-07-28 06:33:37 INFO  RaftServer$Division:1336 - n2@group-9C1B38F098C3 replies to PRE_VOTE vote request: n1<-n2#0:OK-t0. Peer's state: n2@group-9C1B38F098C3:t0, leader=null, voted=, raftlog=Memoized:n2@group-9C1B38F098C3-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ: [id: 0x3b6a6de1, L:/127.0.0.1:7075 - R:/127.0.0.1:64776]
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ COMPLETE
+2023-07-28 06:33:37 DEBUG GrpcServerProtocolService:192 - ------ RequestVoteReply on server n2 ------
+2023-07-28 06:33:37 INFO  RaftServer$Division:1303 - n1@group-9C1B38F098C3: receive requestVote(PRE_VOTE, n2, group-9C1B38F098C3, 0, (t:0, i:0))
+2023-07-28 06:33:37 INFO  VoteContext:49 - n1@group-9C1B38F098C3-CANDIDATE: accept PRE_VOTE from n2: our priority 0 <= candidate's priority 0
+2023-07-28 06:33:37 INFO  RaftServer$Division:1336 - n1@group-9C1B38F098C3 replies to PRE_VOTE vote request: n2<-n1#0:OK-t0. Peer's state: n1@group-9C1B38F098C3:t0, leader=null, voted=, raftlog=Memoized:n1@group-9C1B38F098C3-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-07-28 06:33:37 INFO  LeaderElection:93 - n2@group-9C1B38F098C3-LeaderElection2: PRE_VOTE PASSED received 1 response(s) and 0 exception(s):
+2023-07-28 06:33:37 INFO  LeaderElection:97 -   Response 0: n2<-n0#0:OK-t0
+2023-07-28 06:33:37 INFO  LeaderElection:329 - n2@group-9C1B38F098C3-LeaderElection2 PRE_VOTE round 0: result PASSED
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ: [id: 0xb90ba5f5, L:/127.0.0.1:7075 - R:/127.0.0.1:64780]
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ COMPLETE
+2023-07-28 06:33:37 DEBUG GrpcServerProtocolService:192 - ------ RequestVoteReply on server n1 ------
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ: [id: 0x50c28675, L:/127.0.0.1:7075 - R:/127.0.0.1:64781]
+2023-07-28 06:33:37 INFO  LeaderElection:93 - n1@group-9C1B38F098C3-LeaderElection3: PRE_VOTE DISCOVERED_A_NEW_TERM (term=1) received 1 response(s) and 0 exception(s):
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ COMPLETE
+2023-07-28 06:33:37 INFO  LeaderElection:326 - n2@group-9C1B38F098C3-LeaderElection2 ELECTION round 0: submit vote requests at term 1 for -1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-07-28 06:33:37 INFO  LeaderElection:97 -   Response 0: n1<-n0#0:OK-t1
+2023-07-28 06:33:37 INFO  LeaderElection:329 - n1@group-9C1B38F098C3-LeaderElection3 PRE_VOTE round 0: result DISCOVERED_A_NEW_TERM (term=1)
+2023-07-28 06:33:37 INFO  RaftServer$Division:329 - n1@group-9C1B38F098C3: changes role from CANDIDATE to FOLLOWER at term 1 for DISCOVERED_A_NEW_TERM (term=1)
+2023-07-28 06:33:37 INFO  RoleInfo:130 - n1: shutdown n1@group-9C1B38F098C3-LeaderElection3
+2023-07-28 06:33:37 INFO  RoleInfo:139 - n1: start n1@group-9C1B38F098C3-FollowerState
+2023-07-28 06:33:37 DEBUG LeaderElection:358 - ------ VoteRequest on server n2 to <ByteString@6a56446e size=2 contents="n0"> ------
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ: [id: 0x87a497d4, L:/127.0.0.1:7075 - R:/127.0.0.1:64783]
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ COMPLETE
+2023-07-28 06:33:37 DEBUG LeaderElection:358 - ------ VoteRequest on server n2 to <ByteString@2c65fe39 size=2 contents="n1"> ------
+2023-07-28 06:33:37 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 500ms (fallback to raft.server.rpc.timeout.min)
+2023-07-28 06:33:37 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 1000ms (fallback to raft.server.rpc.timeout.max)
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ: [id: 0x527d3ec2, L:/127.0.0.1:7075 - R:/127.0.0.1:64785]
+2023-07-28 06:33:37 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ COMPLETE
+2023-07-28 06:33:37 INFO  RaftServer$Division:1303 - n1@group-9C1B38F098C3: receive requestVote(ELECTION, n0, group-9C1B38F098C3, 1, (t:0, i:0))
+2023-07-28 06:33:37 INFO  VoteContext:49 - n1@group-9C1B38F098C3-FOLLOWER: accept ELECTION from n0: our priority 0 <= candidate's priority 0
+2023-07-28 06:33:37 INFO  RaftServer$Division:329 - n1@group-9C1B38F098C3: changes role from  FOLLOWER to FOLLOWER at term 1 for candidate:n0
+2023-07-28 06:33:37 INFO  RoleInfo:110 - n1: shutdown n1@group-9C1B38F098C3-FollowerState
+2023-07-28 06:33:37 INFO  RoleInfo:139 - n1: start n1@group-9C1B38F098C3-FollowerState
+2023-07-28 06:33:37 INFO  FollowerState:162 - n1@group-9C1B38F098C3-FollowerState was interrupted
+2023-07-28 06:33:37 INFO  RaftServer$Division:1303 - n2@group-9C1B38F098C3: receive requestVote(ELECTION, n0, group-9C1B38F098C3, 1, (t:0, i:0))
+2023-07-28 06:33:37 INFO  VoteContext:49 - n2@group-9C1B38F098C3-CANDIDATE: reject ELECTION from n0: already has voted for n2 at current term 1
+2023-07-28 06:33:37 INFO  RaftServer$Division:1336 - n2@group-9C1B38F098C3 replies to ELECTION vote request: n0<-n2#0:FAIL-t1. Peer's state: n2@group-9C1B38F098C3:t1, leader=null, voted=n2, raftlog=Memoized:n2@group-9C1B38F098C3-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-07-28 06:33:37 DEBUG GrpcServerProtocolService:192 - ------ RequestVoteReply on server n2 ------
+2023-07-28 06:33:37 INFO  RaftServer$Division:1336 - n1@group-9C1B38F098C3 replies to ELECTION vote request: n0<-n1#0:OK-t1. Peer's state: n1@group-9C1B38F098C3:t1, leader=null, voted=n0, raftlog=Memoized:n1@group-9C1B38F098C3-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-07-28 06:33:37 DEBUG GrpcServerProtocolService:192 - ------ RequestVoteReply on server n1 ------
+2023-07-28 06:33:38 INFO  LeaderElection:93 - n0@group-9C1B38F098C3-LeaderElection1: ELECTION TIMEOUT received 0 response(s) and 0 exception(s):
+2023-07-28 06:33:38 INFO  LeaderElection:329 - n0@group-9C1B38F098C3-LeaderElection1 ELECTION round 0: result TIMEOUT
+2023-07-28 06:33:38 INFO  LeaderElection:93 - n2@group-9C1B38F098C3-LeaderElection2: ELECTION TIMEOUT received 0 response(s) and 0 exception(s):
+2023-07-28 06:33:38 INFO  LeaderElection:326 - n0@group-9C1B38F098C3-LeaderElection1 PRE_VOTE round 1: submit vote requests at term 1 for -1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-07-28 06:33:38 INFO  LeaderElection:329 - n2@group-9C1B38F098C3-LeaderElection2 ELECTION round 0: result TIMEOUT
+2023-07-28 06:33:38 INFO  LeaderElection:326 - n2@group-9C1B38F098C3-LeaderElection2 PRE_VOTE round 1: submit vote requests at term 1 for -1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-07-28 06:33:38 DEBUG LeaderElection:358 - ------ VoteRequest on server n2 to <ByteString@6a56446e size=2 contents="n0"> ------
+2023-07-28 06:33:38 DEBUG LeaderElection:358 - ------ VoteRequest on server n0 to <ByteString@2c65fe39 size=2 contents="n1"> ------
+2023-07-28 06:33:38 DEBUG LeaderElection:358 - ------ VoteRequest on server n2 to <ByteString@2c65fe39 size=2 contents="n1"> ------
+2023-07-28 06:33:38 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 500ms (fallback to raft.server.rpc.timeout.min)
+2023-07-28 06:33:38 DEBUG LeaderElection:358 - ------ VoteRequest on server n0 to <ByteString@4624eb size=2 contents="n2"> ------
+2023-07-28 06:33:38 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 1000ms (fallback to raft.server.rpc.timeout.max)
+2023-07-28 06:33:38 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 500ms (fallback to raft.server.rpc.timeout.min)
+2023-07-28 06:33:38 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 1000ms (fallback to raft.server.rpc.timeout.max)
+2023-07-28 06:33:39 INFO  LeaderElection:93 - n2@group-9C1B38F098C3-LeaderElection2: PRE_VOTE TIMEOUT received 0 response(s) and 0 exception(s):
+2023-07-28 06:33:39 INFO  LeaderElection:329 - n2@group-9C1B38F098C3-LeaderElection2 PRE_VOTE round 1: result TIMEOUT
+2023-07-28 06:33:39 INFO  LeaderElection:326 - n2@group-9C1B38F098C3-LeaderElection2 PRE_VOTE round 2: submit vote requests at term 1 for -1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-07-28 06:33:39 DEBUG LeaderElection:358 - ------ VoteRequest on server n2 to <ByteString@6a56446e size=2 contents="n0"> ------
+2023-07-28 06:33:39 DEBUG LeaderElection:358 - ------ VoteRequest on server n2 to <ByteString@2c65fe39 size=2 contents="n1"> ------
+2023-07-28 06:33:39 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 500ms (fallback to raft.server.rpc.timeout.min)
+2023-07-28 06:33:39 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 1000ms (fallback to raft.server.rpc.timeout.max)
+2023-07-28 06:33:39 DEBUG FollowerState:128 - ------ Timeout on server n1 ------
+2023-07-28 06:33:39 INFO  RoleInfo:110 - n1: shutdown n1@group-9C1B38F098C3-FollowerState
+2023-07-28 06:33:39 INFO  RaftServer$Division:329 - n1@group-9C1B38F098C3: changes role from  FOLLOWER to CANDIDATE at term 1 for changeToCandidate
+2023-07-28 06:33:39 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.pre-vote = true (default)
+2023-07-28 06:33:39 INFO  RoleInfo:139 - n1: start n1@group-9C1B38F098C3-LeaderElection4
+2023-07-28 06:33:39 INFO  LeaderElection:326 - n1@group-9C1B38F098C3-LeaderElection4 PRE_VOTE round 0: submit vote requests at term 1 for -1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-07-28 06:33:39 DEBUG LeaderElection:358 - ------ VoteRequest on server n1 to <ByteString@6a56446e size=2 contents="n0"> ------
+2023-07-28 06:33:39 DEBUG LeaderElection:358 - ------ VoteRequest on server n1 to <ByteString@4624eb size=2 contents="n2"> ------
+2023-07-28 06:33:39 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ: [id: 0xa66a5754, L:/127.0.0.1:7075 - R:/127.0.0.1:64797]
+2023-07-28 06:33:39 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ COMPLETE
+2023-07-28 06:33:39 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ: [id: 0xe962c9d6, L:/127.0.0.1:7075 - R:/127.0.0.1:64798]
+2023-07-28 06:33:39 INFO  RaftServer$Division:1303 - n0@group-9C1B38F098C3: receive requestVote(PRE_VOTE, n1, group-9C1B38F098C3, 1, (t:0, i:0))
+2023-07-28 06:33:39 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ COMPLETE
+2023-07-28 06:33:39 INFO  VoteContext:49 - n0@group-9C1B38F098C3-CANDIDATE: accept PRE_VOTE from n1: our priority 0 <= candidate's priority 0
+2023-07-28 06:33:39 INFO  RaftServer$Division:1336 - n0@group-9C1B38F098C3 replies to PRE_VOTE vote request: n1<-n0#0:OK-t1. Peer's state: n0@group-9C1B38F098C3:t1, leader=null, voted=n0, raftlog=Memoized:n0@group-9C1B38F098C3-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-07-28 06:33:39 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ: [id: 0xc6758888, L:/127.0.0.1:7075 - R:/127.0.0.1:64800]
+2023-07-28 06:33:39 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ COMPLETE
+2023-07-28 06:33:39 INFO  MiniRaftCluster:140 - printing ALL groups
+  n0:  RUNNING CANDIDATE n0@group-9C1B38F098C3:t1, leader=null, voted=n0, raftlog=Memoized:n0@group-9C1B38F098C3-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null RUNNING
+  n1:  RUNNING CANDIDATE n1@group-9C1B38F098C3:t1, leader=null, voted=n0, raftlog=Memoized:n1@group-9C1B38F098C3-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null RUNNING
+  n2:  RUNNING CANDIDATE n2@group-9C1B38F098C3:t1, leader=null, voted=n2, raftlog=Memoized:n2@group-9C1B38F098C3-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null RUNNING
+2023-07-28 06:33:39 ERROR MiniRaftCluster:141 - Failed org.apache.ratis.server.impl.MiniRaftCluster$Factory$Get.runWithNewCluster(MiniRaftCluster.java:118)
+java.lang.NullPointerException: Cannot invoke "org.apache.ratis.server.RaftServer$Division.getId()" because the return value of "org.apache.ratis.server.impl.MiniRaftCluster.getLeader(org.apache.ratis.protocol.RaftGroupId, java.lang.Runnable, java.util.function.Consumer)" is null
+	at org.apache.ratis.examples.common.Experiments.runExperiment(Experiments.java:106)
+	at org.apache.ratis.server.impl.MiniRaftCluster$Factory$Get.runWithNewCluster(MiniRaftCluster.java:138)
+	at org.apache.ratis.server.impl.MiniRaftCluster$Factory$Get.runWithNewCluster(MiniRaftCluster.java:118)
+	at org.apache.ratis.examples.common.Experiments.startExperiment(Experiments.java:58)
+	at org.apache.ratis.examples.common.Runner.main(Runner.java:56)
+2023-07-28 06:33:39 INFO  MiniRaftCluster:884 - ************************************************************** 
+2023-07-28 06:33:39 INFO  MiniRaftCluster:885 - *** 
+2023-07-28 06:33:39 INFO  MiniRaftCluster:886 - ***     Stopping MiniRaftClusterWithGrpc
+2023-07-28 06:33:39 INFO  MiniRaftCluster:887 - *** 
+2023-07-28 06:33:39 INFO  MiniRaftCluster:888 - ************************************************************** 
+2023-07-28 06:33:39 DEBUG GrpcServerProtocolService:192 - ------ RequestVoteReply on server n0 ------
+2023-07-28 06:33:39 INFO  MiniRaftCluster:889 - printing ALL groups
+  n0:  RUNNING CANDIDATE n0@group-9C1B38F098C3:t1, leader=null, voted=n0, raftlog=Memoized:n0@group-9C1B38F098C3-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null RUNNING
+  n1:  RUNNING CANDIDATE n1@group-9C1B38F098C3:t1, leader=null, voted=n0, raftlog=Memoized:n1@group-9C1B38F098C3-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null RUNNING
+  n2:  RUNNING CANDIDATE n2@group-9C1B38F098C3:t1, leader=null, voted=n2, raftlog=Memoized:n2@group-9C1B38F098C3-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[n0|rpc:localhost:64736|admin:localhost:64737|client:localhost:64738|dataStream:localhost:64739|priority:0|startupRole:FOLLOWER, n1|rpc:localhost:64740|admin:localhost:64741|client:localhost:64742|dataStream:localhost:64743|priority:0|startupRole:FOLLOWER, n2|rpc:localhost:64744|admin:localhost:64745|client:localhost:64746|dataStream:localhost:64747|priority:0|startupRole:FOLLOWER]|listeners:[], old=null RUNNING
+2023-07-28 06:33:39 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ: [id: 0x365ad1ae, L:/127.0.0.1:7075 - R:/127.0.0.1:64801]
+2023-07-28 06:33:39 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ COMPLETE
+2023-07-28 06:33:39 INFO  RaftServer:416 - n1: close
+2023-07-28 06:33:39 INFO  RaftServer:416 - n0: close
+2023-07-28 06:33:39 INFO  RaftServer:416 - n2: close
+2023-07-28 06:33:39 INFO  GrpcService:311 - n2: shutdown server org.apache.ratis.grpc.server.GrpcClientProtocolService now
+2023-07-28 06:33:39 INFO  GrpcService:311 - n0: shutdown server org.apache.ratis.grpc.server.GrpcClientProtocolService now
+2023-07-28 06:33:39 INFO  RaftServer$Division:466 - n1@group-9C1B38F098C3: shutdown
+2023-07-28 06:33:39 INFO  GrpcService:311 - n1: shutdown server org.apache.ratis.grpc.server.GrpcClientProtocolService now
+2023-07-28 06:33:39 INFO  JmxRegister:73 - Successfully un-registered JMX Bean with object name Ratis:service=RaftServer,group=group-9C1B38F098C3,id=n1
+2023-07-28 06:33:39 INFO  RaftServer$Division:466 - n2@group-9C1B38F098C3: shutdown
+2023-07-28 06:33:39 INFO  RaftServer$Division:466 - n0@group-9C1B38F098C3: shutdown
+2023-07-28 06:33:39 INFO  JmxRegister:73 - Successfully un-registered JMX Bean with object name Ratis:service=RaftServer,group=group-9C1B38F098C3,id=n2
+2023-07-28 06:33:39 INFO  RoleInfo:130 - n2: shutdown n2@group-9C1B38F098C3-LeaderElection2
+2023-07-28 06:33:39 INFO  RoleInfo:130 - n1: shutdown n1@group-9C1B38F098C3-LeaderElection4
+2023-07-28 06:33:39 INFO  JmxRegister:73 - Successfully un-registered JMX Bean with object name Ratis:service=RaftServer,group=group-9C1B38F098C3,id=n0
+2023-07-28 06:33:39 INFO  RoleInfo:130 - n0: shutdown n0@group-9C1B38F098C3-LeaderElection1
+2023-07-28 06:33:39 INFO  StateMachineUpdater:155 - n0@group-9C1B38F098C3-StateMachineUpdater: set stopIndex = -1
+2023-07-28 06:33:39 INFO  StateMachineUpdater:155 - n1@group-9C1B38F098C3-StateMachineUpdater: set stopIndex = -1
+2023-07-28 06:33:39 INFO  StateMachineUpdater:155 - n2@group-9C1B38F098C3-StateMachineUpdater: set stopIndex = -1
+2023-07-28 06:33:39 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ: [id: 0x1066f26a, L:/127.0.0.1:7075 - R:/127.0.0.1:64802]
+2023-07-28 06:33:39 INFO  LoggingHandler:148 - [id: 0x5aa49d42, L:/127.0.0.1:7075] READ COMPLETE
+2023-07-28 06:33:39 INFO  RaftServer$Division:472 - n2@group-9C1B38F098C3: closes. applyIndex: -1
+2023-07-28 06:33:39 INFO  RaftServer$Division:472 - n1@group-9C1B38F098C3: closes. applyIndex: -1
+2023-07-28 06:33:39 INFO  RaftServer$Division:472 - n0@group-9C1B38F098C3: closes. applyIndex: -1
+2023-07-28 06:33:39 INFO  GrpcServerProtocolClient:103 - n0 Close channels
+2023-07-28 06:33:39 INFO  GrpcServerProtocolClient:103 - n2 Close channels
+2023-07-28 06:33:39 INFO  GrpcServerProtocolClient:103 - n0 Close channels
+2023-07-28 06:33:39 INFO  GrpcServerProtocolClient:103 - n1 Close channels
+2023-07-28 06:33:39 INFO  GrpcServerProtocolClient:103 - n1 Close channels
+2023-07-28 06:33:39 INFO  GrpcServerProtocolClient:103 - n2 Close channels
+2023-07-28 06:33:39 INFO  LeaderElection:93 - n0@group-9C1B38F098C3-LeaderElection1: PRE_VOTE REJECTED received 0 response(s) and 0 exception(s):
+2023-07-28 06:33:39 INFO  LeaderElection:329 - n0@group-9C1B38F098C3-LeaderElection1 PRE_VOTE round 1: result REJECTED
+2023-07-28 06:33:39 INFO  SegmentedRaftLogWorker:252 - n0@group-9C1B38F098C3-SegmentedRaftLogWorker close()
+2023-07-28 06:33:39 INFO  SegmentedRaftLogWorker:252 - n1@group-9C1B38F098C3-SegmentedRaftLogWorker close()
+2023-07-28 06:33:39 INFO  SegmentedRaftLogWorker:252 - n2@group-9C1B38F098C3-SegmentedRaftLogWorker close()
+2023-07-28 06:33:39 INFO  LeaderElection:93 - n2@group-9C1B38F098C3-LeaderElection2: PRE_VOTE REJECTED received 0 response(s) and 0 exception(s):
+2023-07-28 06:33:39 INFO  LeaderElection:329 - n2@group-9C1B38F098C3-LeaderElection2 PRE_VOTE round 2: result REJECTED
+2023-07-28 06:33:40 INFO  LeaderElection:93 - n1@group-9C1B38F098C3-LeaderElection4: PRE_VOTE REJECTED received 0 response(s) and 0 exception(s):
+2023-07-28 06:33:40 INFO  LeaderElection:329 - n1@group-9C1B38F098C3-LeaderElection4 PRE_VOTE round 0: result REJECTED
+2023-07-28 06:33:40 INFO  GrpcService:320 - n2: shutdown server org.apache.ratis.grpc.server.GrpcClientProtocolService successfully
+2023-07-28 06:33:40 INFO  GrpcService:311 - n2: shutdown server GrpcServerProtocolService now
+2023-07-28 06:33:40 INFO  GrpcService:320 - n2: shutdown server GrpcServerProtocolService successfully
+2023-07-28 06:33:40 INFO  GrpcService:311 - n2: shutdown server org.apache.ratis.grpc.server.GrpcAdminProtocolService now
+2023-07-28 06:33:40 INFO  GrpcService:320 - n2: shutdown server org.apache.ratis.grpc.server.GrpcAdminProtocolService successfully
+2023-07-28 06:33:40 INFO  JvmPauseMonitor:109 - JvmPauseMonitor-n2: Stopped
+2023-07-28 06:33:40 INFO  GrpcService:320 - n0: shutdown server org.apache.ratis.grpc.server.GrpcClientProtocolService successfully
+2023-07-28 06:33:40 INFO  GrpcService:311 - n0: shutdown server GrpcServerProtocolService now
+2023-07-28 06:33:40 INFO  GrpcService:320 - n0: shutdown server GrpcServerProtocolService successfully
+2023-07-28 06:33:40 INFO  GrpcService:311 - n0: shutdown server org.apache.ratis.grpc.server.GrpcAdminProtocolService now
+2023-07-28 06:33:40 INFO  GrpcService:320 - n1: shutdown server org.apache.ratis.grpc.server.GrpcClientProtocolService successfully
+2023-07-28 06:33:40 INFO  GrpcService:311 - n1: shutdown server GrpcServerProtocolService now
+2023-07-28 06:33:40 INFO  GrpcService:320 - n0: shutdown server org.apache.ratis.grpc.server.GrpcAdminProtocolService successfully
+2023-07-28 06:33:40 INFO  JvmPauseMonitor:109 - JvmPauseMonitor-n0: Stopped
+2023-07-28 06:33:40 INFO  GrpcService:320 - n1: shutdown server GrpcServerProtocolService successfully
+2023-07-28 06:33:40 INFO  GrpcService:311 - n1: shutdown server org.apache.ratis.grpc.server.GrpcAdminProtocolService now
+2023-07-28 06:33:40 INFO  GrpcService:320 - n1: shutdown server org.apache.ratis.grpc.server.GrpcAdminProtocolService successfully
+2023-07-28 06:33:40 INFO  JvmPauseMonitor:109 - JvmPauseMonitor-n1: Stopped
+2023-07-28 06:33:40 INFO  MiniRaftCluster:908 - MiniRaftClusterWithGrpc shutdown completed
+Network started.
+***************** STARTING ITERATION *******************
+*-*-*-* Scheduling node 3 , 1 / 50 *-*-*-*
+*-*-*-* Scheduling node 1 , 2 / 50 *-*-*-*
+*-*-*-* Scheduling node 1 , 3 / 50 *-*-*-*
+*-*-*-* Scheduling node 2 , 4 / 50 *-*-*-*
+*-*-*-* Scheduling node 3 , 5 / 50 *-*-*-*
+*-*-*-* Scheduling node 2 , 6 / 50 *-*-*-*
+*-*-*-* Scheduling node 1 , 7 / 50 *-*-*-*
+*-*-*-* Scheduling node 2 , 8 / 50 *-*-*-*
+CLIENT REQUEST SENT
+CLIENT REQUEST SENT
+*-*-*-* Scheduling node 2 , 9 / 50 *-*-*-*

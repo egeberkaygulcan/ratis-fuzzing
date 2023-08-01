@@ -36,7 +36,7 @@ import java.util.function.ToIntFunction;
 /**
  * Used when the peer is a follower. Used to track the election timeout.
  */
-class FollowerState extends Daemon {
+public class FollowerState extends Daemon {
   enum UpdateType {
     APPEND_START(AtomicInteger::incrementAndGet),
     APPEND_COMPLETE(AtomicInteger::decrementAndGet),
@@ -56,7 +56,7 @@ class FollowerState extends Daemon {
     }
   }
 
-  static final Logger LOG = LoggerFactory.getLogger(FollowerState.class);
+  public static final Logger LOG = LoggerFactory.getLogger(FollowerState.class);
 
   private final Object reason;
   private final RaftServerImpl server;
@@ -65,7 +65,7 @@ class FollowerState extends Daemon {
   private volatile Timestamp lastRpcTime = creationTime;
   private volatile boolean isRunning = true;
   private final AtomicInteger outstandingOp = new AtomicInteger();
-  private final FuzzerClient client = FuzzerClient.getInstance();
+  private final FuzzerClient client = FuzzerClient.getInstance("FollowerState.java");
 
   FollowerState(RaftServerImpl server, Object reason) {
     super(newBuilder()
@@ -154,7 +154,7 @@ class FollowerState extends Daemon {
             // server.getLeaderElectionMetrics().onLeaderElectionTimeout(); // Update timeout metric counters.
             // election timeout, should become a candidate
             interceptTimeout(new TimeoutMessage(server));
-            //server.changeToCandidate(false); 
+            server.changeToCandidate(false); 
             break;
           }
         }

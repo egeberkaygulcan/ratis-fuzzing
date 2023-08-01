@@ -1,20 +1,24 @@
 package org.apache.ratis.server.fuzzer.messages;
 
 import org.apache.ratis.proto.RaftProtos.RequestVoteRequestProto;
+import org.apache.ratis.server.fuzzer.comm.GsonHelper;
+import org.apache.ratis.server.fuzzer.comm.JsonMessage;
 import org.apache.ratis.server.impl.LeaderElection;
 import org.apache.ratis.server.impl.RaftServerImpl;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import org.apache.ratis.server.impl.LeaderElection.Executor;
 
 public class RequestVoteMessage extends Message {
 
     private RequestVoteRequestProto request;
-    private LeaderElection election;
     private Executor executor;
     private RaftServerImpl server;
 
-    public RequestVoteMessage(RequestVoteRequestProto r, LeaderElection e, Executor ex, RaftServerImpl s) {
+    public RequestVoteMessage(RequestVoteRequestProto r, Executor ex, RaftServerImpl s) {
         this.request = r;
-        this.election = e;
         this.executor = ex;
         this.server = s;
         this.setType("request_vote_request");
@@ -25,20 +29,30 @@ public class RequestVoteMessage extends Message {
 
     @Override
     public void invoke() {
-        election.unlock();
+        // election.notifyElection();
         this.executor.submit(() -> this.server.getServerRpc().requestVote(this.request));
     }
 
     @Override
-    public void send() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'send'");
-    }
+    public String toJsonString() {
+        String to = request.getServerRequest().getRequestorId().toStringUtf8();
+        String from = request.getServerRequest().getReplyId().toStringUtf8();
 
-    @Override
-    protected String toJsonString() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'toJsonString'");
+        JsonObject json = new JsonObject();
+        json.addProperty("type", type);
+        json.addProperty("prevote", request.getPreVote());
+        json.addProperty("term", (double) request.getCandidateTerm());
+        json.addProperty("candidate_id", (double) client.getServerId(request.getServerRequest().getRequestorId().toStringUtf8()));
+        json.addProperty("last_log_idx", (double) request.getCandidateLastEntry().getIndex());
+        json.addProperty("last_log_term", (double) request.getCandidateLastEntry().getTerm());
+
+        Gson gson = GsonHelper.gson;
+
+        JsonMessage msg = new JsonMessage(Integer.toString(client.getServerId(to)), type, gson.toJson(json).getBytes());
+        msg.setFrom(Integer.toString(client.getServerId(from)));
+        msg.setId(Integer.toString(this.getId()));
+
+        return gson.toJson(msg);
     }
 
     @Override

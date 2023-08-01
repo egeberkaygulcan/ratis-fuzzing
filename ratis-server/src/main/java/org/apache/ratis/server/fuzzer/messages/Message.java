@@ -3,28 +3,26 @@ package org.apache.ratis.server.fuzzer.messages;
 import org.apache.ratis.server.fuzzer.FuzzerClient;
 
 public abstract class Message {
-    protected long messageId;
+    protected Integer messageId;
     protected String type;
-    protected FuzzerClient client = FuzzerClient.getInstance();
+    protected FuzzerClient client = FuzzerClient.getInstance("Message.java");
 
     public abstract void invoke();
 
-    public abstract void send();
-
     public abstract String getReceiver();
 
-    protected abstract String toJsonString();
+    public abstract String toJsonString();
 
     protected void isControlledExecution() {
         if (!this.client.isControlledExecution())
             invoke();
     }
 
-    public void setId(long id) {
+    public void setId(Integer id) {
         this.messageId = id;
     }
 
-    public long getId() {
+    public Integer getId() {
         return this.messageId;
     }
 
