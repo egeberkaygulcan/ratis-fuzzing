@@ -13,6 +13,7 @@ public class TimeoutMessage extends Message {
         this.setId(this.client.generateId());
     
         isControlledExecution();
+        invoke();
     }
 
     @Override

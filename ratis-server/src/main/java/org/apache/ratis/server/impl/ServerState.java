@@ -183,6 +183,10 @@ class ServerState implements Closeable {
     return memberId;
   }
 
+  public void closeStorage() throws Exception{
+    this.storage.close();
+  }
+
   static File chooseStorageDir(List<File> volumes, String targetSubDir) throws IOException {
     final Map<File, Integer> numberOfStorageDirPerVolume = new HashMap<>();
     final File[] empty = {};

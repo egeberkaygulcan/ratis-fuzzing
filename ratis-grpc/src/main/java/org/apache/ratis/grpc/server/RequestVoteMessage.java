@@ -1,26 +1,26 @@
-package org.apache.ratis.server.fuzzer.messages;
+package org.apache.ratis.grpc.server;
 
+import org.apache.ratis.proto.RaftProtos.RequestVoteReplyProto;
 import org.apache.ratis.proto.RaftProtos.RequestVoteRequestProto;
+import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.server.fuzzer.comm.GsonHelper;
 import org.apache.ratis.server.fuzzer.comm.JsonMessage;
-import org.apache.ratis.server.impl.LeaderElection;
-import org.apache.ratis.server.impl.RaftServerImpl;
+import org.apache.ratis.server.fuzzer.messages.Message;
+import org.apache.ratis.thirdparty.io.grpc.stub.StreamObserver;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import org.apache.ratis.server.impl.LeaderElection.Executor;
-
 public class RequestVoteMessage extends Message {
 
     private RequestVoteRequestProto request;
-    private Executor executor;
-    private RaftServerImpl server;
+    private GrpcServerProtocolService service;
+    StreamObserver<RequestVoteReplyProto> responseObserver;
 
-    public RequestVoteMessage(RequestVoteRequestProto r, Executor ex, RaftServerImpl s) {
+    public RequestVoteMessage(RequestVoteRequestProto r, GrpcServerProtocolService service, StreamObserver<RequestVoteReplyProto> responseObserver) {
         this.request = r;
-        this.executor = ex;
-        this.server = s;
+        this.service = service;
+        this.responseObserver = responseObserver;
         this.setType("request_vote_request");
         this.setId(this.client.generateId());
 
@@ -29,8 +29,7 @@ public class RequestVoteMessage extends Message {
 
     @Override
     public void invoke() {
-        // election.notifyElection();
-        this.executor.submit(() -> this.server.getServerRpc().requestVote(this.request));
+        service.sendVoteRequest(request, responseObserver);
     }
 
     @Override
@@ -42,14 +41,14 @@ public class RequestVoteMessage extends Message {
         json.addProperty("type", type);
         json.addProperty("prevote", request.getPreVote());
         json.addProperty("term", (double) request.getCandidateTerm());
-        json.addProperty("candidate_id", (double) client.getServerId(request.getServerRequest().getRequestorId().toStringUtf8()));
+        json.addProperty("candidate_id", (double) Integer.parseInt(request.getServerRequest().getRequestorId().toStringUtf8()));
         json.addProperty("last_log_idx", (double) request.getCandidateLastEntry().getIndex());
         json.addProperty("last_log_term", (double) request.getCandidateLastEntry().getTerm());
 
         Gson gson = GsonHelper.gson;
 
-        JsonMessage msg = new JsonMessage(Integer.toString(client.getServerId(to)), type, gson.toJson(json).getBytes());
-        msg.setFrom(Integer.toString(client.getServerId(from)));
+        JsonMessage msg = new JsonMessage(to, type, gson.toJson(json).getBytes());
+        msg.setFrom(from);
         msg.setId(Integer.toString(this.getId()));
 
         return gson.toJson(msg);
@@ -57,7 +56,7 @@ public class RequestVoteMessage extends Message {
 
     @Override
     public String getReceiver() {
-        return this.request.getServerRequest().getReplyId().toString();
+        return this.request.getServerRequest().getReplyId().toStringUtf8();
     }
 
     

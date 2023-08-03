@@ -125,7 +125,7 @@ public class FollowerState extends Daemon {
 
   private void interceptTimeout(Message m) {
     this.client.interceptMessage(m);
-    LOG.debug("------ Timeout on server {} ------", server.getId());
+    LOG.info("------ Timeout on server {} ------", server.getId());
   }
 
   @Override
@@ -154,7 +154,7 @@ public class FollowerState extends Daemon {
             // server.getLeaderElectionMetrics().onLeaderElectionTimeout(); // Update timeout metric counters.
             // election timeout, should become a candidate
             interceptTimeout(new TimeoutMessage(server));
-            server.changeToCandidate(false); 
+            // server.changeToCandidate(false); 
             break;
           }
         }

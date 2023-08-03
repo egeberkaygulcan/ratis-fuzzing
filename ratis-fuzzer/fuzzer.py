@@ -1,20 +1,25 @@
-import os
 import time
 import json
 import random
+import argparse
 import requests
-import subprocess
+import threading
 
 from pandas import read_csv
 from network import Network
 from types import SimpleNamespace
+from cluster import RatisCluster
 
 # Aggreement for consensus violations
 # Recovery
 # Termination for consensus violation
 # Liveness, wether the cluster reaches consensus eventually (Bounded liveness)
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-v', '--verbose', action='store_true')
 
+    return parser.parse_args()
 
 class DefaultMutator:
     def __init__(self) -> None:
@@ -49,13 +54,14 @@ class TLCGuider:
     
 
 class Fuzzer:
-    def __init__(self, config = {}) -> None:
+    def __init__(self, args, config = {}) -> None:
         self.config = self._validate_config(config)
+        self.args = args
         self.network = Network(self.config.network_addr, self.config)
         self.guider = self.config.guider
         self.mutator = self.config.mutator
         self.trace_queue = []
-        self.run_script_path = '/Users/berkay/Documents/Research/ratis-fuzzing/ratis-examples/run.sh'
+        self.cluster = RatisCluster(self.config, self.network)
 
     def _validate_config(self, config):
         new_config = SimpleNamespace()
@@ -113,7 +119,7 @@ class Fuzzer:
             new_config.test_harness = config["test_harness"]
 
         if 'num_client_requests' not in config:
-            new_config.num_client_requests = 5
+            new_config.num_client_requests = 0
         else: 
             new_config.num_client_requests = config['num_client_requests']
 
@@ -125,29 +131,21 @@ class Fuzzer:
         return new_config
 
     def run(self):
-        self.network.run()
+        self.cluster.start(verbose=self.args.verbose)
 
-        # TODO - Start subprocess script call
-        # with open(os.devnull, 'w') as fp:
-        #     process = subprocess.Popen(['/Users/berkay/Documents/Research/ratis-fuzzing/ratis-examples/run.sh'], stderr=subprocess.STDOUT, shell=True, universal_newlines=True, stdout=fp)
-        process = subprocess.Popen(['/Users/berkay/Documents/Research/ratis-fuzzing/ratis-examples/run.sh'], stderr=subprocess.STDOUT, shell=True, universal_newlines=True)
+        # time.sleep(3)
+
+        # print('------ Client request. ------')
+        # self.cluster.send_client_request()
+
+        # time.sleep(3)
+
         for i in range(self.config.init_population):
             (trace, event_trace) = self.run_iteration()
             for j in range(self.config.mutations_per_trace):
-                self.trace_queue.append(self.mutator.mutate(trace))
+                self.trace_queue.append(self.mutator.mutate(trace))     
 
-        # TODO - Check for runtime error
-        output, error = process.communicate()
-
-        if process.returncode != 0:
-            # TODO - replace prints with file logs
-            print("EXECUTION FAILED", error)
-            print(output)
-
-        # TODO - Close subprocess
-        process.kill()
-
-        
+        self.cluster.shutdown()
 
         # for i in range(self.config.no_iterations):
         #     to_mimic = None
@@ -160,7 +158,7 @@ class Fuzzer:
 
         # TODO: plot coverage
 
-        self.network.shutdown()
+        
 
     def run_iteration(self, mimic = None):
         print('***************** STARTING ITERATION *******************')
@@ -173,10 +171,11 @@ class Fuzzer:
         client_requests = []
         if mimic is None:
             node_ids = list(range(1, self.config.nodes+1))
+            node_ids = [id - 1 for id in node_ids] # TODO - remove
             for c in random.sample(range(0, self.config.horizon, 2), self.config.crash_quota):
                crash_points[c] = random.choice(node_ids)
 
-            client_requests = random.sample(range(self.config.horizon), self.config.num_client_requests-1)
+            client_requests = random.sample(range(self.config.horizon), self.config.num_client_requests-1) if self.config.num_client_requests > 0 else []
             
             for i in range(self.config.horizon):
                 schedule.append(random.choice(node_ids))
@@ -198,23 +197,23 @@ class Fuzzer:
         for i in range(self.config.horizon):
             if i in restart_points:
                 node_id = restart_points[i]
-                self.network.schedule_restart(node_id)
+                self.network.schedule_restart(node_id) # TODO - Implement restart
                 self.network.add_event({"name": "Add", "params": {"i": node_id}})
             
             if i in crash_points:
                 node_id = crash_points[i]
-                self.network.schedule_crash(node_id)
+                self.cluster.shutdown()
                 trace.append({"type": "Crash", "node": node_id, "step": i})
                 self.network.add_event({"name": "Remove", "params": {"i": node_id}})
             
             if i in client_requests:
                 if first_request:
                     for _ in range(self.config.num_concurrent_client_requests):
-                        self.network.schedule_client_request()
+                        self.cluster.send_client_request()
                     trace.append({"type": "ClientRequest", "step": i})
                     first_request = False
                 else:
-                    self.network.schedule_client_request()
+                    self.cluster.send_client_request()
                     trace.append({"type": "ClientRequest", "step": i})
             
             # for node_id in self.cluster.node_ids():
@@ -233,7 +232,7 @@ class Fuzzer:
         # TODO - check for execution error
         # kill subprocess
 
-        self.network.send_exit()
+        self.cluster.shutdown()
         event_trace = self.network.get_event_trace()
         self.network.clear_mailboxes()
 
@@ -241,6 +240,7 @@ class Fuzzer:
         
 if __name__ == '__main__':
     experiment_config = read_csv('experiment_config.csv', index_col=False)
+    args = parse_args()
     for index, row in experiment_config.iterrows():
-        fuzzer = Fuzzer(row.to_dict())
+        fuzzer = Fuzzer(args, row.to_dict())
         fuzzer.run()

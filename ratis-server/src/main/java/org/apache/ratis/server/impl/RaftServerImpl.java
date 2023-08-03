@@ -44,6 +44,7 @@ import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.server.RaftServerConfigKeys;
 import org.apache.ratis.server.RaftServerMXBean;
 import org.apache.ratis.server.RaftServerRpc;
+import org.apache.ratis.server.fuzzer.FuzzerClient;
 import org.apache.ratis.server.impl.LeaderElection.Phase;
 import org.apache.ratis.server.impl.RetryCacheImpl.CacheEntry;
 import org.apache.ratis.server.leader.FollowerInfo;
@@ -192,6 +193,7 @@ public class RaftServerImpl implements RaftServer.Division,
 
   private final AtomicBoolean firstElectionSinceStartup = new AtomicBoolean(true);
   private final ThreadGroup threadGroup;
+  private final FuzzerClient fuzzerClient = FuzzerClient.getInstance("RaftServerImpl");
 
   RaftServerImpl(RaftGroup group, StateMachine stateMachine, RaftServerProxy proxy) throws IOException {
     final RaftPeerId id = proxy.getId();
@@ -237,6 +239,7 @@ public class RaftServerImpl implements RaftServer.Division,
         RaftServerConfigKeys.ThreadPool.clientCached(properties),
         RaftServerConfigKeys.ThreadPool.clientSize(properties),
         id + "-client");
+    fuzzerClient.setRaftImpl(this);
   }
 
   @Override
@@ -484,6 +487,13 @@ public class RaftServerImpl implements RaftServer.Division,
       } catch (Exception ignored) {
         LOG.warn("{}: Failed to shutdown LeaderState monitor", getMemberId(), ignored);
       }
+
+      try {
+        state.closeStorage();
+      } catch (Exception e) {
+        LOG.warn("{}: Failed to close storage", getMemberId(), e);
+      }
+
       try{
         state.close();
       } catch (Exception ignored) {
@@ -503,7 +513,7 @@ public class RaftServerImpl implements RaftServer.Division,
       } catch (Exception ignored) {
         LOG.warn("{}: Failed to close raft client", getMemberId(), ignored);
       }
-
+      
       try {
         ConcurrentUtils.shutdownAndWait(clientExecutor);
       } catch (Exception ignored) {
@@ -528,6 +538,7 @@ public class RaftServerImpl implements RaftServer.Division,
       boolean force,
       boolean allowListener,
       Object reason) {
+    // TODO - State change capture
     final RaftPeerRole old = role.getCurrentRole();
     final boolean metadataUpdated = state.updateCurrentTerm(newTerm);
     if (old == RaftPeerRole.LISTENER && !allowListener) {
@@ -560,6 +571,7 @@ public class RaftServerImpl implements RaftServer.Division,
   }
 
   synchronized void changeToLeader() {
+    // TODO - Capture state change
     Preconditions.assertTrue(getInfo().isCandidate());
     role.shutdownLeaderElection();
     setRole(RaftPeerRole.LEADER, "changeToLeader");
@@ -600,6 +612,8 @@ public class RaftServerImpl implements RaftServer.Division,
         LogProtoUtils.toRaftConfigurationProtoBuilder(getRaftConf()).build();
     return new GroupInfoReply(request, getCommitInfos(), getGroup(), getRoleInfoProto(),
         dir.isHealthy(), conf);
+      
+      
   }
 
   RoleInfoProto getRoleInfoProto() {

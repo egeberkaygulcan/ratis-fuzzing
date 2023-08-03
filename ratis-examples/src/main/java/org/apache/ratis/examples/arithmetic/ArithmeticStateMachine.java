@@ -87,6 +87,7 @@ public class ArithmeticStateMachine extends BaseStateMachine {
 
   @Override
   public long takeSnapshot() {
+    System.out.println("------ Taking snapshot ------");
     final Map<String, Double> copy;
     final TermIndex last;
     try(AutoCloseableLock readLock = readLock()) {
@@ -112,6 +113,7 @@ public class ArithmeticStateMachine extends BaseStateMachine {
   }
 
   public long loadSnapshot(SingleFileSnapshotInfo snapshot) throws IOException {
+    System.out.println("------ Loading snapshot ------");
     if (snapshot == null) {
       LOG.warn("The snapshot info is null.");
       return RaftLog.INVALID_LOG_INDEX;

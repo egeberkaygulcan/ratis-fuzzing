@@ -1,10 +1,9 @@
-package org.apache.ratis.server.fuzzer.messages;
+package org.apache.ratis.grpc.server;
 
 import org.apache.ratis.proto.RaftProtos.RequestVoteReplyProto;
-import org.apache.ratis.proto.RaftProtos.RequestVoteRequestProto;
 import org.apache.ratis.server.fuzzer.comm.GsonHelper;
 import org.apache.ratis.server.fuzzer.comm.JsonMessage;
-import org.apache.ratis.thirdparty.io.grpc.internal.GrpcUtil;
+import org.apache.ratis.server.fuzzer.messages.Message;
 import org.apache.ratis.thirdparty.io.grpc.stub.StreamObserver;
 
 import com.google.gson.Gson;
@@ -55,8 +54,8 @@ public class RequestVoteReplyMessage extends Message {
 
         Gson gson = GsonHelper.gson;
 
-        JsonMessage msg = new JsonMessage(Integer.toString(client.getServerId(to)), type, gson.toJson(json).getBytes());
-        msg.setFrom(Integer.toString(client.getServerId(from)));
+        JsonMessage msg = new JsonMessage(to, type, gson.toJson(json).getBytes());
+        msg.setFrom(from);
         msg.setId(Integer.toString(this.getId()));
 
         return gson.toJson(msg);

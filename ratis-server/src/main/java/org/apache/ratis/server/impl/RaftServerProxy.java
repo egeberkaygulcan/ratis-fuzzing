@@ -40,6 +40,7 @@ import org.apache.ratis.rpc.RpcType;
 import org.apache.ratis.server.DataStreamServerRpc;
 import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.server.ServerFactory;
+import org.apache.ratis.server.fuzzer.FuzzerClient;
 import org.apache.ratis.util.ConcurrentUtils;
 import org.apache.ratis.util.JvmPauseMonitor;
 import org.apache.ratis.server.RaftServerConfigKeys;
@@ -70,7 +71,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class RaftServerProxy implements RaftServer {
+public class RaftServerProxy implements RaftServer {
   /**
    * A map: {@link RaftGroupId} -> {@link RaftServerImpl} futures.
    *
@@ -110,7 +111,7 @@ class RaftServerProxy implements RaftServer {
       return future;
     }
 
-    @Override
+    @Override // TODO - Close server
     public synchronized void close() {
       if (isClosed) {
         LOG.info("{} is already closed.", getId());
@@ -196,6 +197,7 @@ class RaftServerProxy implements RaftServer {
 
   private final JvmPauseMonitor pauseMonitor;
   private final ThreadGroup threadGroup;
+  private final FuzzerClient fuzzerClient = FuzzerClient.getInstance("RaftServerProxy");
 
   RaftServerProxy(RaftPeerId id, StateMachine.Registry stateMachineRegistry,
       RaftProperties properties, Parameters parameters, ThreadGroup threadGroup) {
@@ -223,6 +225,7 @@ class RaftServerProxy implements RaftServer {
     this.pauseMonitor = new JvmPauseMonitor(id,
         extraSleep -> handleJvmPause(extraSleep, rpcSlownessTimeout, leaderStepDownWaitTime));
     this.threadGroup = threadGroup == null ? new ThreadGroup(this.id.toString()) : threadGroup;
+    fuzzerClient.setRaftProxy(this);
   }
 
   private void handleJvmPause(TimeDuration extraSleep, TimeDuration closeThreshold, TimeDuration stepDownThreshold)

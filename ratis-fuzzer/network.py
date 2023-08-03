@@ -167,6 +167,7 @@ class Network:
         return len(self.mailboxes[id]) == 0
     
     def _handle_replica(self, request: Request) -> Response:
+        print('Replica received.')
         replica = json.loads(request.content)
         if "id" in replica:
             try:
@@ -178,6 +179,7 @@ class Network:
         return Response.json(HTTPStatus.OK, json.dumps({"message": "Ok"}))
 
     def _handle_message(self, request: Request) -> Response:
+        print('Message received.')
         content = json.loads(request.content)
         content['data'] = json.loads(base64.b64decode(content["data"]).decode('utf-8'))
         msg = Message.from_str(content)
@@ -236,6 +238,8 @@ class Network:
     def schedule_replica(self, replica):
         addr = ""
         messages_to_deliver = []
+        replica = str(replica)
+        print('Scheduling replica ', replica)
         try:
             self.lock.acquire()
             if str(replica) in self.mailboxes and len(self.mailboxes[str(replica)]) > 0:
@@ -253,41 +257,13 @@ class Network:
             except Exception as e:
                 print('COULD NOT SEND MESSAGE')
                 print(e)
-
-    def schedule_client_request(self):
-        print('CLIENT REQUEST SENT')
-        try:
-            self.lock.acquire()
-            addr = self.replicas[list(self.replicas.keys())[0]]['addr']
-            msg = Message(0, 1, "client_request", 0)
-            requests.post("http://"+addr+"/message", json=json.dumps(msg.__dict__)) 
-        finally:
-            self.lock.release()
     
-    def schedule_crash(self, id):
+    def send_shutdown(self, replica):
         try:
             self.lock.acquire()
-            addr = self.replicas[list(self.replicas.keys())[0]]['addr']
-            msg = Message(0, 1, "crash", id)
-            requests.post("http://"+addr+"/message", json=json.dumps(msg.__dict__))
-        finally:
-            self.lock.release()
-    
-    def schedule_restart(self, id):
-        try:
-            self.lock.acquire()
-            addr = self.replicas[list(self.replicas.keys())[0]]['addr']
-            msg = Message(0, 1, "restart", id)
-            requests.post("http://"+addr+"/message", json=json.dumps(msg.__dict__))
-        finally:
-            self.lock.release()
-    
-    def send_exit(self):
-        print('*-*-*-* Sending Exit *-*-*-*')
-        try:
-            self.lock.acquire()
-            addr = self.replicas[list(self.replicas.keys())[0]]['addr']
-            msg = Message(0, 1, "exit", 0)
+            # addr = self.replicas[list(self.replicas.keys())[0]]['addr']
+            addr = self.replicas[replica]["addr"]
+            msg = Message(0, 1, "shutdown", 0)
             requests.post("http://"+addr+"/message", json=json.dumps(msg.__dict__))
         except Exception as e:
             print(e)

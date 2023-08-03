@@ -42,6 +42,7 @@ import org.apache.ratis.protocol.RaftGroupId;
 import org.apache.ratis.protocol.RaftPeerId;
 import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.server.RaftServerConfigKeys;
+import org.apache.ratis.server.fuzzer.FuzzerClient;
 import org.apache.ratis.statemachine.StateMachine;
 import org.apache.ratis.thirdparty.com.google.protobuf.ByteString;
 import org.apache.ratis.util.LifeCycle;
@@ -61,8 +62,6 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 @Parameters(commandDescription = "Start an arithmetic server")
 public class Server extends SubCommandBase {
-  public MiniRaftCluster cluster;
-  private static final AtomicReference<MiniRaftCluster> currentCluster = new AtomicReference<>();
 
   @Parameter(names = {"--id",
       "-i"}, description = "Raft id of this server", required = false)
@@ -72,126 +71,50 @@ public class Server extends SubCommandBase {
       "-s"}, description = "Storage dir", required = false)
   private File storageDir;
 
+  @Parameter(names = {"--fuzzerclientport",
+      "-fcp"}, description = "Port of the server client", required = false)
+  private String serverClientPort;
+
   @Override
   public void run() throws Exception {
-    // RaftPeerId peerId = RaftPeerId.valueOf(id);
-    // RaftProperties properties = new RaftProperties();
+    System.out.println(serverClientPort);
+    FuzzerClient fuzzerClient = FuzzerClient.getInstance("Server init");
+    fuzzerClient.setServerClientPort(Integer.parseInt(serverClientPort));
+    fuzzerClient.initServer();
+    fuzzerClient.registerServer(id);
 
-    // final int port = NetUtils.createSocketAddr(getPeer(peerId).getAddress()).getPort();
-    // GrpcConfigKeys.Server.setPort(properties, port);
-
-    // Optional.ofNullable(getPeer(peerId).getClientAddress()).ifPresent(address ->
-    //     GrpcConfigKeys.Client.setPort(properties, NetUtils.createSocketAddr(address).getPort()));
-    // Optional.ofNullable(getPeer(peerId).getAdminAddress()).ifPresent(address ->
-    //     GrpcConfigKeys.Admin.setPort(properties, NetUtils.createSocketAddr(address).getPort()));
-
-    // RaftServerConfigKeys.setStorageDir(properties, Collections.singletonList(storageDir));
-    // StateMachine stateMachine = new ArithmeticStateMachine();
-
-    // final RaftGroup raftGroup = RaftGroup.valueOf(RaftGroupId.valueOf(ByteString.copyFromUtf8(getRaftGroupId())),
-    //         getPeers());
-    // RaftServer raftServer = RaftServer.newBuilder()
-    //     .setServerId(RaftPeerId.valueOf(id))
-    //     .setStateMachine(stateMachine).setProperties(properties)
-    //     .setGroup(raftGroup)
-    //     .build();
-    // raftServer.start();
-
-    // for(; raftServer.getLifeCycleState() != LifeCycle.State.CLOSED;) {
-    //   TimeUnit.SECONDS.sleep(1);
-    // }
-
-    testPythagorean(3);
-  }
-
-  public void testPythagorean(int clusterSize) throws Exception {
-    RaftProperties prop = new RaftProperties();
     RaftPeerId peerId = RaftPeerId.valueOf(id);
+    RaftProperties properties = new RaftProperties();
 
     final int port = NetUtils.createSocketAddr(getPeer(peerId).getAddress()).getPort();
-    GrpcConfigKeys.Server.setPort(prop, port);
+    GrpcConfigKeys.Server.setPort(properties, port);
 
-    // avoid flaky behaviour in CI environment
-    RaftServerConfigKeys.Rpc.setTimeoutMin(prop, TimeDuration.valueOf(300, TimeUnit.MILLISECONDS));
-    RaftServerConfigKeys.Rpc.setTimeoutMax(prop, TimeDuration.valueOf(600, TimeUnit.MILLISECONDS));
+    Optional.ofNullable(getPeer(peerId).getClientAddress()).ifPresent(address ->
+        GrpcConfigKeys.Client.setPort(properties, NetUtils.createSocketAddr(address).getPort()));
+    Optional.ofNullable(getPeer(peerId).getAdminAddress()).ifPresent(address ->
+        GrpcConfigKeys.Admin.setPort(properties, NetUtils.createSocketAddr(address).getPort()));
 
-    RaftServerConfigKeys.setStorageDir(prop, Collections.singletonList(storageDir));
+    RaftServerConfigKeys.setStorageDir(properties, Collections.singletonList(storageDir));
 
-    prop.setClass(MiniRaftCluster.STATEMACHINE_CLASS_KEY,
-        ArithmeticStateMachine.class, StateMachine.class); 
-        
-    String[] ids = MiniRaftCluster.generateIds(clusterSize, 0);
+    RaftServerConfigKeys.Rpc.setTimeoutMin(properties, TimeDuration.valueOf(500, TimeUnit.MILLISECONDS));
+    RaftServerConfigKeys.Rpc.setTimeoutMax(properties, TimeDuration.valueOf(1000, TimeUnit.MILLISECONDS));
 
-    final MiniRaftCluster cluster = MiniRaftClusterWithGrpc.FACTORY.newCluster(ids, new String[] {}, prop);
+    StateMachine stateMachine = new ArithmeticStateMachine();
 
-    try (final RaftClient client = cluster.createClient()) {
-      runTestPythagorean(client, 3, 10);
-    }
+    fuzzerClient.setStateMachine(stateMachine);
 
-    cluster.close();
-  }
+    final RaftGroup raftGroup = RaftGroup.valueOf(RaftGroupId.valueOf(ByteString.copyFromUtf8(getRaftGroupId())),
+            getPeers());
+    RaftServer raftServer = RaftServer.newBuilder()
+        .setServerId(RaftPeerId.valueOf(id))
+        .setStateMachine(stateMachine).setProperties(properties)
+        .setGroup(raftGroup)
+        .build();
+    raftServer.start();
 
-  public void runTestPythagorean(
-      RaftClient client, int start, int count) throws IOException {
-    Preconditions.assertTrue(count > 0, () -> "count = " + count + " <= 0");
-    Preconditions.assertTrue(start >= 2, () -> "start = " + start + " < 2");
-
-    final Variable a = new Variable("a");
-    final Variable b = new Variable("b");
-    final Variable c = new Variable("c");
-    final Expression pythagorean = SQRT.apply(ADD.apply(SQUARE.apply(a), SQUARE.apply(b)));
-
-    final int end = start + 2*count;
-    for(int n = (start & 1) == 0? start + 1: start; n < end; n += 2) {
-      int n2 = n*n;
-      int half_n2 = n2/2;
-
-      try {
-        assign(client, a, n);
-        assign(client, b, half_n2);
-        assign(client, c, pythagorean, (double)half_n2 + 1);
-
-        assignNull(client, a);
-        assignNull(client, b);
-        assignNull(client, c);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+    for(; raftServer.getLifeCycleState() != LifeCycle.State.CLOSED;) {
+      TimeUnit.SECONDS.sleep(1);
+      fuzzerClient.getAndExecuteMessages();
     }
   }
-
-  private Expression assign(RaftClient client, Variable x, double value) throws IOException, Exception {
-    return assign(client, x, new DoubleValue(value), value);
-  }
-
-  private Expression assign(RaftClient client, Variable x, Expression e, Double expected) throws IOException, Exception {
-    final RaftClientReply r = client.io().send(x.assign(e));
-    return assertRaftClientReply(r, expected);
-  }
-
-  private Expression assign(RaftClient client, Variable x, Expression e) throws IOException, Exception {
-    return assign(client, x, e, null);
-  }
-
-  private Expression assertRaftClientReply(RaftClientReply reply, Double expected) throws Exception{
-    final Expression e;
-    if(reply.isSuccess()) {
-      e = Expression.Utils.bytes2Expression(
-          reply.getMessage().getContent().toByteArray(), 0);
-      if (expected != null) {
-        if(expected != e.evaluate(null))
-          throw new Exception("****** Client reply not equal to expected! ******");
-      }
-    } else {
-      throw new Exception("****** Client reply unsuccesfull! ******");
-    }
-    return e;
-  }
-
-  private void assignNull(RaftClient client, Variable x) throws IOException, Exception {
-    final Expression e = assign(client, x, NullValue.getInstance());
-    if(NullValue.getInstance() != e)
-      throw new Exception("****** assignNull failed! ******");
-  }
-
 }

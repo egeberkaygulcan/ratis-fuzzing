@@ -43,8 +43,8 @@ public class AppendEntriesReplyMessage extends Message {
 
         Gson gson = GsonHelper.gson;
 
-        JsonMessage msg = new JsonMessage(Integer.toString(client.getServerId(to)), type, gson.toJson(json).getBytes());
-        msg.setFrom(Integer.toString(client.getServerId(from)));
+        JsonMessage msg = new JsonMessage(to, type, gson.toJson(json).getBytes());
+        msg.setFrom(from);
         msg.setId(Integer.toString(this.getId()));
 
         return gson.toJson(msg);
@@ -54,6 +54,10 @@ public class AppendEntriesReplyMessage extends Message {
     public String getReceiver() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getReceiver'");
+    }
+
+    public boolean getHearbeat() {
+        return request.getIsHearbeat();
     }
     
 }

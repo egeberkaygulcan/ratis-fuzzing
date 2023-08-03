@@ -22,7 +22,6 @@ import org.apache.ratis.protocol.RaftPeerId;
 import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.server.fuzzer.FuzzerClient;
 import org.apache.ratis.server.fuzzer.messages.Message;
-import org.apache.ratis.server.fuzzer.messages.RequestVoteReplyMessage;
 import org.apache.ratis.server.protocol.RaftServerProtocol;
 import org.apache.ratis.server.util.ServerStringUtils;
 import org.apache.ratis.thirdparty.io.grpc.Status;
@@ -177,6 +176,7 @@ public class GrpcServerProtocolService extends RaftServerProtocolServiceImplBase
 
   private final Supplier<RaftPeerId> idSupplier;
   private final RaftServer server;
+  private final FuzzerClient fuzzerClient = FuzzerClient.getInstance("GrpcServerProtocolService");
 
   GrpcServerProtocolService(Supplier<RaftPeerId> idSupplier, RaftServer server) {
     this.idSupplier = idSupplier;
@@ -189,14 +189,17 @@ public class GrpcServerProtocolService extends RaftServerProtocolServiceImplBase
 
   private void interceptVoteReply(Message m) {
     this.client.interceptMessage(m);
-    LOG.debug("------ RequestVoteReply on server {} ------", server.getId());
+    LOG.info("------ RequestVoteReply on server {} ------", server.getId().toString());
   }
 
-  // TODO - Intercept
-  @Override
-  public void requestVote(RequestVoteRequestProto request,
+  private void interceptVoteRequest(Message m) {
+    this.client.interceptMessage(m);
+    LOG.info("------ VoteRequest on server {} to {} ------", server.getId().toString(), m.getReceiver());
+  }
+
+  public void sendVoteRequest(RequestVoteRequestProto request,
       StreamObserver<RequestVoteReplyProto> responseObserver) {
-    try {
+      try {
       final RequestVoteReplyProto reply = server.requestVote(request);
       interceptVoteReply(new RequestVoteReplyMessage(reply, responseObserver));
       //responseObserver.onNext(reply);
@@ -205,6 +208,22 @@ public class GrpcServerProtocolService extends RaftServerProtocolServiceImplBase
       GrpcUtil.warn(LOG, () -> getId() + ": Failed requestVote " + ProtoUtils.toString(request.getServerRequest()), e);
       responseObserver.onError(GrpcUtil.wrapException(e));
     }
+  }
+
+  // TODO - Intercept
+  @Override
+  public void requestVote(RequestVoteRequestProto request,
+      StreamObserver<RequestVoteReplyProto> responseObserver) {
+        interceptVoteRequest(new RequestVoteMessage(request, this, responseObserver));
+    // try {
+      // final RequestVoteReplyProto reply = server.requestVote(request);
+      // interceptVoteReply(new RequestVoteReplyMessage(reply, responseObserver));
+      // responseObserver.onNext(reply);
+      // responseObserver.onCompleted();
+    // } catch (Exception e) {
+    //   GrpcUtil.warn(LOG, () -> getId() + ": Failed requestVote " + ProtoUtils.toString(request.getServerRequest()), e);
+    //   responseObserver.onError(GrpcUtil.wrapException(e));
+    // }
   }
 
   @Override
@@ -238,6 +257,7 @@ public class GrpcServerProtocolService extends RaftServerProtocolServiceImplBase
   @Override
   public StreamObserver<AppendEntriesRequestProto> appendEntries(
       StreamObserver<AppendEntriesReplyProto> responseObserver) {
+        // TODO - Intercept
     return new ServerRequestStreamObserver<AppendEntriesRequestProto, AppendEntriesReplyProto>(
         RaftServerProtocol.Op.APPEND_ENTRIES, responseObserver) {
       @Override
@@ -275,6 +295,7 @@ public class GrpcServerProtocolService extends RaftServerProtocolServiceImplBase
   @Override
   public StreamObserver<InstallSnapshotRequestProto> installSnapshot(
       StreamObserver<InstallSnapshotReplyProto> responseObserver) {
+        // TODO - Add installSnapshot
     return new ServerRequestStreamObserver<InstallSnapshotRequestProto, InstallSnapshotReplyProto>(
         RaftServerProtocol.Op.INSTALL_SNAPSHOT, responseObserver) {
       @Override

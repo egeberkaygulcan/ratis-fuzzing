@@ -49,7 +49,7 @@ public class AppendEntriesMessage extends Message {
         long prev_log_term = prevLog == null ? -1 : prevLog.getTerm();
 
         json.addProperty("type", type);
-        json.addProperty("leader_id", client.getServerId(proto.getServerRequest().getRequestorId().toStringUtf8()));
+        json.addProperty("leader_id", proto.getServerRequest().getRequestorId().toStringUtf8());
         json.addProperty("term", (double) proto.getLeaderTerm());
         json.addProperty("prev_log_idx", (double) prev_log_idx);
         json.addProperty("prev_log_term", (double) prev_log_term);
@@ -72,8 +72,8 @@ public class AppendEntriesMessage extends Message {
 
         Gson gson = GsonHelper.gson;
 
-        JsonMessage msg = new JsonMessage(Integer.toString(client.getServerId(to)), type, gson.toJson(json).getBytes());
-        msg.setFrom(Integer.toString(client.getServerId(from)));
+        JsonMessage msg = new JsonMessage(to, type, gson.toJson(json).getBytes());
+        msg.setFrom(from);
         msg.setId(Integer.toString(this.getId()));
 
         return gson.toJson(msg);

@@ -17,9 +17,6 @@
  */
 package org.apache.ratis.server.impl;
 
-import org.apache.ratis.server.fuzzer.FuzzerClient;
-import org.apache.ratis.server.fuzzer.messages.Message;
-import org.apache.ratis.server.fuzzer.messages.RequestVoteMessage;
 import org.apache.ratis.proto.RaftProtos.RequestVoteReplyProto;
 import org.apache.ratis.proto.RaftProtos.RequestVoteRequestProto;
 import org.apache.ratis.protocol.RaftPeer;
@@ -191,7 +188,6 @@ public class LeaderElection implements Runnable {
   private final RaftServerImpl server;
   private final boolean skipPreVote;
   private final ConfAndTerm round0;
-  private final FuzzerClient client = FuzzerClient.getInstance("LeaderElection");
 
   LeaderElection(RaftServerImpl server, boolean force) {
     this.name = server.getMemberId() + "-" + JavaUtils.getClassSimpleName(getClass()) + COUNT.incrementAndGet();
@@ -332,7 +328,6 @@ public class LeaderElection implements Runnable {
       if (!shouldRun(electionTerm)) {
         return false; // term already passed or this should not run anymore.
       }
-
       switch (r.getResult()) {
         case PASSED:
           return true;
@@ -353,21 +348,13 @@ public class LeaderElection implements Runnable {
     }
   }
 
-  private void interceptVoteRequest(Message m) {
-    this.client.interceptMessage(m);
-    LOG.debug("------ VoteRequest on server {} to {} ------", server.getId(), m.getReceiver());
-  }
-
   private int submitRequests(Phase phase, long electionTerm, TermIndex lastEntry,
       Collection<RaftPeer> others, Executor voteExecutor) {
     int submitted = 0;
     for (final RaftPeer peer : others) {
-      // TODO - Intercept
       final RequestVoteRequestProto r = ServerProtoUtils.toRequestVoteRequestProto(
           server.getMemberId(), peer.getId(), electionTerm, lastEntry, phase == Phase.PRE_VOTE);
-      // TODO - Write wrapper function for controlled scheduling
-      interceptVoteRequest(new RequestVoteMessage(r, voteExecutor, server));
-      // voteExecutor.submit(() -> server.getServerRpc().requestVote(r));
+      voteExecutor.submit(() -> server.getServerRpc().requestVote(r));
       submitted++;
     }
     return submitted;

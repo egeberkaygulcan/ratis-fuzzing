@@ -268,7 +268,7 @@ public class GrpcLogAppender extends LogAppenderBase {
   private void interceptAppendEntries(Message m, boolean heartbeat) {
     if(!heartbeat) {
       this.client.interceptMessage(m);
-      LOG.debug("------ AppendEntries on server {} to {} ------", this.getServer().getId().toString(), m.getReceiver());
+      LOG.info("------ AppendEntries on server {} to {} ------", this.getServer().getId().toString(), m.getReceiver());
     }
   }
 
@@ -311,6 +311,9 @@ public class GrpcLogAppender extends LogAppenderBase {
       pending = newAppendEntriesRequest(callId.getAndIncrement(), heartbeat);
       request = new AppendEntriesRequest(pending, getFollowerId(), grpcServerMetrics);
       interceptAppendEntries(new AppendEntriesMessage(pending, request, heartbeat, this), heartbeat);
+    } catch (NullPointerException e) {
+      LOG.info("------ Null AppendEntriesProto ------");
+      return;
     }
   } 
 
@@ -374,8 +377,10 @@ public class GrpcLogAppender extends LogAppenderBase {
      */
 
     private void interceptAppendEntriesReply(Message m) {
-      this.client.interceptMessage(m);
-      LOG.debug("------ AppendEntriesReply received from {} ------", getFollowerId().toString());
+      if(((AppendEntriesReplyMessage)m).getHearbeat()) {
+        this.client.interceptMessage(m);
+        LOG.info("------ AppendEntriesReply received from {} ------", getFollowerId().toString());
+      }
     }
 
     public void onNextInvoke(AppendEntriesReplyProto reply) {

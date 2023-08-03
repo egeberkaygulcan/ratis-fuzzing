@@ -33,14 +33,8 @@ public class MessageHandler{
             messages.add(m);
             lock.unlock();
 
-            if (m.type.equals("client_request")) {
-                fuzzerClient.scheduleClientReq();
-            } else if (m.type.equals("crash")) {
-                fuzzerClient.scheduleShutdown(Integer.parseInt(new String(m.data, StandardCharsets.UTF_8))); // Base64.getEncoder().encodeToString(bytes);
-            } else if (m.type.equals("restart")) {
-                fuzzerClient.scheduleRestart(Integer.parseInt(new String(m.data, StandardCharsets.UTF_8))); // Base64.getEncoder().encodeToString(bytes);
-            } else if (m.type.equals("exit")) {
-                fuzzerClient.startExit();
+            if (m.type.equals("shutdown")) {
+                fuzzerClient.startShutdown();
             } else {
                 lock.lock();
                 messages.add(m);
