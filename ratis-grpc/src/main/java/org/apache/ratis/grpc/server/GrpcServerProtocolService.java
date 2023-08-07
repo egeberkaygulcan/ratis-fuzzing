@@ -18,8 +18,11 @@
 package org.apache.ratis.grpc.server;
 
 import org.apache.ratis.grpc.GrpcUtil;
+import org.apache.ratis.grpc.server.messages.RequestVoteMessage;
 import org.apache.ratis.protocol.RaftPeerId;
 import org.apache.ratis.server.RaftServer;
+import org.apache.ratis.server.fuzzer.FuzzerClient;
+import org.apache.ratis.server.fuzzer.messages.Message;
 import org.apache.ratis.server.protocol.RaftServerProtocol;
 import org.apache.ratis.server.util.ServerStringUtils;
 import org.apache.ratis.thirdparty.io.grpc.Status;
@@ -40,6 +43,7 @@ import java.util.function.Supplier;
 
 class GrpcServerProtocolService extends RaftServerProtocolServiceImplBase {
   public static final Logger LOG = LoggerFactory.getLogger(GrpcServerProtocolService.class);
+  private final FuzzerClient fuzzerClient = FuzzerClient.getInstance();
 
   static class PendingServerRequest<REQUEST> {
     private final REQUEST request;
@@ -183,17 +187,22 @@ class GrpcServerProtocolService extends RaftServerProtocolServiceImplBase {
     return idSupplier.get();
   }
 
+  private void interceptRequestVote(Message m) {
+    fuzzerClient.interceptMessage(m);
+  }
+
   @Override
   public void requestVote(RequestVoteRequestProto request,
       StreamObserver<RequestVoteReplyProto> responseObserver) {
-    try {
-      final RequestVoteReplyProto reply = server.requestVote(request);
-      responseObserver.onNext(reply);
-      responseObserver.onCompleted();
-    } catch (Exception e) {
-      GrpcUtil.warn(LOG, () -> getId() + ": Failed requestVote " + ProtoUtils.toString(request.getServerRequest()), e);
-      responseObserver.onError(GrpcUtil.wrapException(e));
-    }
+        interceptRequestVote(new RequestVoteMessage(server, request, responseObserver, server.getId().toString()));
+    // try {
+    //   final RequestVoteReplyProto reply = server.requestVote(request);
+    //   responseObserver.onNext(reply);
+    //   responseObserver.onCompleted();
+    // } catch (Exception e) {
+    //   GrpcUtil.warn(LOG, () -> getId() + ": Failed requestVote " + ProtoUtils.toString(request.getServerRequest()), e);
+    //   responseObserver.onError(GrpcUtil.wrapException(e));
+    // }
   }
 
   @Override

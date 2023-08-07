@@ -18,6 +18,8 @@
 package org.apache.ratis.server.impl;
 
 import org.apache.ratis.server.DivisionInfo;
+import org.apache.ratis.server.fuzzer.FuzzerClient;
+import org.apache.ratis.server.fuzzer.events.StateChangeEvent;
 import org.apache.ratis.server.leader.LeaderState;
 import org.apache.ratis.util.Daemon;
 import org.apache.ratis.util.JavaUtils;
@@ -62,6 +64,8 @@ class FollowerState extends Daemon {
   private volatile Timestamp lastRpcTime = creationTime;
   private volatile boolean isRunning = true;
   private final AtomicInteger outstandingOp = new AtomicInteger();
+
+  private final FuzzerClient fuzzerClient = FuzzerClient.getInstance();
 
   FollowerState(RaftServerImpl server, Object reason) {
     super(newBuilder()
@@ -144,6 +148,7 @@ class FollowerState extends Daemon {
                 this, lastRpcTime.elapsedTime(), electionTimeout);
             server.getLeaderElectionMetrics().onLeaderElectionTimeout(); // Update timeout metric counters.
             // election timeout, should become a candidate
+            fuzzerClient.sendEvent(new StateChangeEvent("candidate", server.getId().toString()));
             server.changeToCandidate(false);
             break;
           }

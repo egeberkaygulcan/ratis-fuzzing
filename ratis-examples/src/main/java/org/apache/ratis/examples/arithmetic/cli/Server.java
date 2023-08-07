@@ -28,10 +28,13 @@ import org.apache.ratis.protocol.RaftGroupId;
 import org.apache.ratis.protocol.RaftPeerId;
 import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.server.RaftServerConfigKeys;
+import org.apache.ratis.server.fuzzer.FuzzerClient;
 import org.apache.ratis.statemachine.StateMachine;
 import org.apache.ratis.thirdparty.com.google.protobuf.ByteString;
 import org.apache.ratis.util.LifeCycle;
 import org.apache.ratis.util.NetUtils;
+import org.apache.ratis.util.SizeInBytes;
+import org.apache.ratis.util.TimeDuration;
 
 import java.io.File;
 import java.util.Collections;
@@ -52,6 +55,9 @@ public class Server extends SubCommandBase {
       "-s"}, description = "Storage dir", required = true)
   private File storageDir;
 
+  @Parameter(names = {"--fuzzerclientport",
+  "-fcp"}, description = "Port of the server client", required = false)
+  private String serverClientPort;
 
   @Override
   public void run() throws Exception {
@@ -60,6 +66,10 @@ public class Server extends SubCommandBase {
 
     final int port = NetUtils.createSocketAddr(getPeer(peerId).getAddress()).getPort();
     GrpcConfigKeys.Server.setPort(properties, port);
+    RaftServerConfigKeys.Rpc.setFirstElectionTimeoutMin(properties, TimeDuration.valueOf(300, TimeUnit.MILLISECONDS));
+    RaftServerConfigKeys.Rpc.setFirstElectionTimeoutMax(properties, TimeDuration.valueOf(600, TimeUnit.MILLISECONDS));
+    RaftServerConfigKeys.Rpc.setTimeoutMin(properties, TimeDuration.valueOf(500, TimeUnit.MILLISECONDS));
+    RaftServerConfigKeys.Rpc.setTimeoutMax(properties, TimeDuration.valueOf(1000, TimeUnit.MILLISECONDS));
 
     Optional.ofNullable(getPeer(peerId).getClientAddress()).ifPresent(address ->
         GrpcConfigKeys.Client.setPort(properties, NetUtils.createSocketAddr(address).getPort()));
@@ -76,11 +86,47 @@ public class Server extends SubCommandBase {
         .setStateMachine(stateMachine).setProperties(properties)
         .setGroup(raftGroup)
         .build();
+
+    FuzzerClient fuzzerClient = FuzzerClient.getInstance();
+    fuzzerClient.setServerClientPort(Integer.parseInt(serverClientPort));
+    fuzzerClient.initServer();
+    fuzzerClient.registerServer(id);
+
     raftServer.start();
 
-    for(; raftServer.getLifeCycleState() != LifeCycle.State.CLOSED;) {
-      TimeUnit.SECONDS.sleep(1);
+    boolean crashed = false;
+    for(; raftServer.getLifeCycleState() != LifeCycle.State.CLOSED || crashed;) {
+      if (fuzzerClient.shouldShutdown())
+        break;
+      
+      if (fuzzerClient.shouldCrash() && !crashed) {
+        System.out.println("Crashing server: " + id);
+        crashed = true;
+        raftServer.close();
+        fuzzerClient.crashed();
+        System.out.println("Crashed server: " + id);
+      }
+
+      if (fuzzerClient.shouldRestart() && crashed) {
+        System.out.println("Restarting server: " + id);
+
+        raftServer = RaftServer.newBuilder()
+          .setServerId(RaftPeerId.valueOf(id))
+          .setStateMachine(stateMachine).setProperties(properties)
+          .setGroup(raftGroup)
+          .build();
+        raftServer.start();
+        crashed = false;
+
+        fuzzerClient.restarted();
+        System.out.println("Restarted server: " + id);
+      }
+      TimeUnit.MILLISECONDS.sleep(1);
     }
+
+    System.out.println("Closing server: " + id);
+    if (!crashed)
+      raftServer.close();
   }
 
 }

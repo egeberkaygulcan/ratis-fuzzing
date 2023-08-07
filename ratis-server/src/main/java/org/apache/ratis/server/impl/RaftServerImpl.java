@@ -44,6 +44,9 @@ import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.server.RaftServerConfigKeys;
 import org.apache.ratis.server.RaftServerMXBean;
 import org.apache.ratis.server.RaftServerRpc;
+import org.apache.ratis.server.fuzzer.FuzzerClient;
+import org.apache.ratis.server.fuzzer.events.Event;
+import org.apache.ratis.server.fuzzer.events.StateChangeEvent;
 import org.apache.ratis.server.impl.LeaderElection.Phase;
 import org.apache.ratis.server.impl.RetryCacheImpl.CacheEntry;
 import org.apache.ratis.server.leader.FollowerInfo;
@@ -192,6 +195,8 @@ class RaftServerImpl implements RaftServer.Division,
 
   private final AtomicBoolean firstElectionSinceStartup = new AtomicBoolean(true);
   private final ThreadGroup threadGroup;
+
+  private final FuzzerClient fuzzerClient = FuzzerClient.getInstance();
 
   RaftServerImpl(RaftGroup group, StateMachine stateMachine, RaftServerProxy proxy) throws IOException {
     final RaftPeerId id = proxy.getId();
@@ -545,6 +550,7 @@ class RaftServerImpl implements RaftServer.Division,
         role.shutdownFollowerState();
       }
       role.startFollowerState(this, reason);
+      sendEvent(new StateChangeEvent("follower", getId().toString()));
       firstElectionSinceStartup.set(false);
     }
     return metadataUpdated;
@@ -568,6 +574,7 @@ class RaftServerImpl implements RaftServer.Division,
     // start sending AppendEntries RPC to followers
     final LogEntryProto e = role.startLeaderState(this);
     getState().setRaftConf(e);
+    sendEvent(new StateChangeEvent("leader", getId().toString()));
   }
 
   @Override
@@ -643,6 +650,10 @@ class RaftServerImpl implements RaftServer.Division,
       throw new IllegalStateException("incorrect role of server " + currentRole);
     }
     return roleInfo.build();
+  }
+
+  private void sendEvent(Event e) {
+    fuzzerClient.sendEvent(e);
   }
 
   synchronized void changeToCandidate(boolean forceStartLeaderElection) {

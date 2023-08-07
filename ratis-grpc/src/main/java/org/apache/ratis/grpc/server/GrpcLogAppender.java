@@ -21,10 +21,17 @@ import org.apache.ratis.conf.RaftProperties;
 import org.apache.ratis.grpc.GrpcConfigKeys;
 import org.apache.ratis.grpc.GrpcUtil;
 import org.apache.ratis.grpc.metrics.GrpcServerMetrics;
+import org.apache.ratis.grpc.server.messages.AppendEntriesMessage;
+import org.apache.ratis.grpc.server.messages.AppendEntriesReplyMessage;
+import org.apache.ratis.grpc.server.messages.AppendEntriesReplyMessage;
 import org.apache.ratis.proto.RaftProtos.InstallSnapshotResult;
+import org.apache.ratis.proto.RaftProtos.LogEntryProto;
 import org.apache.ratis.protocol.RaftPeerId;
 import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.server.RaftServerConfigKeys;
+import org.apache.ratis.server.fuzzer.FuzzerClient;
+import org.apache.ratis.server.fuzzer.comm.FuzzerCaller;
+import org.apache.ratis.server.fuzzer.messages.Message;
 import org.apache.ratis.server.leader.FollowerInfo;
 import org.apache.ratis.server.leader.LeaderState;
 import org.apache.ratis.server.leader.LogAppenderBase;
@@ -82,6 +89,9 @@ public class GrpcLogAppender extends LogAppenderBase {
   private final AutoCloseableReadWriteLock lock;
   private final StackTraceElement caller;
 
+  private final FuzzerClient fuzzerClient = FuzzerClient.getInstance();
+  private final String invokeServerId;
+
   public GrpcLogAppender(RaftServer.Division server, LeaderState leaderState, FollowerInfo f) {
     super(server, leaderState, f);
 
@@ -101,6 +111,7 @@ public class GrpcLogAppender extends LogAppenderBase {
 
     lock = new AutoCloseableReadWriteLock(this);
     caller = LOG.isTraceEnabled()? JavaUtils.getCallerStackTraceElement(): null;
+    this.invokeServerId = server.getId().toString();
   }
 
   @Override
@@ -139,7 +150,7 @@ public class GrpcLogAppender extends LogAppenderBase {
   }
 
   private boolean isFollowerCommitBehindLastCommitIndex() {
-    return getRaftLog().getLastCommittedIndex() > getFollower().getCommitIndex();
+    return getRaftLog().getLastCommittedIndex() > getFollower().getCommitIndex(); // TODO - Commit index related code
   }
 
   @Override
@@ -261,17 +272,8 @@ public class GrpcLogAppender extends LogAppenderBase {
     return CALL_ID_COMPARATOR;
   }
 
-  private void appendLog(boolean heartbeat) throws IOException {
-    final AppendEntriesRequestProto pending;
-    final AppendEntriesRequest request;
+  public void appendLog_(AppendEntriesRequestProto pending, AppendEntriesRequest request, boolean heartbeat) throws IOException {
     try (AutoCloseableLock writeLock = lock.writeLock(caller, LOG::trace)) {
-      // Prepare and send the append request.
-      // Note changes on follower's nextIndex and ops on pendingRequests should always be done under the write-lock
-      pending = newAppendEntriesRequest(callId.getAndIncrement(), heartbeat);
-      if (pending == null) {
-        return;
-      }
-      request = new AppendEntriesRequest(pending, getFollowerId(), grpcServerMetrics);
       pendingRequests.put(request);
       increaseNextIndex(pending);
       if (appendLogRequestObserver == null) {
@@ -293,6 +295,31 @@ public class GrpcLogAppender extends LogAppenderBase {
     if (isRunning()) {
       sendRequest(request, pending);
     }
+  }
+
+  private void interceptAppendEntries(Message m) {
+    fuzzerClient.interceptMessage(m);
+  }
+
+  private void appendLog(boolean heartbeat) throws IOException {
+    final AppendEntriesRequestProto pending;
+    final AppendEntriesRequest request;
+    try (AutoCloseableLock writeLock = lock.writeLock(caller, LOG::trace)) {
+      // Prepare and send the append request.
+      // Note changes on follower's nextIndex and ops on pendingRequests should always be done under the write-lock
+      pending = newAppendEntriesRequest(callId.getAndIncrement(), heartbeat);
+      if (pending == null) {
+        return;
+      }
+      request = new AppendEntriesRequest(pending, getFollowerId(), grpcServerMetrics);
+    }
+
+    if (heartbeat) {
+      appendLog_(pending, request, heartbeat);
+    } else {
+      interceptAppendEntries(new AppendEntriesMessage(pending, request, this, this.invokeServerId));
+    }
+    // interceptAppendEntries(new AppendEntriesMessage(pending, request, this, this.invokeServerId));
   }
 
   private void sendRequest(AppendEntriesRequest request, AppendEntriesRequestProto proto) {
@@ -341,9 +368,13 @@ public class GrpcLogAppender extends LogAppenderBase {
   /**
    * StreamObserver for handling responses from the follower
    */
-  private class AppendLogResponseHandler implements StreamObserver<AppendEntriesReplyProto> {
+  public class AppendLogResponseHandler implements StreamObserver<AppendEntriesReplyProto> {
     private final String name = getFollower().getName() + "-" + JavaUtils.getClassSimpleName(getClass());
+    private final FuzzerClient fuzzerClient = FuzzerClient.getInstance();
 
+    private void interceptAppendEntriesReply(Message m) {
+      fuzzerClient.interceptMessage(m);
+    }
     /**
      * After receiving a appendEntries reply, do the following:
      * 1. If the reply is success, update the follower's match index and submit
@@ -354,6 +385,10 @@ public class GrpcLogAppender extends LogAppenderBase {
      */
     @Override
     public void onNext(AppendEntriesReplyProto reply) {
+      interceptAppendEntriesReply(new AppendEntriesReplyMessage(reply, this, getServer().getId().toString()));
+    }
+
+    public void onNext_(AppendEntriesReplyProto reply) {
       AppendEntriesRequest request = pendingRequests.remove(reply);
       if (request != null) {
         request.stopRequestTimer(); // Update completion time
@@ -720,7 +755,7 @@ public class GrpcLogAppender extends LogAppenderBase {
     return null;
   }
 
-  static class AppendEntriesRequest {
+  public static class AppendEntriesRequest {
     private final Timer timer;
     private volatile Timer.Context timerContext;
 
@@ -744,7 +779,7 @@ public class GrpcLogAppender extends LogAppenderBase {
       return callId;
     }
 
-    TermIndex getPreviousLog() {
+    public TermIndex getPreviousLog() {
       return previousLog;
     }
 
