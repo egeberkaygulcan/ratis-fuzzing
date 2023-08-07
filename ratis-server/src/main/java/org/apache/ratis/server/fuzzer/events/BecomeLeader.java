@@ -7,14 +7,16 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-public class AskLeaderEvent extends Event {
+public class BecomeLeader extends Event {
 
     public static final Logger LOG = LoggerFactory.getLogger(StateChangeEvent.class);
+    private int term;
 
-    public AskLeaderEvent() {
-        this.type = "ask_leader_id";
-        this.serverId = "client";
-        LOG.info("New ask leader event on server ");
+    public BecomeLeader(int term, String serverId) {
+        this.type = "BecomeLeader";
+        this.serverId = serverId;
+        this.term = term;
+        LOG.info("New BecomeLeader event on server " + this.serverId);
     }
 
     @Override
@@ -22,6 +24,8 @@ public class AskLeaderEvent extends Event {
         JsonObject json = new JsonObject();
         json.addProperty("type", type);
         json.addProperty("server_id", serverId);
+        json.addProperty("node", serverId);
+        json.addProperty("term", term);
 
         Gson gson = GsonHelper.gson;
         return gson.toJson(json);

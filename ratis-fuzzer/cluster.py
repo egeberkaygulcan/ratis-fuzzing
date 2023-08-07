@@ -78,9 +78,6 @@ class RatisServer:
         type = event['type']
         if type == 'state_change':
             self.update_state(event['new_state'])
-        elif type == 'ask_leader_id':
-            if self.state == ServerState.LEADER:
-                self.network.send_leader_id(str(self.id))
 
     
     def validate(self):
@@ -89,9 +86,9 @@ class RatisServer:
 class RatisClient:
     def __init__(self, peers) -> None:
         self.peers = peers
-        self.req_count = 0
         self.errors = []
-        self.isAssign = True
+        # self.expected_output = []
+        # self.isAssign = True
         self.lock = threading.Lock()
         self.name_counter = 0
         self.completed_requests = 0
@@ -100,7 +97,7 @@ class RatisClient:
     
     def send_request(self, value, filepath, timeout=None):
         def run(cmd, timeout, filepath, on_exit):
-            time.sleep(0.05)
+            time.sleep(0.01)
             out, err = False, False
             try:
                 f = open(os.path.join(filepath, f'client.txt'), 'a+')
@@ -112,18 +109,21 @@ class RatisClient:
             on_exit(err)
             return
         
-        self.req_count += 1
         name = str(self.name_counter)
-        if self.isAssign:
-            cmd = f'./client_assign.sh {name} {value} {self.peers}'
-        else:
-            cmd = f'./client_get.sh {name} {self.peers}'
-            self.name_counter += 1
-        self.isAssign = not self.isAssign
+        # if self.isAssign:
+        #     cmd = f'./client_assign.sh {name} {value} {self.peers}'
+        #     self.expected_output.append('Success: true')
+        # else:
+        #     cmd = f'./client_get.sh {name} {self.peers}'
+        #     self.name_counter += 1
+        #     self.expected_output.append(f'{name}={value}')
+        # self.isAssign = not self.isAssign
+        cmd = f'./client_assign.sh {name} {value} {self.peers}'
         thread = threading.Thread(target=run, args=(cmd, timeout, filepath, self.on_exit))
         thread.start()
         self.pending_requests += 1
-        logging.info(f'Client request sent: {"assign" if self.isAssign else "get"}, {name}')
+        logging.debug('Client request sent.')
+        # logging.info(f'Client request sent: {"assign" if not self.isAssign else "get"}, {name}')
 
     def on_exit(self, err):
         self.lock.acquire()
@@ -191,7 +191,7 @@ class RatisCluster:
     def shutdown(self):
         for server in self.servers:
             self.network.send_shutdown(str(server.id))
-        time.sleep(1)
+        time.sleep(0.05)
         for server in self.servers:
             server.shutdown()
         
@@ -232,4 +232,7 @@ class RatisCluster:
     
     def get_pending_requests(self):
         return self.client.pending_requests
+    
+    def get_node_ids(self):
+        return [server.id for server in self.servers]
         

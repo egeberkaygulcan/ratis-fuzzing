@@ -5,7 +5,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.ratis.protocol.RaftPeerId;
 import org.apache.ratis.server.fuzzer.comm.FuzzerCaller;
 import org.apache.ratis.server.fuzzer.comm.GsonHelper;
 import org.apache.ratis.server.fuzzer.comm.JsonMessage;
@@ -13,7 +12,6 @@ import org.apache.ratis.server.fuzzer.comm.MessageHandler;
 import org.apache.ratis.server.fuzzer.comm.NettyRouter;
 import org.apache.ratis.server.fuzzer.comm.NettyServer;
 import org.apache.ratis.server.fuzzer.comm.Route;
-import org.apache.ratis.server.fuzzer.events.AskLeaderEvent;
 import org.apache.ratis.server.fuzzer.events.Event;
 import org.apache.ratis.server.fuzzer.messages.Message;
 
@@ -262,5 +260,9 @@ public class FuzzerClient extends Thread{
     public String getServerId() {
         return this.serverId;
     }
-
+    
+    public void clearMessageQueue() {
+        this.messageMap.clear();
+        this.messageHandler.clearMessages();
+    }
 }

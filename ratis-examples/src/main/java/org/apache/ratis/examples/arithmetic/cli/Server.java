@@ -119,11 +119,14 @@ public class Server extends SubCommandBase {
         raftServer.start();
         crashed = false;
 
+        fuzzerClient.clearMessageQueue();
         fuzzerClient.restarted();
         System.out.println("Restarted server: " + id);
       }
 
-      fuzzerClient.getAndExecuteMessages();
+      if(!crashed) {
+        fuzzerClient.getAndExecuteMessages();
+      }
       TimeUnit.MILLISECONDS.sleep(1);
     }
 

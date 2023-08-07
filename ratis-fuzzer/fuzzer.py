@@ -80,7 +80,7 @@ class Fuzzer:
         if "no_iterations" not in config:
             new_config.no_iterations = 100
         else:
-            new_config.no_iterations = 100
+            new_config.no_iterations = config["no_iterations"]
 
         if "horizon" not in config:
             new_config.horizon = 100
@@ -113,7 +113,7 @@ class Fuzzer:
             new_config.test_harness = config["test_harness"]
 
         if 'num_client_requests' not in config:
-            new_config.num_client_requests = 2
+            new_config.num_client_requests = 3
         else: 
             new_config.num_client_requests = config['num_client_requests']
 
@@ -151,90 +151,197 @@ class Fuzzer:
         # time.sleep(1)
 
         # self.cluster.shutdown()
+        print(self.config.no_iterations)
+        if self.config.exp_name == 'naive_random':
+            for i in range(self.config.no_iterations):
+                (trace, event_trace) = self.run_iteration(i)
+                # new_states = self.guider.check_new_state(trace, event_trace) 
+        else:
+            pass
+            # for i in range(self.config.init_population):
+            #     (trace, event_trace) = self.run_iteration(i)
+                # for j in range(self.config.mutations_per_trace):
+                #     self.trace_queue.append(self.mutator.mutate(trace))  
+            # new_states = self.guider.check_new_state(trace, event_trace)   
 
-        for i in range(self.config.init_population):
-            (trace, event_trace) = self.run_iteration(True)
-            # for j in range(self.config.mutations_per_trace):
-            #     self.trace_queue.append(self.mutator.mutate(trace))  
-        # new_states = self.guider.check_new_state(trace, event_trace)   
 
-        # self.cluster.shutdown()
+            # for i in range(self.config.no_iterations):
+            #     to_mimic = None
+            #     if len(self.trace_queue) > 0:
+            #         to_mimic = self.trace_queue.pop(0)
+            #     (trace, event_trace) = self.run_iteration(to_mimic)
+            #     if self.guider.check_new_state(trace, event_trace):
+            #         for j in range(self.config.mutations_per_trace):
+            #             self.trace_queue.append(self.mutator.mutate(trace))
 
-        # for i in range(self.config.no_iterations):
-        #     to_mimic = None
-        #     if len(self.trace_queue) > 0:
-        #         to_mimic = self.trace_queue.pop(0)
-        #     (trace, event_trace) = self.run_iteration(to_mimic)
-        #     if self.guider.check_new_state(trace, event_trace):
-        #         for j in range(self.config.mutations_per_trace):
-        #             self.trace_queue.append(self.mutator.mutate(trace))
-
-        # TODO: plot coverage
+            # TODO: plot coverage
 
         
 
-    def run_iteration(self, random_, schedule=None):
-        logging.info('***************** STARTING ITERATION *******************')
+    def run_iteration(self, iteration, mimic=None):
         trace = []
-        # crashed = None
+        crashed = set()
 
-        # crash_points = {}
-        # restart_points = {}
-        # schedule = []
-        # client_requests = []
-        # node_ids = list(range(1, self.config.nodes+1))
-        # if mimic is None:
-        #     for c in random.sample(range(0, self.config.horizon, 2), self.config.crash_quota):
-        #        crash_points[c] = random.choice(node_ids)
+        crash_points = {}
+        start_points = {}
+        schedule = []
+        client_requests = []
+        random_ = False
+        if mimic is None:
+            random_ = True
+            node_ids = self.cluster.get_node_ids() # list(range(1, self.config.nodes+1))
+            for c in random.sample(range(0, self.config.horizon, 2), self.config.crash_quota):
+                node_id = random.choice(node_ids)
+                crash_points[c] = node_id
+                s = random.choice(range(c, self.config.horizon))
+                start_points[s] = node_id
 
-        #     # client_requests = random.sample(range(self.config.horizon), self.config.num_client_requests)
-            
-        #     for i in range(self.config.horizon):
-        #         schedule.append(random.choice(node_ids))
-        # else:
-        #     schedule = [0 for i in range(self.config.horizon)]
-        #     for ch in mimic:
-        #         if ch["type"] == "Crash":
-        #             crash_points[ch["node"]] = ch["step"]
-        #         elif ch['type'] == 'Restart':
-        #             restart_points[ch['node']] = ch['step']
-        #         elif ch["type"] == "Schedule":
-        #             schedule[ch["step"]] = ch["node"]
-        #         elif ch["type"] == "ClientRequest":
-        #             client_requests.append(ch["step"])
+            client_requests = random.sample(range(self.config.horizon), self.config.test_harness)
+            # for choice in random.choices(node_ids, k=self.config.horizon):
+            #     schedule.append(choice)
+        else:
+            schedule = [1 for i in range(self.config.horizon)]
+            for ch in mimic:
+                if ch["type"] == "Crash":
+                    crash_points[ch["step"]] = ch["node"]
+                elif ch["type"] == "Start":
+                    start_points[ch["step"]] = ch["node"]
+                elif ch["type"] == "Schedule":
+                    schedule[ch["step"]] = ch["node"]
+                elif ch["type"] == "ClientRequest":
+                    client_requests.append(ch["step"])
 
+        # def record_logs(record_path, cluster):
+        #     LOG.debug("Recording logs to path: {}".format(record_path))
+        #     with open(record_path, "w") as record_file:
+        #         lines = []
+        #         for _id, logs in cluster.get_log_lines().items():
+        #             lines.append("Log for node: {}\n".format(_id))
+        #             lines.append("------ Stdout -----\n")
+        #             for line in logs["stdout"]:
+        #                 lines.append(line+"\n")
+        #             lines.append("------ Stderr -----\n")
+        #             for line in logs["stderr"]:
+        #                 lines.append(line+"\n")
+        #             lines.append("\n\n")
+        #         record_file.writelines(lines)
 
+        logging.debug("Creating cluster")
         self.cluster.start(0)
         while self.network.check_replicas(self.config.nodes):
             time.sleep(0.001)
-
-        node_ids = []
+        event_trace = []
+        pending_requests = 0
         try:
-            if random_:
-                for i in tqdm(range(self.config.horizon), disable=not self.args.verbose):
-                    if self.cluster.get_completed_requests() >= self.config.num_client_requests:
-                        break
+            for i in tqdm(range(self.config.horizon), disable=not self.args.verbose):
+                if self.cluster.check_timeout():
+                    break
+                logging.debug("Taking step {}".format(i))
+                if i in start_points and start_points[i] in crashed:
+                    node_id = start_points[i]
+                    logging.info(f"Starting crashed node {node_id}")
+                    # self.cluster.node(node_id).start()
+                    self.network.send_restart(str(node_id))
+                    trace.append({"type": "Start", "node": node_id, "step": i})
+                    self.network.add_event({"name": "Add", "params": {"i": node_id}})
+                    crashed.remove(node_id)
+                
+                if i in crash_points:
+                    node_id = crash_points[i]
+                    logging.info(f"Crashing node {node_id}")
+                    if node_id not in crashed:
+                        self.network.send_crash(str(node_id))
+                    crashed.add(node_id)
+                    trace.append({"type": "Crash", "node": node_id, "step": i})
+                    self.network.add_event({"name": "Remove", "params": {"i": node_id}})
+                                
+                # for node_id in self.cluster.node_ids():
+                #     logging.debug("Updating state of node: {}".format(node_id))
+                #     if node_id not in crashed:
+                #         info = self.cluster.node(node_id).info()
+                #         state = info['raft_role']
+                #         lastlog_index = int(info["raft_current_index"])
+                #         commit_index = int(info["raft_commit_index"])
+                #         term = int(info["raft_current_term"])
+                #         self.network.add_event({"name": "UpdateState", "params": {"i": node_id, "state": state, "last_index": lastlog_index, "commit_index": commit_index, "term": term}})
+                if random_:
+                    node_id = -1
                     node_ids = self.network.check_mailboxes()
                     while len(node_ids) == 0:
                         time.sleep(0.001)
                         node_ids = self.network.check_mailboxes()
-                    if self.cluster.get_leader() is not None and self.cluster.get_pending_requests() < self.config.num_client_requests:
-                        node_ids.append(0)
-                    node_id = random.sample(node_ids, 1)[0]
-                    if node_id == 0:
-                        self.cluster.send_client_request()
-                    else:
-                        # logging.info(f'Scheduling: {node_id}')
-                        self.network.schedule_replica(str(node_id))
-                    trace.append(node_id)
-                    node_ids = []
-        except Exception as e:
-            logging.error(f'Exception on fuzzer loop: {e}')
-            traceback.print_exc(e)
-        finally:
-            self.cluster.shutdown()
-            event_trace = self.network.get_event_trace()
-            self.network.clear_mailboxes()
+                    node_id = random.choice(node_ids)
+                else:
+                    node_id = str(schedule[i])
+                    node_ids = self.network.check_mailboxes()
+                    while node_id not in node_ids:
+                        time.sleep(0.001)
+                        node_ids = self.network.check_mailboxes()
+                self.network.schedule_replica(node_id)
+                trace.append({"type": "Schedule", "node": node_id, "step": i, "max_messages": node_id})
 
+                if i in client_requests:
+                    try:
+                        logging.debug("Executing client request")                        
+                        # self.cluster.execute_async('INCRBY', 'counter', 1, with_retry=False)
+                        pending_requests += 1
+                    except:
+                        pass
+                    # trace.append({"type": "ClientRequest", "step": i})
+                
+                if self.cluster.get_leader() is not None:
+                    for _ in range(pending_requests):
+                        self.cluster.send_client_request()
+                        pending_requests -= 1
+                        trace.append({"type": "ClientRequest", "step": i})
+        except Exception as e:
+            print(e)
+            # record_logs(path.join(self.config.report_path, "{}_{}.log".format(self.config.record_file_prefix, iteration)), cluster)
+        finally:
+            logging.debug("Destroying cluster")
+            try:
+                self.cluster.shutdown()
+            except:
+                pass
+                # record_logs(path.join(self.config.report_path, "{}_{}.log".format(self.config.record_file_prefix, iteration)), cluster)
+
+        event_trace = self.network.get_event_trace()
+        self.network.clear_mailboxes()
 
         return (trace, event_trace)
+        # logging.info('***************** STARTING ITERATION *******************')
+        # trace = []
+        # self.cluster.start(0)
+        # while self.network.check_replicas(self.config.nodes):
+        #     time.sleep(0.001)
+
+        # node_ids = []
+        # try:
+        #     if random_:
+        #         for i in tqdm(range(self.config.horizon), disable=not self.args.verbose):
+        #             if self.cluster.get_completed_requests() >= self.config.num_client_requests:
+        #                 break
+        #             node_ids = self.network.check_mailboxes()
+        #             while len(node_ids) == 0:
+        #                 time.sleep(0.001)
+        #                 node_ids = self.network.check_mailboxes()
+        #             if self.cluster.get_leader() is not None and self.cluster.get_pending_requests() < self.config.num_client_requests:
+        #                 node_ids.append(0)
+        #             node_id = random.sample(node_ids, 1)[0]
+        #             if node_id == 0:
+        #                 self.cluster.send_client_request()
+        #             else:
+        #                 # logging.info(f'Scheduling: {node_id}')
+        #                 self.network.schedule_replica(str(node_id))
+        #             trace.append(node_id)
+        #             node_ids = []
+        # except Exception as e:
+        #     logging.error(f'Exception on fuzzer loop: {e}')
+        #     traceback.print_exc(e)
+        # finally:
+        #     self.cluster.shutdown()
+        #     event_trace = self.network.get_event_trace()
+        #     self.network.clear_mailboxes()
+
+
+        # return (trace, event_trace)

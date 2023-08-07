@@ -25,6 +25,7 @@ import org.apache.ratis.server.DivisionInfo;
 import org.apache.ratis.server.RaftConfiguration;
 import org.apache.ratis.server.RaftServerConfigKeys;
 import org.apache.ratis.server.fuzzer.FuzzerClient;
+import org.apache.ratis.server.fuzzer.events.BecomeLeader;
 import org.apache.ratis.server.protocol.TermIndex;
 import org.apache.ratis.server.util.ServerStringUtils;
 import org.apache.ratis.thirdparty.com.google.common.annotations.VisibleForTesting;
@@ -189,11 +190,13 @@ class LeaderElection implements Runnable {
   private final RaftServerImpl server;
   private final boolean skipPreVote;
   private final ConfAndTerm round0;
+  private int term_;
 
   private final FuzzerClient fuzzerClient = FuzzerClient.getInstance();
 
   LeaderElection(RaftServerImpl server, boolean force) {
     this.name = server.getMemberId() + "-" + JavaUtils.getClassSimpleName(getClass()) + COUNT.incrementAndGet();
+    this.term_ = -1;
     this.lifeCycle = new LifeCycle(this);
     this.daemon = Daemon.newBuilder().setName(name).setRunnable(this)
         .setThreadGroup(server.getThreadGroup()).build();
@@ -250,6 +253,7 @@ class LeaderElection implements Runnable {
         if (skipPreVote || askForVotes(Phase.PRE_VOTE, round)) {
           if (askForVotes(Phase.ELECTION, round)) {
             server.changeToLeader();
+            fuzzerClient.sendEvent(new BecomeLeader(this.term_, server.getId().toString()));
           }
         }
       }
@@ -321,6 +325,7 @@ class LeaderElection implements Runnable {
       final ConfAndTerm confAndTerm = (round == 0 && round0 != null) ?
           round0 : server.getState().initElection(phase);
       electionTerm = confAndTerm.getTerm();
+      this.term_ = (int) electionTerm;
       conf = confAndTerm.getConf();
     }
 

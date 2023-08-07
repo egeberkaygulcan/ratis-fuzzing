@@ -85,4 +85,10 @@ public class MessageHandler{
         lock.unlock();
         return result;
     }
+
+    public void clearMessages() {
+        lock.lock();
+        messages.clear();
+        lock.unlock();
+    }
 }

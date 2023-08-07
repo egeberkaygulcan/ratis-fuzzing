@@ -222,14 +222,57 @@ class Network:
         return Response.json(HTTPStatus.OK, json.dumps({"message": "Ok"}))
     
     def _handle_event(self, request: Request) -> Response:
+        logging.debug("Received event: {}".format(request.content))
         event = json.loads(request.content)
-        if event is not None:
+        if "server_id" in event:
+            try:
+                params = self._map_event_params(event)
+                e = {"name": event["type"], "params": params}
+                if params != None:
+                    e["params"]["replica"] = event["replica"]
+                    self.lock.acquire()
+                    self.event_trace.append(e)
+            finally:
+                if self.lock.locked():
+                    self.lock.release()
+
+        return Response.json(HTTPStatus.OK, json.dumps({"message": "Ok"}))
+    
+    
+    def _map_event_params(self, event):
+        if event["type"] == "ClientRequest":
+            return {
+                "leader": int(event["params"]["leader"]),
+                "request": self._get_request_number(event["params"]["request"])
+            }
+        elif event["type"] == "B":
+            return {
+                "node": int(event["params"]["node"]),
+                "term": int(event["params"]["term"])
+            }
+        elif event["type"] == "Timeout":
+            return {
+                "node": int(event["params"]["node"])
+            }
+        elif event["type"] == "MembershipChange":
+            return {
+                "action": event["params"]["action"],
+                "node": int(event["params"]["node"])
+            }
+        elif event["type"] == "UpdateSnapshot":
+            return {
+                "node": int(event["params"]["node"]),
+                "snapshot_index": int(event["params"]["snapshot_index"]),
+            }
+        elif event["type"] == 'state_change':
             try:
                 self.lock.acquire()
                 self.event_callbacks[event['server_id']](event)
             finally:
                 self.lock.release()
-        return Response.json(HTTPStatus.OK, json.dumps({"message": "Ok"}))
+            return None
+        else:
+            -1
     
     def set_event_callback(self, server_id, callback):
         try:
@@ -307,7 +350,7 @@ class Network:
             self.lock.release()
     
     def send_crash(self, replica):
-        logging.info(f'Sending crash to {replica}')
+        # logging.info(f'Sending crash to {replica}')
         try:
             self.lock.acquire()
             addr = self.replicas[replica]["addr"]
@@ -319,7 +362,7 @@ class Network:
             self.lock.release()
     
     def send_restart(self, replica):
-        logging.info(f'Sending restart to {replica}')
+        # logging.info(f'Sending restart to {replica}')
         try:
             self.lock.acquire()
             addr = self.replicas[replica]["addr"]
