@@ -94,11 +94,13 @@ class RatisClient:
         self.isAssign = True
         self.lock = threading.Lock()
         self.name_counter = 0
+        self.completed_requests = 0
+        self.pending_requests = 0
         logging.info('RatisClient created.')
     
     def send_request(self, value, filepath, timeout=None):
         def run(cmd, timeout, filepath, on_exit):
-            
+            time.sleep(0.05)
             out, err = False, False
             try:
                 f = open(os.path.join(filepath, f'client.txt'), 'a+')
@@ -112,7 +114,6 @@ class RatisClient:
         
         self.req_count += 1
         name = str(self.name_counter)
-        logging.info(f'Client request sent: {"assign" if self.isAssign else "get"}, {name}')
         if self.isAssign:
             cmd = f'./client_assign.sh {name} {value} {self.peers}'
         else:
@@ -121,10 +122,13 @@ class RatisClient:
         self.isAssign = not self.isAssign
         thread = threading.Thread(target=run, args=(cmd, timeout, filepath, self.on_exit))
         thread.start()
+        self.pending_requests += 1
+        logging.info(f'Client request sent: {"assign" if self.isAssign else "get"}, {name}')
 
     def on_exit(self, err):
         self.lock.acquire()
         self.errors.append(err)
+        self.completed_requests += 1
         self.lock.release()
     
     def reset(self):
@@ -222,4 +226,10 @@ class RatisCluster:
             if server.timeout_:
                 return True
         return False
+
+    def get_completed_requests(self):
+        return self.client.completed_requests
+    
+    def get_pending_requests(self):
+        return self.client.pending_requests
         

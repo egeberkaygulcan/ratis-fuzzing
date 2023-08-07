@@ -3,6 +3,7 @@ import json
 import random
 import requests
 import logging
+import traceback
 
 from tqdm import tqdm
 from network import Network
@@ -82,7 +83,7 @@ class Fuzzer:
             new_config.no_iterations = 100
 
         if "horizon" not in config:
-            new_config.horizon = 50
+            new_config.horizon = 100
         else:
             new_config.horizon = config["horizon"]
 
@@ -112,7 +113,7 @@ class Fuzzer:
             new_config.test_harness = config["test_harness"]
 
         if 'num_client_requests' not in config:
-            new_config.num_client_requests = 1
+            new_config.num_client_requests = 2
         else: 
             new_config.num_client_requests = config['num_client_requests']
 
@@ -154,7 +155,8 @@ class Fuzzer:
         for i in range(self.config.init_population):
             (trace, event_trace) = self.run_iteration(True)
             # for j in range(self.config.mutations_per_trace):
-            #     self.trace_queue.append(self.mutator.mutate(trace))     
+            #     self.trace_queue.append(self.mutator.mutate(trace))  
+        # new_states = self.guider.check_new_state(trace, event_trace)   
 
         # self.cluster.shutdown()
 
@@ -205,80 +207,34 @@ class Fuzzer:
         self.cluster.start(0)
         while self.network.check_replicas(self.config.nodes):
             time.sleep(0.001)
-        
-        sent_client_requests = 0
+
         node_ids = []
-        if random_:
-            for i in tqdm(range(self.config.horizon), disable=not self.args.verbose):
-                if self.cluster.check_timeout():
-                    break
-                node_ids = self.network.check_mailboxes()
-                while len(node_ids) == 0:
-                    time.sleep(0.0001)
+        try:
+            if random_:
+                for i in tqdm(range(self.config.horizon), disable=not self.args.verbose):
+                    if self.cluster.get_completed_requests() >= self.config.num_client_requests:
+                        break
                     node_ids = self.network.check_mailboxes()
-                if self.cluster.get_leader() is not None and sent_client_requests < self.config.num_client_requests:
-                    node_ids.append(0)
-                node_id = random.sample(node_ids, 1)[0]
-                if node_id == 0:
-                    self.cluster.send_client_request()
-                    sent_client_requests += 1
-                else:
-                    self.network.schedule_replica(str(node_id))
-                trace.append(node_id)
-                node_ids = []
-            # if self.cluster.check_infinite_loop():
-            #     # TODO - mark as error
-            #     break
-            # if self.cluster.get_leader() is not None:
-            #     self.cluster.schedule_leader()
-            #     continue
+                    while len(node_ids) == 0:
+                        time.sleep(0.001)
+                        node_ids = self.network.check_mailboxes()
+                    if self.cluster.get_leader() is not None and self.cluster.get_pending_requests() < self.config.num_client_requests:
+                        node_ids.append(0)
+                    node_id = random.sample(node_ids, 1)[0]
+                    if node_id == 0:
+                        self.cluster.send_client_request()
+                    else:
+                        # logging.info(f'Scheduling: {node_id}')
+                        self.network.schedule_replica(str(node_id))
+                    trace.append(node_id)
+                    node_ids = []
+        except Exception as e:
+            logging.error(f'Exception on fuzzer loop: {e}')
+            traceback.print_exc(e)
+        finally:
+            self.cluster.shutdown()
+            event_trace = self.network.get_event_trace()
+            self.network.clear_mailboxes()
 
-            # node_id = schedule[i]
-            # while self.network.check_mailbox(str(node_id)):
-            #     time.sleep(0.001)
-            
-                
-            # if i in restart_points:
-            #     pass
-            #     node_id = restart_points[i]
-            #     self.cluster.restart(node_id)
-            #     trace.append({"type": "Restart", "node": node_id, "step": i})
-            #     self.network.add_event({"name": "Add", "params": {"i": node_id}})
-            
-            # if i in crash_points:
-            #     node_id = crash_points[i]
-            #     self.cluster.crash(node_id)
-            #     trace.append({"type": "Crash", "node": node_id, "step": i})
-            #     self.network.add_event({"name": "Remove", "params": {"i": node_id}})
-            
-            # if i in client_requests:
-            #     self.cluster.send_client_request()
-            #     trace.append({"type": "ClientRequest", "step": i})
-            #     self.network.add_event({"name": "Client", "step": i})
-            
-            # if self.cluster.get_leader() is not None and first_request < 1:
-            #     time.sleep(0.1)
-            #     first_request += 1
-            #     self.cluster.send_client_request()
-            #     trace.append({"type": "ClientRequest", "step": i})
-            #     self.network.add_event({"name": "Client", "step": i})
-
-            
-            # # for node_id in self.cluster.node_ids():
-            # #     state = self.cluster.node(node_id).info()['raft_role']
-            # #     self.network.add_event({"name": "UpdateState", "params": {"state": state}})
-            # # logging.info('*-*-*-* Scheduling node {} , {} / {} *-*-*-*'.format(schedule[i], i+1, self.config.horizon))
-            # self.network.schedule_replica(schedule[i])
-            # trace.append({"type": "Schedule", "node": schedule[i], "step": i})
-
-                
-        
-        # TODO - check for correctness, == horizon & client req & term & leaderid
-        # TODO - check for execution error
-        # kill subprocess
-
-        self.cluster.shutdown()
-        event_trace = self.network.get_event_trace()
-        self.network.clear_mailboxes()
 
         return (trace, event_trace)

@@ -90,9 +90,10 @@ public class Server extends SubCommandBase {
     FuzzerClient fuzzerClient = FuzzerClient.getInstance();
     fuzzerClient.setServerClientPort(Integer.parseInt(serverClientPort));
     fuzzerClient.initServer();
-    fuzzerClient.registerServer(id);
 
     raftServer.start();
+    fuzzerClient.registerServer(id);
+    System.out.println("Registering server");
 
     boolean crashed = false;
     for(; raftServer.getLifeCycleState() != LifeCycle.State.CLOSED || crashed;) {
@@ -121,6 +122,8 @@ public class Server extends SubCommandBase {
         fuzzerClient.restarted();
         System.out.println("Restarted server: " + id);
       }
+
+      fuzzerClient.getAndExecuteMessages();
       TimeUnit.MILLISECONDS.sleep(1);
     }
 

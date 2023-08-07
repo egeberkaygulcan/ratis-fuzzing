@@ -51,8 +51,6 @@ public class MessageHandler{
             HashMap<String, String> params = new HashMap<String, String>();
             params.put("message_id", m.getId());
 
-            fuzzerClient.getAndExecuteMessages();
-
             return new DefaultFullHttpResponse(
                     req.protocolVersion(),
                     HttpResponseStatus.OK,

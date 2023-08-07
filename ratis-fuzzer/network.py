@@ -287,7 +287,8 @@ class Network:
             try:
                 requests.post("http://"+addr_list[i]+"/message", json=json.dumps(next_msg.__dict__))
             except:
-                logging.error(f'COULD NOT SEND MESSAGE')
+                pass
+                # logging.error(f'COULD NOT SEND MESSAGE')
                 # store {replica} , {next_msg}
             finally:
                 continue
