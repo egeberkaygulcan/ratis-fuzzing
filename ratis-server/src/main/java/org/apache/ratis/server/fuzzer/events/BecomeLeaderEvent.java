@@ -7,12 +7,12 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-public class BecomeLeader extends Event {
+public class BecomeLeaderEvent extends Event {
 
     public static final Logger LOG = LoggerFactory.getLogger(StateChangeEvent.class);
     private int term;
 
-    public BecomeLeader(int term, String serverId) {
+    public BecomeLeaderEvent(int term, String serverId) {
         this.type = "BecomeLeader";
         this.serverId = serverId;
         this.term = term;

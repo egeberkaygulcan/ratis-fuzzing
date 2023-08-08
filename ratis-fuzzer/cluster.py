@@ -122,7 +122,7 @@ class RatisClient:
         thread = threading.Thread(target=run, args=(cmd, timeout, filepath, self.on_exit))
         thread.start()
         self.pending_requests += 1
-        logging.debug('Client request sent.')
+        logging.info('Client request sent.')
         # logging.info(f'Client request sent: {"assign" if not self.isAssign else "get"}, {name}')
 
     def on_exit(self, err):
@@ -158,7 +158,7 @@ class RatisCluster:
         path = os.path.join(self.config.parent_dir, '_'.join([self.config.exp_name, str(self.run_id)]))
         timeout = 15 if self.average_run_time == 0 else int(math.ceil(self.average_run_time)) + 1
         # TODO - Add write-write-read loop
-        self.client.send_request(0, path, timeout)
+        self.client.send_request(self.client_request_counter, path, timeout)
         self.client_request_counter += 1
 
     def validate(self):
@@ -196,6 +196,7 @@ class RatisCluster:
             server.shutdown()
         
         self.network.shutdown()
+        # self.reset()
         cmd = './stop-all.sh'
         subprocess.run(cmd, shell=True)
         logging.info('RatisCluster shut down.')

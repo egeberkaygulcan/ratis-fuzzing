@@ -144,6 +144,8 @@ class Network:
         self.event_callbacks = {}
         self.event_trace = []
         self.config = config
+        self.client_request_counter = 0
+        self.started = False
 
         router = Router()
         router.add_route("/replica", self._handle_replica)
@@ -154,8 +156,10 @@ class Network:
         self.server_thread = Thread(target=self.server.serve_forever)
 
     def run(self):
-        self.server_thread.start()
-        logging.info('Network started.')
+        if not self.started:
+            self.server_thread.start()
+            self.started = True
+            logging.info('Network started.')
     
     def shutdown(self):
         self.server.shutdown()
@@ -203,6 +207,58 @@ class Network:
 
         return Response.json(HTTPStatus.OK, json.dumps({"message": "Ok"}))
 
+    def _get_message_event_params(self, msg):
+        if msg.type == "append_entries_request":
+            return {
+                "type": "MsgApp",
+                "term": msg.msg["term"],
+                "from": int(msg.fr),
+                "to": int(msg.to),
+                "log_term": msg.msg["prev_log_term"], 
+                "entries": [{"Term": e["term"], "Data": str(self._get_request_number(e["data"].encode("utf-8")))} for e in msg.msg["entries"] if e["data"] != ""],
+                "index": msg.msg["prev_log_idx"],
+                "commit": msg.msg["leader_commit"],
+                "reject": False,
+            }
+        elif msg.type == "append_entries_response":
+            return {
+                "type": "MsgAppResp",
+                "term": msg.msg["term"],
+                "from": int(msg.fr),
+                "to": int(msg.to),
+                "log_term": 0, 
+                "entries": [],
+                "index": msg.msg["current_idx"],
+                "commit": 0,
+                "reject": msg.msg["success"] == 0,
+            }
+        elif msg.type == "request_vote_request":
+            return {
+                "type": "MsgVote",
+                "term": msg.msg["term"],
+                "from": int(msg.fr),
+                "to": int(msg.to),
+                "log_term": msg.msg["last_log_term"],
+                "entries": [],
+                "index": msg.msg["last_log_idx"],
+                "commit": 0,
+                "reject": False,
+            }
+        elif msg.type == "request_vote_response":
+            return {
+                "type": "MsgVoteResp",
+                "term": msg.msg["term"],
+                "from": int(msg.fr),
+                "to": int(msg.to),
+                "log_term": 0,
+                "entries": [],
+                "index": 0,
+                "commit": 0,
+                "reject": msg.msg["vote_granted"] == 0,
+            }
+        return {}
+
+
     def _handle_message(self, request: Request) -> Response:
         content = json.loads(request.content)
         content['data'] = json.loads(base64.b64decode(content["data"]).decode('utf-8'))
@@ -218,18 +274,19 @@ class Network:
                 self.mailboxes[msg.to].append(msg)
             finally:
                 self.lock.release()
+            # self.add_event({"name": "SendMessage", "params": self._get_message_event_params(msg)})
 
         return Response.json(HTTPStatus.OK, json.dumps({"message": "Ok"}))
     
     def _handle_event(self, request: Request) -> Response:
-        logging.debug("Received event: {}".format(request.content))
+        logging.info("Received event: {}".format(request.content))
         event = json.loads(request.content)
         if "server_id" in event:
             try:
                 params = self._map_event_params(event)
                 e = {"name": event["type"], "params": params}
                 if params != None:
-                    e["params"]["replica"] = event["replica"]
+                    e["params"]["replica"] = event["server_id"]
                     self.lock.acquire()
                     self.event_trace.append(e)
             finally:
@@ -241,28 +298,29 @@ class Network:
     
     def _map_event_params(self, event):
         if event["type"] == "ClientRequest":
+            self.client_request_counter += 1
             return {
-                "leader": int(event["params"]["leader"]),
-                "request": self._get_request_number(event["params"]["request"])
+                "leader": int(event["leader"]),
+                "request": self.client_request_counter-1
             }
-        elif event["type"] == "B":
+        elif event["type"] == "BecomeLeader":
             return {
-                "node": int(event["params"]["node"]),
-                "term": int(event["params"]["term"])
+                "node": int(event["node"]),
+                "term": int(event["term"])
             }
         elif event["type"] == "Timeout":
             return {
-                "node": int(event["params"]["node"])
+                "node": int(event["node"])
             }
         elif event["type"] == "MembershipChange":
             return {
-                "action": event["params"]["action"],
-                "node": int(event["params"]["node"])
+                "action": event["action"],
+                "node": int(event["node"])
             }
         elif event["type"] == "UpdateSnapshot":
             return {
-                "node": int(event["params"]["node"]),
-                "snapshot_index": int(event["params"]["snapshot_index"]),
+                "node": int(event["node"]),
+                "snapshot_index": int(event["snapshot_index"]),
             }
         elif event["type"] == 'state_change':
             try:

@@ -20,6 +20,7 @@ package org.apache.ratis.server.impl;
 import org.apache.ratis.server.DivisionInfo;
 import org.apache.ratis.server.fuzzer.FuzzerClient;
 import org.apache.ratis.server.fuzzer.events.StateChangeEvent;
+import org.apache.ratis.server.fuzzer.events.TimeoutEvent;
 import org.apache.ratis.server.leader.LeaderState;
 import org.apache.ratis.util.Daemon;
 import org.apache.ratis.util.JavaUtils;
@@ -149,6 +150,7 @@ class FollowerState extends Daemon {
             server.getLeaderElectionMetrics().onLeaderElectionTimeout(); // Update timeout metric counters.
             // election timeout, should become a candidate
             fuzzerClient.sendEvent(new StateChangeEvent("candidate", server.getId().toString()));
+            fuzzerClient.sendEvent(new TimeoutEvent(server.getId().toString()));
             server.changeToCandidate(false);
             break;
           }

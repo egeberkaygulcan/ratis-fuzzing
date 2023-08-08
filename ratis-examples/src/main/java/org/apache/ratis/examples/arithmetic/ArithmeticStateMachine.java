@@ -24,6 +24,9 @@ import org.apache.ratis.proto.RaftProtos.RaftPeerRole;
 import org.apache.ratis.protocol.Message;
 import org.apache.ratis.protocol.RaftGroupId;
 import org.apache.ratis.server.RaftServer;
+import org.apache.ratis.server.fuzzer.FuzzerClient;
+import org.apache.ratis.server.fuzzer.comm.FuzzerCaller;
+import org.apache.ratis.server.fuzzer.events.SnapshotUpdateEvent;
 import org.apache.ratis.server.protocol.TermIndex;
 import org.apache.ratis.server.raftlog.RaftLog;
 import org.apache.ratis.server.storage.FileInfo;
@@ -57,6 +60,7 @@ public class ArithmeticStateMachine extends BaseStateMachine {
   private final SimpleStateMachineStorage storage = new SimpleStateMachineStorage();
 
   private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
+  private final FuzzerClient fuzzerClient = FuzzerClient.getInstance();
 
   private AutoCloseableLock readLock() {
     return AutoCloseableLock.acquire(lock.readLock());
@@ -108,6 +112,7 @@ public class ArithmeticStateMachine extends BaseStateMachine {
     final MD5Hash md5 = MD5FileUtil.computeAndSaveMd5ForFile(snapshotFile);
     final FileInfo info = new FileInfo(snapshotFile.toPath(), md5);
     storage.updateLatestSnapshot(new SingleFileSnapshotInfo(info, last));
+    fuzzerClient.sendEvent(new SnapshotUpdateEvent((int)last.getIndex(), getId().toString()));
     return last.getIndex();
   }
 

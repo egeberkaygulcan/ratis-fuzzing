@@ -45,7 +45,6 @@ import org.apache.ratis.server.RaftServerConfigKeys;
 import org.apache.ratis.server.RaftServerMXBean;
 import org.apache.ratis.server.RaftServerRpc;
 import org.apache.ratis.server.fuzzer.FuzzerClient;
-import org.apache.ratis.server.fuzzer.events.BecomeLeader;
 import org.apache.ratis.server.fuzzer.events.Event;
 import org.apache.ratis.server.fuzzer.events.StateChangeEvent;
 import org.apache.ratis.server.impl.LeaderElection.Phase;

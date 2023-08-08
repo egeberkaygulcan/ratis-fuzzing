@@ -73,9 +73,15 @@ public class AppendEntriesMessage extends Message {
             entryJson.addProperty("term", (double) entry.getTerm());
             entryJson.addProperty("id", (int) entry.getIndex());
             entryJson.addProperty("session", ""); // Not applicable for Ratis
-            entryJson.addProperty("type", -1); // Not applicable for Ratis
-            entryJson.addProperty("data", entry.getStateMachineLogEntry().getLogData().toStringUtf8());
+            entryJson.addProperty("type", "str"); // Not applicable for Ratis
+            entryJson.addProperty("data_len", entry.getStateMachineLogEntry().getStateMachineEntry().toString().length());
+            if (entry.getStateMachineLogEntry().getLogData().size() > 0) {
+                entryJson.addProperty("data", entry.getAllFields().toString());
+            } else {
+                entryJson.addProperty("data", "");
+            }
             entries.add(Integer.toString(i), entryJson);
+            System.out.println(entry.getAllFields().toString());
             i++;
         }
         json.add("entries", entries);

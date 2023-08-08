@@ -25,7 +25,7 @@ import org.apache.ratis.server.DivisionInfo;
 import org.apache.ratis.server.RaftConfiguration;
 import org.apache.ratis.server.RaftServerConfigKeys;
 import org.apache.ratis.server.fuzzer.FuzzerClient;
-import org.apache.ratis.server.fuzzer.events.BecomeLeader;
+import org.apache.ratis.server.fuzzer.events.BecomeLeaderEvent;
 import org.apache.ratis.server.protocol.TermIndex;
 import org.apache.ratis.server.util.ServerStringUtils;
 import org.apache.ratis.thirdparty.com.google.common.annotations.VisibleForTesting;
@@ -253,7 +253,7 @@ class LeaderElection implements Runnable {
         if (skipPreVote || askForVotes(Phase.PRE_VOTE, round)) {
           if (askForVotes(Phase.ELECTION, round)) {
             server.changeToLeader();
-            fuzzerClient.sendEvent(new BecomeLeader(this.term_, server.getId().toString()));
+            fuzzerClient.sendEvent(new BecomeLeaderEvent(this.term_, server.getId().toString()));
           }
         }
       }

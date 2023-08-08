@@ -1,3 +1,4 @@
+import os
 import time
 import json
 import random
@@ -46,6 +47,47 @@ class TLCGuider:
             return have_new
         return False
     
+class TLCGuider:
+    def __init__(self, tlc_addr, record_path) -> None:
+        self.tlc_addr = tlc_addr
+        self.record_path = record_path
+        self.states = {}
+    
+    def check_new_state(self, trace, event_trace, name, record = False) -> int:
+        trace_to_send = event_trace
+        trace_to_send.append({"reset": True})
+        logging.debug("Sending trace to TLC: {}".format(trace_to_send))
+        try:
+            r = requests.post("http://"+self.tlc_addr+"/execute", json=trace_to_send)
+            if r.ok:
+                response = r.json()
+                logging.debug("Received response from TLC: {}".format(response))               
+                new_states = 0
+                for i in range(len(response["states"])):
+                    tlc_state = {"state": response["states"][i], "key" : response["keys"][i]}
+                    if tlc_state["key"] not in self.states:
+                        self.states[tlc_state["key"]] = tlc_state
+                        new_states += 1
+                if record:
+                    with open(os.path.join(self.record_path, name+".log"), "w") as record_file:
+                        lines = ["Trace sent to TLC: \n", json.dumps(trace_to_send, indent=2)+"\n\n", "Response received from TLC:\n", json.dumps(response, indent=2)+"\n"]
+                        record_file.writelines(lines)
+                return new_states
+            else:
+                logging.info("Received error response from TLC, code: {}, text: {}".format(r.status_code, r.content))
+        except Exception as e:
+            logging.info("Error received from TLC: {}".format(e))
+            pass
+
+        return 0
+    
+    def coverage(self):
+        return len(self.states.keys())
+
+    def reset(self):
+        self.states = {}
+
+    
 
 class Fuzzer:
     def __init__(self, args, config = {}) -> None:
@@ -73,7 +115,7 @@ class Fuzzer:
             tlc_addr = "127.0.0.1:2023"
             if "tlc_addr" in config:
                 tlc_addr = config["tlc_addr"]
-            new_config.guider = TLCGuider(tlc_addr)
+            new_config.guider = None # TLCGuider(tlc_addr)
         else:
             new_config.guider = config["guider"]
 
@@ -108,14 +150,9 @@ class Fuzzer:
             new_config.init_population = config["init_population"]
         
         if "test_harness" not in config:
-            new_config.test_harness = 5
+            new_config.test_harness = 3
         else:
             new_config.test_harness = config["test_harness"]
-
-        if 'num_client_requests' not in config:
-            new_config.num_client_requests = 3
-        else: 
-            new_config.num_client_requests = config['num_client_requests']
 
         if 'num_concurrent_client_requests' not in config:
             new_config.num_concurrent_client_requests = 1
@@ -155,7 +192,16 @@ class Fuzzer:
         if self.config.exp_name == 'naive_random':
             for i in range(self.config.no_iterations):
                 (trace, event_trace) = self.run_iteration(i)
+                # new_states = self.guider.check_new_state(trace, event_trace, str(i), record=False)
+                # print(new_states)
+                # if new_states > 0:
+                #     for j in range(new_states * self.config.mutations_per_trace):
+                #         mutated_trace = self.mutator.mutate(trace)
+                #         if mutated_trace is not None:
+                #             self.trace_queue.append(mutated_trace)
+                # self.trace_queue.append(trace)
                 # new_states = self.guider.check_new_state(trace, event_trace) 
+            # (trace, event_trace) = self.run_iteration(1, mimic=self.trace_queue.pop(0))
         else:
             pass
             # for i in range(self.config.init_population):
@@ -179,6 +225,7 @@ class Fuzzer:
         
 
     def run_iteration(self, iteration, mimic=None):
+        logging.info('***************** STARTING ITERATION *******************')
         trace = []
         crashed = set()
 
@@ -268,6 +315,8 @@ class Fuzzer:
                     node_id = -1
                     node_ids = self.network.check_mailboxes()
                     while len(node_ids) == 0:
+                        if self.cluster.check_timeout():
+                            break
                         time.sleep(0.001)
                         node_ids = self.network.check_mailboxes()
                     node_id = random.choice(node_ids)
@@ -294,8 +343,10 @@ class Fuzzer:
                         self.cluster.send_client_request()
                         pending_requests -= 1
                         trace.append({"type": "ClientRequest", "step": i})
+                        self.network.add_event({"name": 'ClientRequest', "params": {"leader": self.cluster.get_leader(), "request": self.cluster.client_request_counter-1}})
         except Exception as e:
             print(e)
+            traceback.print_exc(e)
             # record_logs(path.join(self.config.report_path, "{}_{}.log".format(self.config.record_file_prefix, iteration)), cluster)
         finally:
             logging.debug("Destroying cluster")
