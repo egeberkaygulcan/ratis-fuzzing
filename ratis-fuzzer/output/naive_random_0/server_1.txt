@@ -1,1068 +1,209 @@
 Found /Users/berkay/Documents/Research/ratis-fuzzing/ratis-examples/target/ratis-examples-2.5.1.jar
-2023-08-09 00:27:57 INFO  RaftServer:46 - raft.rpc.type = GRPC (default)
-2023-08-09 00:27:57 INFO  GrpcConfigKeys:53 - raft.grpc.admin.host = null (fallback to raft.grpc.server.host)
-2023-08-09 00:27:57 INFO  GrpcConfigKeys:53 - raft.grpc.admin.port = 6001 (fallback to raft.grpc.server.port)
-2023-08-09 00:27:57 INFO  GrpcConfigKeys:53 - raft.grpc.client.host = null (fallback to raft.grpc.server.host)
-2023-08-09 00:27:57 INFO  GrpcConfigKeys:53 - raft.grpc.client.port = 6001 (fallback to raft.grpc.server.port)
-2023-08-09 00:27:57 INFO  GrpcConfigKeys:46 - raft.grpc.server.host = null (default)
-2023-08-09 00:27:57 INFO  GrpcConfigKeys:46 - raft.grpc.server.port = 6001 (custom)
-2023-08-09 00:27:57 INFO  GrpcService:46 - raft.grpc.message.size.max = 64MB (=67108864) (default)
-2023-08-09 00:27:57 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
-2023-08-09 00:27:57 INFO  GrpcService:46 - raft.grpc.flow.control.window = 1MB (=1048576) (default)
-2023-08-09 00:27:57 INFO  RaftServerConfigKeys:46 - raft.server.rpc.request.timeout = 3000ms (default)
-2023-08-09 00:27:57 INFO  GrpcConfigKeys:46 - raft.grpc.server.heartbeat.channel = true (default)
-2023-08-09 00:27:57 INFO  GrpcConfigKeys:46 - raft.grpc.server.async.request.thread.pool.cached = true (default)
-2023-08-09 00:27:57 INFO  GrpcConfigKeys:46 - raft.grpc.server.async.request.thread.pool.size = 32 (default)
-2023-08-09 00:27:57 INFO  DataStreamServerImpl:46 - raft.datastream.type = DISABLED (default)
-2023-08-09 00:27:57 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.proxy.cached = true (default)
-2023-08-09 00:27:57 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.proxy.size = 0 (default)
-2023-08-09 00:27:57 INFO  RaftServerConfigKeys:46 - raft.server.rpc.slowness.timeout = 60s (default)
-2023-08-09 00:27:57 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.leader.step-down.wait-time = 10s (default)
-2023-08-09 00:27:57 INFO  RaftServerConfigKeys:46 - raft.server.storage.dir = [/tmp/ratis/1] (custom)
-2023-08-09 00:27:57 INFO  RaftServer:98 - 1: addNew group-6F7570313233:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER] returns group-6F7570313233:java.util.concurrent.CompletableFuture@60410cd[Not completed]
-2023-08-09 00:27:57 INFO  RaftServer$Division:203 - 1: new RaftServerImpl for group-6F7570313233:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER] with ArithmeticStateMachine:uninitialized
-2023-08-09 00:27:57 INFO  RaftServerConfigKeys:46 - raft.server.rpc.timeout.min = 150ms (default)
-2023-08-09 00:27:57 INFO  RaftServerConfigKeys:46 - raft.server.rpc.timeout.max = 300ms (default)
-2023-08-09 00:27:57 INFO  RaftServerConfigKeys:46 - raft.server.rpc.sleep.time = 25ms (default)
-2023-08-09 00:27:57 INFO  RaftServerConfigKeys:46 - raft.server.rpc.slowness.timeout = 60s (default)
-2023-08-09 00:27:57 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.leader.step-down.wait-time = 10s (default)
-2023-08-09 00:27:57 INFO  RaftServerConfigKeys:46 - raft.server.sleep.deviation.threshold = 300ms (default)
-2023-08-09 00:27:57 INFO  RaftServer$Division:120 - 1@group-6F7570313233: ConfigurationManager, init=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null, confs=<EMPTY_MAP>
-2023-08-09 00:27:57 INFO  RaftServerConfigKeys:46 - raft.server.storage.dir = [/tmp/ratis/1] (custom)
+2023-08-09 01:23:03 INFO  RaftServer:46 - raft.rpc.type = GRPC (default)
+2023-08-09 01:23:03 INFO  GrpcConfigKeys:53 - raft.grpc.admin.host = null (fallback to raft.grpc.server.host)
+2023-08-09 01:23:03 INFO  GrpcConfigKeys:53 - raft.grpc.admin.port = 6001 (fallback to raft.grpc.server.port)
+2023-08-09 01:23:03 INFO  GrpcConfigKeys:53 - raft.grpc.client.host = null (fallback to raft.grpc.server.host)
+2023-08-09 01:23:03 INFO  GrpcConfigKeys:53 - raft.grpc.client.port = 6001 (fallback to raft.grpc.server.port)
+2023-08-09 01:23:03 INFO  GrpcConfigKeys:46 - raft.grpc.server.host = null (default)
+2023-08-09 01:23:03 INFO  GrpcConfigKeys:46 - raft.grpc.server.port = 6001 (custom)
+2023-08-09 01:23:03 INFO  GrpcService:46 - raft.grpc.message.size.max = 64MB (=67108864) (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-08-09 01:23:03 INFO  GrpcService:46 - raft.grpc.flow.control.window = 1MB (=1048576) (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.rpc.request.timeout = 3000ms (default)
+2023-08-09 01:23:03 INFO  GrpcConfigKeys:46 - raft.grpc.server.heartbeat.channel = true (default)
+2023-08-09 01:23:03 INFO  GrpcConfigKeys:46 - raft.grpc.server.async.request.thread.pool.cached = true (default)
+2023-08-09 01:23:03 INFO  GrpcConfigKeys:46 - raft.grpc.server.async.request.thread.pool.size = 32 (default)
+2023-08-09 01:23:03 INFO  DataStreamServerImpl:46 - raft.datastream.type = DISABLED (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.proxy.cached = true (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.proxy.size = 0 (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.rpc.slowness.timeout = 60s (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.leader.step-down.wait-time = 10s (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.storage.dir = [/tmp/ratis/1] (custom)
+2023-08-09 01:23:03 INFO  RaftServer:98 - 1: addNew group-6F7570313233:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER] returns group-6F7570313233:java.util.concurrent.CompletableFuture@60410cd[Not completed]
+2023-08-09 01:23:03 INFO  RaftServer$Division:203 - 1: new RaftServerImpl for group-6F7570313233:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER] with ArithmeticStateMachine:uninitialized
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.rpc.timeout.min = 150ms (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.rpc.timeout.max = 300ms (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.rpc.sleep.time = 25ms (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.rpc.slowness.timeout = 60s (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.leader.step-down.wait-time = 10s (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.sleep.deviation.threshold = 300ms (default)
+2023-08-09 01:23:03 INFO  RaftServer$Division:120 - 1@group-6F7570313233: ConfigurationManager, init=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null, confs=<EMPTY_MAP>
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.storage.dir = [/tmp/ratis/1] (custom)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.corruption.policy = EXCEPTION (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.storage.free-space.min = 0MB (=0) (default)
 RUNNING FUZZERCLIENT
-2023-08-09 00:27:57 INFO  RaftServerConfigKeys:46 - raft.server.log.corruption.policy = EXCEPTION (default)
-2023-08-09 00:27:57 INFO  RaftServerConfigKeys:46 - raft.server.storage.free-space.min = 0MB (=0) (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.notification.no-leader.timeout = 60s (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.read.timeout = 10s (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.retrycache.expirytime = 60s (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.retrycache.statistics.expirytime = 100μs (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.read.option = DEFAULT (default)
-2023-08-09 00:27:58 INFO  MetricRegistries:64 - Loaded MetricRegistries class org.apache.ratis.metrics.impl.MetricRegistriesImpl
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb] REGISTERED
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb] BIND: /127.0.0.1:7075
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] ACTIVE
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.rpc.request.timeout = 3000ms (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.install.snapshot.enabled = true (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.server.cached = true (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.server.size = 0 (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.client.cached = true (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.client.size = 0 (default)
-2023-08-09 00:27:58 INFO  RaftStorageDirectory:137 - The storage directory /private/tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233 does not exist. Creating ...
-2023-08-09 00:27:58 INFO  RaftStorageDirectory:231 - Lock on /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233/in_use.lock acquired by nodename 52305@eges-mbp.home
-2023-08-09 00:27:58 INFO  RaftStorage:96 - Storage directory /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233 has been successfully formatted.
-2023-08-09 00:27:58 WARN  StateMachine:121 - The snapshot info is null.
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.use.memory = false (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.gap = 1024 (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.read.timeout = 1000ms (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.preservation.log.num = 0 (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.size.max = 8MB (=8388608) (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.cache.num.max = 6 (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.cache.size.max = 200MB (=209715200) (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
-2023-08-09 00:27:58 INFO  SegmentedRaftLogWorker:188 - new 1@group-6F7570313233-SegmentedRaftLogWorker for RaftStorageImpl:Storage Directory /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.queue.byte-limit = 64MB (=67108864) (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.queue.element-limit = 4096 (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.size.max = 8MB (=8388608) (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.preallocated.size = 4MB (=4194304) (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.force.sync.num = 128 (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync = true (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync.timeout = 10s (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync.timeout.retry = -1 (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.write.buffer.size = 64KB (=65536) (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.unsafe-flush.enabled = false (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.async-flush.enabled = false (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.caching.enabled = false (default)
-2023-08-09 00:27:58 INFO  SegmentedRaftLogWorker:135 - 1@group-6F7570313233-SegmentedRaftLogWorker: flushIndex: setUnconditionally 0 -> -1
-2023-08-09 00:27:58 INFO  SegmentedRaftLogWorker:135 - 1@group-6F7570313233-SegmentedRaftLogWorker: safeCacheEvictIndex: setUnconditionally 0 -> -1
-2023-08-09 00:27:58 INFO  RaftServer$Division:347 - 1@group-6F7570313233: start as a follower, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-09 00:27:58 INFO  RaftServer$Division:334 - 1@group-6F7570313233: changes role from      null to FOLLOWER at term 0 for startAsFollower
-2023-08-09 00:27:58 INFO  RoleInfo:139 - 1: start 1@group-6F7570313233-FollowerState
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
-2023-08-09 00:27:58 INFO  JmxRegister:44 - Successfully registered JMX Bean with object name Ratis:service=RaftServer,group=group-6F7570313233,id=1
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.snapshot.auto.trigger.enabled = true (custom)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.snapshot.auto.trigger.threshold = 400000 (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.snapshot.retention.file.num = -1 (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.upto.snapshot.index = false (default)
-2023-08-09 00:27:58 INFO  RaftServer:400 - 1: start RPC server
-2023-08-09 00:27:58 INFO  GrpcService:302 - 1: GrpcService started, listening on 6001
-2023-08-09 00:27:58 INFO  JvmPauseMonitor:103 - JvmPauseMonitor-1: Started
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.notification.no-leader.timeout = 60s (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.read.timeout = 10s (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.retrycache.expirytime = 60s (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.retrycache.statistics.expirytime = 100μs (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.read.option = DEFAULT (default)
+2023-08-09 01:23:03 INFO  MetricRegistries:64 - Loaded MetricRegistries class org.apache.ratis.metrics.impl.MetricRegistriesImpl
+2023-08-09 01:23:03 INFO  LoggingHandler:148 - [id: 0x2ecd0a47] REGISTERED
+2023-08-09 01:23:03 INFO  LoggingHandler:148 - [id: 0x2ecd0a47] BIND: /127.0.0.1:7075
+2023-08-09 01:23:03 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] ACTIVE
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.rpc.request.timeout = 3000ms (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.install.snapshot.enabled = true (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.server.cached = true (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.server.size = 0 (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.client.cached = true (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.client.size = 0 (default)
+2023-08-09 01:23:03 INFO  RaftStorageDirectory:137 - The storage directory /private/tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233 does not exist. Creating ...
+2023-08-09 01:23:03 INFO  RaftStorageDirectory:231 - Lock on /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233/in_use.lock acquired by nodename 60637@eges-mbp.home
+2023-08-09 01:23:03 INFO  RaftStorage:96 - Storage directory /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233 has been successfully formatted.
+2023-08-09 01:23:03 WARN  StateMachine:121 - The snapshot info is null.
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.use.memory = false (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.gap = 1024 (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.read.timeout = 1000ms (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.preservation.log.num = 0 (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.size.max = 8MB (=8388608) (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.cache.num.max = 6 (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.cache.size.max = 200MB (=209715200) (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-08-09 01:23:03 INFO  SegmentedRaftLogWorker:188 - new 1@group-6F7570313233-SegmentedRaftLogWorker for RaftStorageImpl:Storage Directory /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.queue.byte-limit = 64MB (=67108864) (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.queue.element-limit = 4096 (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.size.max = 8MB (=8388608) (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.preallocated.size = 4MB (=4194304) (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.force.sync.num = 128 (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync = true (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync.timeout = 10s (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync.timeout.retry = -1 (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.write.buffer.size = 64KB (=65536) (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.unsafe-flush.enabled = false (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.async-flush.enabled = false (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.caching.enabled = false (default)
+2023-08-09 01:23:03 INFO  SegmentedRaftLogWorker:135 - 1@group-6F7570313233-SegmentedRaftLogWorker: flushIndex: setUnconditionally 0 -> -1
+2023-08-09 01:23:03 INFO  SegmentedRaftLogWorker:135 - 1@group-6F7570313233-SegmentedRaftLogWorker: safeCacheEvictIndex: setUnconditionally 0 -> -1
+2023-08-09 01:23:03 INFO  RaftServer$Division:347 - 1@group-6F7570313233: start as a follower, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-09 01:23:03 INFO  RaftServer$Division:334 - 1@group-6F7570313233: changes role from      null to FOLLOWER at term 0 for startAsFollower
+2023-08-09 01:23:03 INFO  RoleInfo:139 - 1: start 1@group-6F7570313233-FollowerState
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
+2023-08-09 01:23:03 INFO  JmxRegister:44 - Successfully registered JMX Bean with object name Ratis:service=RaftServer,group=group-6F7570313233,id=1
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.snapshot.auto.trigger.enabled = true (custom)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.snapshot.auto.trigger.threshold = 400000 (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.snapshot.retention.file.num = -1 (default)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.upto.snapshot.index = false (default)
+2023-08-09 01:23:03 INFO  RaftServer:400 - 1: start RPC server
+2023-08-09 01:23:03 INFO  GrpcService:302 - 1: GrpcService started, listening on 6001
+2023-08-09 01:23:03 INFO  JvmPauseMonitor:103 - JvmPauseMonitor-1: Started
 Registering server
-2023-08-09 00:27:58 INFO  FollowerState:148 - 1@group-6F7570313233-FollowerState: change to CANDIDATE, lastRpcElapsedTime:249758375ns, electionTimeout:245ms
-2023-08-09 00:27:58 INFO  StateChangeEvent:25 - New state change event on server 1 to candidate
-2023-08-09 00:27:58 INFO  StateChangeEvent:17 - New Timeout event on server 1
-2023-08-09 00:27:58 INFO  RoleInfo:110 - 1: shutdown 1@group-6F7570313233-FollowerState
-2023-08-09 00:27:58 INFO  RaftServer$Division:334 - 1@group-6F7570313233: changes role from  FOLLOWER to CANDIDATE at term 0 for changeToCandidate
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.pre-vote = true (default)
-2023-08-09 00:27:58 INFO  RoleInfo:139 - 1: start 1@group-6F7570313233-LeaderElection1
-2023-08-09 00:27:58 INFO  LeaderElection:332 - 1@group-6F7570313233-LeaderElection1 PRE_VOTE round 0: submit vote requests at term 0 for -1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
-2023-08-09 00:27:58 INFO  GrpcServerProtocolClient:65 - Build channel for 3
-2023-08-09 00:27:58 INFO  GrpcServerProtocolClient:65 - Build channel for 2
-2023-08-09 00:27:58 INFO  RequestVoteMessage:33 - Intercepted request vote from server 3 to 1
-2023-08-09 00:27:58 INFO  RequestVoteMessage:33 - Intercepted request vote from server 2 to 1
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xa60ff8ef, L:/127.0.0.1:7075 - R:/127.0.0.1:60316]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  RequestVoteMessage:45 - Invoking request vote on server: 1
-2023-08-09 00:27:58 INFO  RaftServer$Division:1313 - 1@group-6F7570313233: receive requestVote(PRE_VOTE, 3, group-6F7570313233, 0, (t:0, i:0))
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x779c2f5a, L:/127.0.0.1:7075 - R:/127.0.0.1:60318]
-2023-08-09 00:27:58 INFO  VoteContext:49 - 1@group-6F7570313233-CANDIDATE: accept PRE_VOTE from 3: our priority 0 <= candidate's priority 0
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  RaftServer$Division:1346 - 1@group-6F7570313233 replies to PRE_VOTE vote request: 3<-1#0:OK-t0. Peer's state: 1@group-6F7570313233:t0, leader=null, voted=, raftlog=Memoized:1@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-09 00:27:58 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 1 to 3
-2023-08-09 00:27:58 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
-2023-08-09 00:27:58 INFO  RequestVoteMessage:45 - Invoking request vote on server: 1
-2023-08-09 00:27:58 INFO  RaftServer$Division:1313 - 1@group-6F7570313233: receive requestVote(PRE_VOTE, 2, group-6F7570313233, 0, (t:0, i:0))
-2023-08-09 00:27:58 INFO  VoteContext:49 - 1@group-6F7570313233-CANDIDATE: accept PRE_VOTE from 2: our priority 0 <= candidate's priority 0
-2023-08-09 00:27:58 INFO  RaftServer$Division:1346 - 1@group-6F7570313233 replies to PRE_VOTE vote request: 2<-1#0:OK-t0. Peer's state: 1@group-6F7570313233:t0, leader=null, voted=, raftlog=Memoized:1@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-09 00:27:58 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 1 to 2
-2023-08-09 00:27:58 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
-2023-08-09 00:27:58 INFO  LeaderElection:92 - 1@group-6F7570313233-LeaderElection1: PRE_VOTE PASSED received 1 response(s) and 0 exception(s):
-2023-08-09 00:27:58 INFO  LeaderElection:96 -   Response 0: 1<-3#0:OK-t0
-2023-08-09 00:27:58 INFO  LeaderElection:334 - 1@group-6F7570313233-LeaderElection1 PRE_VOTE round 0: result PASSED
-2023-08-09 00:27:58 INFO  LeaderElection:332 - 1@group-6F7570313233-LeaderElection1 ELECTION round 0: submit vote requests at term 1 for -1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
-2023-08-09 00:27:58 INFO  RequestVoteMessage:33 - Intercepted request vote from server 2 to 1
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xd8a7a25a, L:/127.0.0.1:7075 - R:/127.0.0.1:60332]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  RequestVoteReplyMessage:44 - Invoking request vote reply on server: 1
-2023-08-09 00:27:58 INFO  RequestVoteMessage:33 - Intercepted request vote from server 3 to 1
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xc9cfb96f, L:/127.0.0.1:7075 - R:/127.0.0.1:60334]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  RequestVoteMessage:45 - Invoking request vote on server: 1
-2023-08-09 00:27:58 INFO  RaftServer$Division:1313 - 1@group-6F7570313233: receive requestVote(PRE_VOTE, 2, group-6F7570313233, 0, (t:0, i:0))
-2023-08-09 00:27:58 INFO  VoteContext:49 - 1@group-6F7570313233-CANDIDATE: accept PRE_VOTE from 2: our priority 0 <= candidate's priority 0
-2023-08-09 00:27:58 INFO  RaftServer$Division:1346 - 1@group-6F7570313233 replies to PRE_VOTE vote request: 2<-1#0:OK-t1. Peer's state: 1@group-6F7570313233:t1, leader=null, voted=1, raftlog=Memoized:1@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-09 00:27:58 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 1 to 2
-2023-08-09 00:27:58 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x257556d9, L:/127.0.0.1:7075 - R:/127.0.0.1:60339]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  RequestVoteReplyMessage:44 - Invoking request vote reply on server: 1
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x741e81a5, L:/127.0.0.1:7075 - R:/127.0.0.1:60345]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  RequestVoteMessage:45 - Invoking request vote on server: 1
-2023-08-09 00:27:58 INFO  RaftServer$Division:1313 - 1@group-6F7570313233: receive requestVote(PRE_VOTE, 3, group-6F7570313233, 0, (t:0, i:0))
-2023-08-09 00:27:58 INFO  VoteContext:49 - 1@group-6F7570313233-CANDIDATE: accept PRE_VOTE from 3: our priority 0 <= candidate's priority 0
-2023-08-09 00:27:58 INFO  RaftServer$Division:1346 - 1@group-6F7570313233 replies to PRE_VOTE vote request: 3<-1#0:OK-t1. Peer's state: 1@group-6F7570313233:t1, leader=null, voted=1, raftlog=Memoized:1@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-09 00:27:58 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 1 to 3
-2023-08-09 00:27:58 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
-2023-08-09 00:27:58 INFO  LeaderElection:92 - 1@group-6F7570313233-LeaderElection1: ELECTION PASSED received 1 response(s) and 0 exception(s):
-2023-08-09 00:27:58 INFO  LeaderElection:96 -   Response 0: 1<-3#0:OK-t1
-2023-08-09 00:27:58 INFO  LeaderElection:334 - 1@group-6F7570313233-LeaderElection1 ELECTION round 0: result PASSED
-2023-08-09 00:27:58 INFO  RoleInfo:130 - 1: shutdown 1@group-6F7570313233-LeaderElection1
-2023-08-09 00:27:58 INFO  RaftServer$Division:334 - 1@group-6F7570313233: changes role from CANDIDATE to LEADER at term 1 for changeToLeader
-2023-08-09 00:27:58 INFO  RaftServer$Division:317 - 1@group-6F7570313233: change Leader from null to 1 at term 1 for becomeLeader, leader elected after 657ms
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.staging.catchup.gap = 1000 (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.write.element-limit = 4096 (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.write.byte-limit = 64MB (=67108864) (default)
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x44bb1459, L:/127.0.0.1:7075 - R:/127.0.0.1:60352]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  RequestVoteReplyMessage:44 - Invoking request vote reply on server: 1
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.watch.timeout = 10s (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.watch.timeout.denomination = 1s (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.watch.element-limit = 65536 (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.write.element-limit = 4096 (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.write.follower.gap.ratio.max = -1.0 (default)
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xbce1b05a, L:/127.0.0.1:7075 - R:/127.0.0.1:60355]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  RequestVoteReplyMessage:44 - Invoking request vote reply on server: 1
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.snapshot.chunk.size.max = 16MB (=16777216) (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.element-limit = 0 (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.wait-time.min = 10ms (default)
-2023-08-09 00:27:58 INFO  GrpcConfigKeys:46 - raft.grpc.server.leader.outstanding.appends.max = 128 (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.rpc.request.timeout = 3000ms (default)
-2023-08-09 00:27:58 INFO  GrpcConfigKeys:46 - raft.grpc.server.install_snapshot.request.element-limit = 8 (default)
-2023-08-09 00:27:58 INFO  GrpcConfigKeys:46 - raft.grpc.server.install_snapshot.request.timeout = 3000ms (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.install.snapshot.enabled = true (default)
-2023-08-09 00:27:58 INFO  GrpcConfigKeys:46 - raft.grpc.server.heartbeat.channel = true (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.snapshot.chunk.size.max = 16MB (=16777216) (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.element-limit = 0 (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.wait-time.min = 10ms (default)
-2023-08-09 00:27:58 INFO  GrpcConfigKeys:46 - raft.grpc.server.leader.outstanding.appends.max = 128 (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.rpc.request.timeout = 3000ms (default)
-2023-08-09 00:27:58 INFO  GrpcConfigKeys:46 - raft.grpc.server.install_snapshot.request.element-limit = 8 (default)
-2023-08-09 00:27:58 INFO  GrpcConfigKeys:46 - raft.grpc.server.install_snapshot.request.timeout = 3000ms (default)
-2023-08-09 00:27:58 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.install.snapshot.enabled = true (default)
-2023-08-09 00:27:58 INFO  GrpcConfigKeys:46 - raft.grpc.server.heartbeat.channel = true (default)
-2023-08-09 00:27:58 INFO  RoleInfo:139 - 1: start 1@group-6F7570313233-LeaderStateImpl
-2023-08-09 00:27:58 INFO  SegmentedRaftLogWorker:447 - 1@group-6F7570313233-SegmentedRaftLogWorker: Starting segment from index:0
-2023-08-09 00:27:58 INFO  RaftServer$Division:434 - 1@group-6F7570313233: set configuration 0: peers:[1|rpc:127.0.0.1:6001|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-09 00:27:58 INFO  StateChangeEvent:25 - New state change event on server 1 to leader
-2023-08-09 00:27:58 INFO  StateChangeEvent:19 - New BecomeLeader event on server 1
-2023-08-09 00:27:58 INFO  AppendEntriesMessage:35 - Intercepted append entries from server 1 to 2
-2023-08-09 00:27:58 INFO  AppendEntriesMessage:35 - Intercepted append entries from server 1 to 3
-2023-08-09 00:27:58 INFO  AppendEntriesMessage:35 - Intercepted append entries from server 1 to 2
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_11
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_12
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x4cdf5e2c, L:/127.0.0.1:7075 - R:/127.0.0.1:60362]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  AppendEntriesMessage:35 - Intercepted append entries from server 1 to 3
-2023-08-09 00:27:58 INFO  AppendEntriesMessage:45 - Invoking append entries on server: 1
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x880673fd, L:/127.0.0.1:7075 - R:/127.0.0.1:60366]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  AppendEntriesMessage:45 - Invoking append entries on server: 1
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x4efdb5f3, L:/127.0.0.1:7075 - R:/127.0.0.1:60369]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  AppendEntriesMessage:35 - Intercepted append entries from server 1 to 3
-2023-08-09 00:27:58 INFO  AppendEntriesMessage:35 - Intercepted append entries from server 1 to 3
-2023-08-09 00:27:58 INFO  AppendEntriesMessage:35 - Intercepted append entries from server 1 to 3
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x578d3136, L:/127.0.0.1:7075 - R:/127.0.0.1:60372]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  AppendEntriesMessage:35 - Intercepted append entries from server 1 to 3
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:58 INFO  AppendEntriesMessage:35 - Intercepted append entries from server 1 to 3
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x998698fc, L:/127.0.0.1:7075 - R:/127.0.0.1:60375]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_19
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xcb7accea, L:/127.0.0.1:7075 - R:/127.0.0.1:60377]
-2023-08-09 00:27:58 INFO  AppendEntriesMessage:45 - Invoking append entries on server: 1
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  SegmentedRaftLogWorker:651 - 1@group-6F7570313233-SegmentedRaftLogWorker: created new log segment /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233/current/log_inprogress_0
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x4acfda02, L:/127.0.0.1:7075 - R:/127.0.0.1:60379]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x74423890, L:/127.0.0.1:7075 - R:/127.0.0.1:60380]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  AppendEntriesMessage:45 - Invoking append entries on server: 1
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x37c46dc4, L:/127.0.0.1:7075 - R:/127.0.0.1:60381]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x95b4cef4, L:/127.0.0.1:7075 - R:/127.0.0.1:60382]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x5fe0063b, L:/127.0.0.1:7075 - R:/127.0.0.1:60383]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  AppendEntriesMessage:45 - Invoking append entries on server: 1
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xa025e450, L:/127.0.0.1:7075 - R:/127.0.0.1:60384]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  AppendEntriesMessage:45 - Invoking append entries on server: 1
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_20
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_21
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x2174bd21, L:/127.0.0.1:7075 - R:/127.0.0.1:60386]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xfe565d19, L:/127.0.0.1:7075 - R:/127.0.0.1:60388]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  AppendEntriesMessage:45 - Invoking append entries on server: 1
-2023-08-09 00:27:58 INFO  AppendEntriesMessage:45 - Invoking append entries on server: 1
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_22
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_23
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x60d444b9, L:/127.0.0.1:7075 - R:/127.0.0.1:60391]
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_24
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  AppendEntriesMessage:45 - Invoking append entries on server: 1
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xf1aace56, L:/127.0.0.1:7075 - R:/127.0.0.1:60393]
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_25
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_26
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_27
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x51872323, L:/127.0.0.1:7075 - R:/127.0.0.1:60396]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x7208d0ed, L:/127.0.0.1:7075 - R:/127.0.0.1:60398]
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_28
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x07c35ded, L:/127.0.0.1:7075 - R:/127.0.0.1:60400]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x01c04201, L:/127.0.0.1:7075 - R:/127.0.0.1:60401]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xeaf369c4, L:/127.0.0.1:7075 - R:/127.0.0.1:60402]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_29
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_30
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xa3210973, L:/127.0.0.1:7075 - R:/127.0.0.1:60405]
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x37c77b3a, L:/127.0.0.1:7075 - R:/127.0.0.1:60406]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_31
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x932fd7dc, L:/127.0.0.1:7075 - R:/127.0.0.1:60408]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_32
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x5c8c2a39, L:/127.0.0.1:7075 - R:/127.0.0.1:60410]
-2023-08-09 00:27:58 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:58 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_33
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_34
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x6fdb9372, L:/127.0.0.1:7075 - R:/127.0.0.1:60413]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xabb68a36, L:/127.0.0.1:7075 - R:/127.0.0.1:60414]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_35
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_36
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x8d574ccd, L:/127.0.0.1:7075 - R:/127.0.0.1:60417]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xd04e0758, L:/127.0.0.1:7075 - R:/127.0.0.1:60418]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_37
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_38
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xebf99542, L:/127.0.0.1:7075 - R:/127.0.0.1:60420]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xe534ec20, L:/127.0.0.1:7075 - R:/127.0.0.1:60422]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_39
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_40
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x8dcb6280, L:/127.0.0.1:7075 - R:/127.0.0.1:60425]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x5c859923, L:/127.0.0.1:7075 - R:/127.0.0.1:60426]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_42
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_41
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xf59f9c9a, L:/127.0.0.1:7075 - R:/127.0.0.1:60429]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x85184e07, L:/127.0.0.1:7075 - R:/127.0.0.1:60430]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_43
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_44
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xda033aba, L:/127.0.0.1:7075 - R:/127.0.0.1:60433]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xb9b2d092, L:/127.0.0.1:7075 - R:/127.0.0.1:60434]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_45
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_46
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x706c1957, L:/127.0.0.1:7075 - R:/127.0.0.1:60437]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x48bb6722, L:/127.0.0.1:7075 - R:/127.0.0.1:60438]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_47
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_48
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xb0609490, L:/127.0.0.1:7075 - R:/127.0.0.1:60441]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x90ae88a8, L:/127.0.0.1:7075 - R:/127.0.0.1:60442]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_49
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_50
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x77f8c7d0, L:/127.0.0.1:7075 - R:/127.0.0.1:60445]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xce9003aa, L:/127.0.0.1:7075 - R:/127.0.0.1:60446]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_51
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_52
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xbd07dc0a, L:/127.0.0.1:7075 - R:/127.0.0.1:60449]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x41e227e0, L:/127.0.0.1:7075 - R:/127.0.0.1:60450]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_53
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_54
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xd72d9380, L:/127.0.0.1:7075 - R:/127.0.0.1:60453]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xb481c628, L:/127.0.0.1:7075 - R:/127.0.0.1:60454]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_55
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_56
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xdbc65574, L:/127.0.0.1:7075 - R:/127.0.0.1:60457]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x587967e4, L:/127.0.0.1:7075 - R:/127.0.0.1:60458]
-2023-08-09 00:27:59 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:27:59 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_58
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_57
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xcb0bd494, L:/127.0.0.1:7075 - R:/127.0.0.1:60461]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xdf898af7, L:/127.0.0.1:7075 - R:/127.0.0.1:60462]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_59
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_60
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xe4595d4d, L:/127.0.0.1:7075 - R:/127.0.0.1:60465]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x4d17f0d6, L:/127.0.0.1:7075 - R:/127.0.0.1:60466]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_61
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_62
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xb70d9761, L:/127.0.0.1:7075 - R:/127.0.0.1:60469]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xbce6c727, L:/127.0.0.1:7075 - R:/127.0.0.1:60470]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_63
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x78cd5866, L:/127.0.0.1:7075 - R:/127.0.0.1:60472]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_64
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x56a211c3, L:/127.0.0.1:7075 - R:/127.0.0.1:60474]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_65
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_66
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x851689f2, L:/127.0.0.1:7075 - R:/127.0.0.1:60477]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xa216c610, L:/127.0.0.1:7075 - R:/127.0.0.1:60478]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_67
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x2006a7eb, L:/127.0.0.1:7075 - R:/127.0.0.1:60480]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_68
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x3c425d70, L:/127.0.0.1:7075 - R:/127.0.0.1:60482]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_69
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x1e1f9652, L:/127.0.0.1:7075 - R:/127.0.0.1:60484]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_70
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xd96f7d7b, L:/127.0.0.1:7075 - R:/127.0.0.1:60486]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_71
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_72
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x6f44d0ab, L:/127.0.0.1:7075 - R:/127.0.0.1:60489]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x8b0ac893, L:/127.0.0.1:7075 - R:/127.0.0.1:60490]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_73
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_74
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x2cc7af33, L:/127.0.0.1:7075 - R:/127.0.0.1:60493]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x63680743, L:/127.0.0.1:7075 - R:/127.0.0.1:60494]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_75
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_76
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x6f9da608, L:/127.0.0.1:7075 - R:/127.0.0.1:60497]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xfb1e16ed, L:/127.0.0.1:7075 - R:/127.0.0.1:60498]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_77
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_78
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x83c6dd1f, L:/127.0.0.1:7075 - R:/127.0.0.1:60501]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xc1b611ef, L:/127.0.0.1:7075 - R:/127.0.0.1:60502]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 1
-2023-08-09 00:28:00 INFO  AppendEntriesMessage:35 - Intercepted append entries from server 1 to 3
-2023-08-09 00:28:00 INFO  AppendEntriesMessage:35 - Intercepted append entries from server 1 to 2
-Entry: [B@487c6afb , 12
-Entry: [B@97ed4e5 , 12
-2023-08-09 00:28:00 INFO  AppendEntriesMessage:35 - Intercepted append entries from server 1 to 3
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x700077ff, L:/127.0.0.1:7075 - R:/127.0.0.1:60505]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-Entry: [B@2142b649 , 12
-2023-08-09 00:28:00 INFO  AppendEntriesMessage:45 - Invoking append entries on server: 1
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_82
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x0d66a331, L:/127.0.0.1:7075 - R:/127.0.0.1:60508]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesMessage:45 - Invoking append entries on server: 1
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xd212257a, L:/127.0.0.1:7075 - R:/127.0.0.1:60510]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_83
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x7f127fa9, L:/127.0.0.1:7075 - R:/127.0.0.1:60512]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x165a481c, L:/127.0.0.1:7075 - R:/127.0.0.1:60513]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xb9836d3a, L:/127.0.0.1:7075 - R:/127.0.0.1:60514]
-2023-08-09 00:28:00 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-Crashing server: 1
-2023-08-09 00:28:00 INFO  RaftServer:416 - 1: close
-2023-08-09 00:28:00 INFO  GrpcService:311 - 1: shutdown server GrpcServerProtocolService now
-2023-08-09 00:28:00 INFO  RaftServer$Division:471 - 1@group-6F7570313233: shutdown
-2023-08-09 00:28:00 INFO  JmxRegister:73 - Successfully un-registered JMX Bean with object name Ratis:service=RaftServer,group=group-6F7570313233,id=1
-2023-08-09 00:28:00 INFO  RoleInfo:93 - 1: shutdown 1@group-6F7570313233-LeaderStateImpl
-2023-08-09 00:28:00 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 3 to 1 with id: 1_84
-2023-08-09 00:28:00 INFO  PendingRequests:289 - 1@group-6F7570313233-PendingRequests: sendNotLeaderResponses
-2023-08-09 00:28:00 WARN  GrpcLogAppender:210 - 1@group-6F7570313233->3-GrpcLogAppender: Wait interrupted by java.lang.InterruptedException
-2023-08-09 00:28:00 WARN  GrpcLogAppender:210 - 1@group-6F7570313233->2-GrpcLogAppender: Wait interrupted by java.lang.InterruptedException
-2023-08-09 00:28:01 INFO  GrpcServerProtocolClient:103 - 2 Close channels
-2023-08-09 00:28:01 INFO  GrpcServerProtocolClient:103 - 3 Close channels
-2023-08-09 00:28:01 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 2 to 1 with id: 1_85
-2023-08-09 00:28:01 INFO  StateMachineUpdater:155 - 1@group-6F7570313233-StateMachineUpdater: set stopIndex = 0
-2023-08-09 00:28:01 INFO  GrpcLogAppender:463 - 1@group-6F7570313233->3-AppendLogResponseHandler: follower responses appendEntries COMPLETED
-2023-08-09 00:28:01 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x4cd76477, L:/127.0.0.1:7075 - R:/127.0.0.1:60516]
-2023-08-09 00:28:01 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:01 INFO  StateMachine:102 - Taking a snapshot to file /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233/sm/snapshot.1_0
-2023-08-09 00:28:01 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-73B1967918D7->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002000000000000...(size=12), reply=RaftClientReply:client-73B1967918D7->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0]
-2023-08-09 00:28:01 WARN  GrpcLogAppender:148 - 1@group-6F7570313233->3-GrpcLogAppender: Failed to getClient for 3
-org.apache.ratis.protocol.exceptions.AlreadyClosedException: 1 is already CLOSED
-	at org.apache.ratis.util.PeerProxyMap$PeerAndProxy.getProxy(PeerProxyMap.java:61)
-	at org.apache.ratis.util.PeerProxyMap.getProxy(PeerProxyMap.java:115)
-	at org.apache.ratis.grpc.server.GrpcLogAppender.getClient(GrpcLogAppender.java:123)
-	at org.apache.ratis.grpc.server.GrpcLogAppender.resetClient(GrpcLogAppender.java:128)
-	at org.apache.ratis.grpc.server.GrpcLogAppender.access$400(GrpcLogAppender.java:63)
-	at org.apache.ratis.grpc.server.GrpcLogAppender$AppendLogResponseHandler.onCompleted(GrpcLogAppender.java:464)
-	at org.apache.ratis.thirdparty.io.grpc.stub.ClientCalls$StreamObserverToCallListenerAdapter.onClose(ClientCalls.java:485)
-	at org.apache.ratis.thirdparty.io.grpc.internal.ClientCallImpl.closeObserver(ClientCallImpl.java:563)
-	at org.apache.ratis.thirdparty.io.grpc.internal.ClientCallImpl.access$300(ClientCallImpl.java:70)
-	at org.apache.ratis.thirdparty.io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1StreamClosed.runInternal(ClientCallImpl.java:744)
-	at org.apache.ratis.thirdparty.io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1StreamClosed.runInContext(ClientCallImpl.java:723)
-	at org.apache.ratis.thirdparty.io.grpc.internal.ContextRunnable.run(ContextRunnable.java:37)
-	at org.apache.ratis.thirdparty.io.grpc.internal.SerializingExecutor.run(SerializingExecutor.java:133)
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
-	at java.base/java.lang.Thread.run(Thread.java:1623)
-2023-08-09 00:28:01 INFO  GrpcLogAppender:463 - 1@group-6F7570313233->2-AppendLogResponseHandler: follower responses appendEntries COMPLETED
-2023-08-09 00:28:01 WARN  GrpcLogAppender:148 - 1@group-6F7570313233->2-GrpcLogAppender: Failed to getClient for 2
-org.apache.ratis.protocol.exceptions.AlreadyClosedException: 1 is already CLOSED
-	at org.apache.ratis.util.PeerProxyMap$PeerAndProxy.getProxy(PeerProxyMap.java:61)
-	at org.apache.ratis.util.PeerProxyMap.getProxy(PeerProxyMap.java:115)
-	at org.apache.ratis.grpc.server.GrpcLogAppender.getClient(GrpcLogAppender.java:123)
-	at org.apache.ratis.grpc.server.GrpcLogAppender.resetClient(GrpcLogAppender.java:128)
-	at org.apache.ratis.grpc.server.GrpcLogAppender.access$400(GrpcLogAppender.java:63)
-	at org.apache.ratis.grpc.server.GrpcLogAppender$AppendLogResponseHandler.onCompleted(GrpcLogAppender.java:464)
-	at org.apache.ratis.thirdparty.io.grpc.stub.ClientCalls$StreamObserverToCallListenerAdapter.onClose(ClientCalls.java:485)
-	at org.apache.ratis.thirdparty.io.grpc.internal.ClientCallImpl.closeObserver(ClientCallImpl.java:563)
-	at org.apache.ratis.thirdparty.io.grpc.internal.ClientCallImpl.access$300(ClientCallImpl.java:70)
-	at org.apache.ratis.thirdparty.io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1StreamClosed.runInternal(ClientCallImpl.java:744)
-	at org.apache.ratis.thirdparty.io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1StreamClosed.runInContext(ClientCallImpl.java:723)
-	at org.apache.ratis.thirdparty.io.grpc.internal.ContextRunnable.run(ContextRunnable.java:37)
-	at org.apache.ratis.thirdparty.io.grpc.internal.SerializingExecutor.run(SerializingExecutor.java:133)
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
-	at java.base/java.lang.Thread.run(Thread.java:1623)
-2023-08-09 00:28:01 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xf7fe2358, L:/127.0.0.1:7075 - R:/127.0.0.1:60518]
-2023-08-09 00:28:01 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:01 INFO  StateChangeEvent:20 - New SnapshotUpdate event on server 1 to 0
-2023-08-09 00:28:01 INFO  StateMachineUpdater:291 - 1@group-6F7570313233-StateMachineUpdater: Took a snapshot at index 0
-2023-08-09 00:28:01 INFO  StateMachineUpdater:97 - 1@group-6F7570313233-StateMachineUpdater: snapshotIndex: updateIncreasingly -1 -> 0
-2023-08-09 00:28:01 INFO  RaftServer$Division:472 - 1@group-6F7570313233: closes. applyIndex: -1
-2023-08-09 00:28:01 INFO  GrpcLogAppender:463 - 1@group-6F7570313233->2-AppendLogResponseHandler: follower responses appendEntries COMPLETED
-2023-08-09 00:28:01 WARN  GrpcLogAppender:148 - 1@group-6F7570313233->2-GrpcLogAppender: Failed to getClient for 2
-org.apache.ratis.protocol.exceptions.AlreadyClosedException: 1 is already CLOSED
-	at org.apache.ratis.util.PeerProxyMap$PeerAndProxy.getProxy(PeerProxyMap.java:61)
-	at org.apache.ratis.util.PeerProxyMap.getProxy(PeerProxyMap.java:115)
-	at org.apache.ratis.grpc.server.GrpcLogAppender.getClient(GrpcLogAppender.java:123)
-	at org.apache.ratis.grpc.server.GrpcLogAppender.resetClient(GrpcLogAppender.java:128)
-	at org.apache.ratis.grpc.server.GrpcLogAppender.access$400(GrpcLogAppender.java:63)
-	at org.apache.ratis.grpc.server.GrpcLogAppender$AppendLogResponseHandler.onCompleted(GrpcLogAppender.java:464)
-	at org.apache.ratis.thirdparty.io.grpc.stub.ClientCalls$StreamObserverToCallListenerAdapter.onClose(ClientCalls.java:485)
-	at org.apache.ratis.thirdparty.io.grpc.internal.DelayedClientCall$DelayedListener$3.run(DelayedClientCall.java:471)
-	at org.apache.ratis.thirdparty.io.grpc.internal.DelayedClientCall$DelayedListener.delayOrExecute(DelayedClientCall.java:435)
-	at org.apache.ratis.thirdparty.io.grpc.internal.DelayedClientCall$DelayedListener.onClose(DelayedClientCall.java:468)
-	at org.apache.ratis.thirdparty.io.grpc.internal.ClientCallImpl.closeObserver(ClientCallImpl.java:563)
-	at org.apache.ratis.thirdparty.io.grpc.internal.ClientCallImpl.access$300(ClientCallImpl.java:70)
-	at org.apache.ratis.thirdparty.io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1StreamClosed.runInternal(ClientCallImpl.java:744)
-	at org.apache.ratis.thirdparty.io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1StreamClosed.runInContext(ClientCallImpl.java:723)
-	at org.apache.ratis.thirdparty.io.grpc.internal.ContextRunnable.run(ContextRunnable.java:37)
-	at org.apache.ratis.thirdparty.io.grpc.internal.SerializingExecutor.run(SerializingExecutor.java:133)
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
-	at java.base/java.lang.Thread.run(Thread.java:1623)
-2023-08-09 00:28:01 INFO  GrpcLogAppender:463 - 1@group-6F7570313233->3-AppendLogResponseHandler: follower responses appendEntries COMPLETED
-2023-08-09 00:28:01 WARN  GrpcLogAppender:148 - 1@group-6F7570313233->3-GrpcLogAppender: Failed to getClient for 3
-org.apache.ratis.protocol.exceptions.AlreadyClosedException: 1 is already CLOSED
-	at org.apache.ratis.util.PeerProxyMap$PeerAndProxy.getProxy(PeerProxyMap.java:61)
-	at org.apache.ratis.util.PeerProxyMap.getProxy(PeerProxyMap.java:115)
-	at org.apache.ratis.grpc.server.GrpcLogAppender.getClient(GrpcLogAppender.java:123)
-	at org.apache.ratis.grpc.server.GrpcLogAppender.resetClient(GrpcLogAppender.java:128)
-	at org.apache.ratis.grpc.server.GrpcLogAppender.access$400(GrpcLogAppender.java:63)
-	at org.apache.ratis.grpc.server.GrpcLogAppender$AppendLogResponseHandler.onCompleted(GrpcLogAppender.java:464)
-	at org.apache.ratis.thirdparty.io.grpc.stub.ClientCalls$StreamObserverToCallListenerAdapter.onClose(ClientCalls.java:485)
-	at org.apache.ratis.thirdparty.io.grpc.internal.DelayedClientCall$DelayedListener$3.run(DelayedClientCall.java:471)
-	at org.apache.ratis.thirdparty.io.grpc.internal.DelayedClientCall$DelayedListener.delayOrExecute(DelayedClientCall.java:435)
-	at org.apache.ratis.thirdparty.io.grpc.internal.DelayedClientCall$DelayedListener.onClose(DelayedClientCall.java:468)
-	at org.apache.ratis.thirdparty.io.grpc.internal.ClientCallImpl.closeObserver(ClientCallImpl.java:563)
-	at org.apache.ratis.thirdparty.io.grpc.internal.ClientCallImpl.access$300(ClientCallImpl.java:70)
-	at org.apache.ratis.thirdparty.io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1StreamClosed.runInternal(ClientCallImpl.java:744)
-	at org.apache.ratis.thirdparty.io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1StreamClosed.runInContext(ClientCallImpl.java:723)
-	at org.apache.ratis.thirdparty.io.grpc.internal.ContextRunnable.run(ContextRunnable.java:37)
-	at org.apache.ratis.thirdparty.io.grpc.internal.SerializingExecutor.run(SerializingExecutor.java:133)
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
-	at java.base/java.lang.Thread.run(Thread.java:1623)
-2023-08-09 00:28:01 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0xf15a87aa, L:/127.0.0.1:7075 - R:/127.0.0.1:60808]
-2023-08-09 00:28:01 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:01 INFO  GrpcService:320 - 1: shutdown server GrpcServerProtocolService successfully
-2023-08-09 00:28:01 INFO  SegmentedRaftLogWorker:252 - 1@group-6F7570313233-SegmentedRaftLogWorker close()
-2023-08-09 00:28:01 INFO  JvmPauseMonitor:109 - JvmPauseMonitor-1: Stopped
-Crashed server: 1
-Restarting server: 1
-2023-08-09 00:28:01 INFO  RaftServer:46 - raft.rpc.type = GRPC (default)
-2023-08-09 00:28:01 INFO  GrpcConfigKeys:53 - raft.grpc.admin.host = null (fallback to raft.grpc.server.host)
-2023-08-09 00:28:01 INFO  GrpcConfigKeys:53 - raft.grpc.admin.port = 6001 (fallback to raft.grpc.server.port)
-2023-08-09 00:28:01 INFO  GrpcConfigKeys:53 - raft.grpc.client.host = null (fallback to raft.grpc.server.host)
-2023-08-09 00:28:01 INFO  GrpcConfigKeys:53 - raft.grpc.client.port = 6001 (fallback to raft.grpc.server.port)
-2023-08-09 00:28:01 INFO  GrpcConfigKeys:46 - raft.grpc.server.host = null (default)
-2023-08-09 00:28:01 INFO  GrpcConfigKeys:46 - raft.grpc.server.port = 6001 (custom)
-2023-08-09 00:28:01 INFO  GrpcService:46 - raft.grpc.message.size.max = 64MB (=67108864) (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
-2023-08-09 00:28:01 INFO  GrpcService:46 - raft.grpc.flow.control.window = 1MB (=1048576) (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.rpc.request.timeout = 3000ms (default)
-2023-08-09 00:28:01 INFO  GrpcConfigKeys:46 - raft.grpc.server.heartbeat.channel = true (default)
-2023-08-09 00:28:01 INFO  GrpcConfigKeys:46 - raft.grpc.server.async.request.thread.pool.cached = true (default)
-2023-08-09 00:28:01 INFO  GrpcConfigKeys:46 - raft.grpc.server.async.request.thread.pool.size = 32 (default)
-2023-08-09 00:28:01 INFO  DataStreamServerImpl:46 - raft.datastream.type = DISABLED (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.proxy.cached = true (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.proxy.size = 0 (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.rpc.slowness.timeout = 60s (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.leader.step-down.wait-time = 10s (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.storage.dir = [/tmp/ratis/1] (custom)
-2023-08-09 00:28:01 INFO  RaftServer:258 - 1: found a subdirectory /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233
-2023-08-09 00:28:01 INFO  RaftServer:98 - 1: addNew group-6F7570313233:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER] returns group-6F7570313233:java.util.concurrent.CompletableFuture@5d2a4eed[Not completed]
-2023-08-09 00:28:01 INFO  RaftServer$Division:203 - 1: new RaftServerImpl for group-6F7570313233:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER] with ArithmeticStateMachine:1:group-6F7570313233
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.rpc.timeout.min = 150ms (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.rpc.timeout.max = 300ms (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.rpc.sleep.time = 25ms (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.rpc.slowness.timeout = 60s (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.leader.step-down.wait-time = 10s (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.sleep.deviation.threshold = 300ms (default)
-2023-08-09 00:28:01 INFO  RaftServer$Division:120 - 1@group-6F7570313233: ConfigurationManager, init=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null, confs=<EMPTY_MAP>
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.storage.dir = [/tmp/ratis/1] (custom)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.log.corruption.policy = EXCEPTION (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.storage.free-space.min = 0MB (=0) (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.notification.no-leader.timeout = 60s (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.read.timeout = 10s (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.retrycache.expirytime = 60s (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.retrycache.statistics.expirytime = 100μs (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.read.option = DEFAULT (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.rpc.request.timeout = 3000ms (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.install.snapshot.enabled = true (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.server.cached = true (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.server.size = 0 (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.client.cached = true (default)
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.client.size = 0 (default)
-2023-08-09 00:28:01 INFO  RaftStorageDirectory:231 - Lock on /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233/in_use.lock acquired by nodename 52305@eges-mbp.home
-2023-08-09 00:28:01 INFO  RaftStorage:117 - Read RaftStorageMetadata{term=1, votedFor=1} from /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233/current/raft-meta
-2023-08-09 00:28:01 INFO  RaftServer$Division:434 - 1@group-6F7570313233: set configuration 0: peers:[1|rpc:127.0.0.1:6001|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-09 00:28:01 INFO  RaftServerConfigKeys:46 - raft.server.log.use.memory = false (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.gap = 1024 (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.read.timeout = 1000ms (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.preservation.log.num = 0 (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.size.max = 8MB (=8388608) (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.cache.num.max = 6 (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.cache.size.max = 200MB (=209715200) (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
-2023-08-09 00:28:02 INFO  SegmentedRaftLogWorker:188 - new 1@group-6F7570313233-SegmentedRaftLogWorker for RaftStorageImpl:Storage Directory /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.queue.byte-limit = 64MB (=67108864) (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.queue.element-limit = 4096 (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.size.max = 8MB (=8388608) (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.preallocated.size = 4MB (=4194304) (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.force.sync.num = 128 (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync = true (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync.timeout = 10s (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync.timeout.retry = -1 (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.write.buffer.size = 64KB (=65536) (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.unsafe-flush.enabled = false (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.async-flush.enabled = false (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.caching.enabled = false (default)
-2023-08-09 00:28:02 INFO  RaftServer$Division:434 - 1@group-6F7570313233: set configuration 0: peers:[1|rpc:127.0.0.1:6001|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-09 00:28:02 INFO  LogSegment:170 - Successfully read 2 entries from segment file /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233/current/log_inprogress_0
-2023-08-09 00:28:02 INFO  SegmentedRaftLogWorker:135 - 1@group-6F7570313233-SegmentedRaftLogWorker: flushIndex: setUnconditionally 0 -> 1
-2023-08-09 00:28:02 INFO  SegmentedRaftLogWorker:135 - 1@group-6F7570313233-SegmentedRaftLogWorker: safeCacheEvictIndex: setUnconditionally 0 -> -1
-2023-08-09 00:28:02 INFO  RaftServer$Division:347 - 1@group-6F7570313233: start as a follower, conf=0: peers:[1|rpc:127.0.0.1:6001|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-09 00:28:02 INFO  RaftServer$Division:334 - 1@group-6F7570313233: changes role from      null to FOLLOWER at term 1 for startAsFollower
-2023-08-09 00:28:02 INFO  RoleInfo:139 - 1: start 1@group-6F7570313233-FollowerState
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
-2023-08-09 00:28:02 INFO  JmxRegister:44 - Successfully registered JMX Bean with object name Ratis:service=RaftServer,group=group-6F7570313233,id=1
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.snapshot.auto.trigger.enabled = true (custom)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.snapshot.auto.trigger.threshold = 400000 (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.snapshot.retention.file.num = -1 (default)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.upto.snapshot.index = false (default)
-2023-08-09 00:28:02 INFO  RaftServer:400 - 1: start RPC server
-2023-08-09 00:28:02 INFO  GrpcService:302 - 1: GrpcService started, listening on 6001
-Restarted server: 1
-2023-08-09 00:28:02 INFO  JvmPauseMonitor:103 - JvmPauseMonitor-1: Started
-2023-08-09 00:28:02 INFO  RaftServer$Division:317 - 1@group-6F7570313233: change Leader from null to 2 at term 2 for appendEntries, leader elected after 40ms
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#41:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#42:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#43:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#44:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#45:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#46:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#47:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#48:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#49:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#50:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#52:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#53:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#54:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#55:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#56:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#57:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#58:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#59:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#60:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#61:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#62:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#63:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#65:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#66:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#67:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#68:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#69:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#70:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#71:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#72:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#73:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#74:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#75:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#76:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#77:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#78:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#79:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#80:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#82:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#83:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#84:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#85:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#86:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#87:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#88:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#89:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#90:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#91:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#92:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#93:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#95:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#96:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#97:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#98:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#99:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#100:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#101:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#102:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#103:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#104:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 0) already exists (snapshotIndex: 0, commitIndex: 0)
-2023-08-09 00:28:02 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:2<-1#105:FAIL-t2,INCONSISTENCY,nextIndex=1,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:02 INFO  GrpcServerProtocolService:159 - 1: Completed APPEND_ENTRIES, lastRequest: null
-2023-08-09 00:28:02 INFO  GrpcServerProtocolService:159 - 1: Completed APPEND_ENTRIES, lastRequest: 2->1#105-t2,previous=(t:0, i:0),leaderCommit=0,initializing? true,entries: size=3, first=(t:1, i:0), CONFIGURATIONENTRY(current:id: "1"
-address: "127.0.0.1:6001"
-startupRole: FOLLOWER
-,id: "2"
-address: "127.0.0.1:6002"
-startupRole: FOLLOWER
-,id: "3"
-address: "127.0.0.1:6003"
-startupRole: FOLLOWER
-, old:)
-2023-08-09 00:28:02 INFO  GrpcServerProtocolService:161 - 1: Completed APPEND_ENTRIES, lastReply: null
-2023-08-09 00:28:02 INFO  GrpcServerProtocolService:161 - 1: Completed APPEND_ENTRIES, lastReply: serverReply {
-  requestorId: "2"
-  replyId: "1"
-  raftGroupId {
-    id: "demoRaftGroup123"
-  }
-  callId: 139
-  success: true
-}
-term: 2
-nextIndex: 2
-matchIndex: 18446744073709551615
-isHearbeat: true
-
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
-2023-08-09 00:28:02 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:02 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  RequestVoteMessage:33 - Intercepted request vote from server 3 to 1
-2023-08-09 00:28:03 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x81745e4f, L:/127.0.0.1:7075 - R:/127.0.0.1:63031]
-2023-08-09 00:28:03 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  FollowerState:148 - 1@group-6F7570313233-FollowerState: change to CANDIDATE, lastRpcElapsedTime:438994583ns, electionTimeout:229ms
-2023-08-09 00:28:03 INFO  StateChangeEvent:25 - New state change event on server 1 to candidate
-2023-08-09 00:28:03 INFO  StateChangeEvent:17 - New Timeout event on server 1
-2023-08-09 00:28:03 INFO  RoleInfo:110 - 1: shutdown 1@group-6F7570313233-FollowerState
-2023-08-09 00:28:03 INFO  RaftServer$Division:334 - 1@group-6F7570313233: changes role from  FOLLOWER to CANDIDATE at term 2 for changeToCandidate
-2023-08-09 00:28:03 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.pre-vote = true (default)
-2023-08-09 00:28:03 INFO  RoleInfo:139 - 1: start 1@group-6F7570313233-LeaderElection2
-2023-08-09 00:28:03 INFO  RaftServer$Division:317 - 1@group-6F7570313233: change Leader from 2 to null at term 2 for PRE_VOTE
-2023-08-09 00:28:03 INFO  LeaderElection:332 - 1@group-6F7570313233-LeaderElection2 PRE_VOTE round 0: submit vote requests at term 2 for 0: peers:[1|rpc:127.0.0.1:6001|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-09 00:28:03 INFO  GrpcServerProtocolClient:65 - Build channel for 2
-2023-08-09 00:28:03 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
-2023-08-09 00:28:03 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
-2023-08-09 00:28:03 INFO  GrpcServerProtocolClient:65 - Build channel for 3
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  LeaderElection:92 - 1@group-6F7570313233-LeaderElection2: PRE_VOTE TIMEOUT received 1 response(s) and 0 exception(s):
-2023-08-09 00:28:03 INFO  LeaderElection:96 -   Response 0: 1<-3#0:FAIL-t2
-2023-08-09 00:28:03 INFO  LeaderElection:334 - 1@group-6F7570313233-LeaderElection2 PRE_VOTE round 0: result TIMEOUT
-2023-08-09 00:28:03 INFO  LeaderElection:332 - 1@group-6F7570313233-LeaderElection2 PRE_VOTE round 1: submit vote requests at term 2 for 0: peers:[1|rpc:127.0.0.1:6001|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-09 00:28:03 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
-2023-08-09 00:28:03 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
-2023-08-09 00:28:03 INFO  RequestVoteMessage:33 - Intercepted request vote from server 3 to 1
-2023-08-09 00:28:03 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x2f3101a9, L:/127.0.0.1:7075 - R:/127.0.0.1:63191]
-2023-08-09 00:28:03 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:03 INFO  RequestVoteMessage:45 - Invoking request vote on server: 1
-2023-08-09 00:28:03 INFO  RaftServer$Division:1313 - 1@group-6F7570313233: receive requestVote(PRE_VOTE, 3, group-6F7570313233, 2, (t:2, i:3))
-2023-08-09 00:28:03 INFO  VoteContext:49 - 1@group-6F7570313233-CANDIDATE: accept PRE_VOTE from 3: our last entry (t:1, i:1) < candidate's last entry (t:2, i:3)
-2023-08-09 00:28:03 INFO  RaftServer$Division:1346 - 1@group-6F7570313233 replies to PRE_VOTE vote request: 3<-1#0:OK-t2. Peer's state: 1@group-6F7570313233:t2, leader=null, voted=null, raftlog=Memoized:1@group-6F7570313233-SegmentedRaftLog:OPENED:c0, conf=0: peers:[1|rpc:127.0.0.1:6001|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-09 00:28:03 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 1 to 3
-2023-08-09 00:28:03 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
-2023-08-09 00:28:03 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x3b5c4c4e, L:/127.0.0.1:7075 - R:/127.0.0.1:63199]
-2023-08-09 00:28:03 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  RequestVoteReplyMessage:44 - Invoking request vote reply on server: 1
-2023-08-09 00:28:03 INFO  RequestVoteMessage:33 - Intercepted request vote from server 3 to 1
-2023-08-09 00:28:03 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x54a9d45a, L:/127.0.0.1:7075 - R:/127.0.0.1:63207]
-2023-08-09 00:28:03 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:03 INFO  RequestVoteMessage:45 - Invoking request vote on server: 1
-2023-08-09 00:28:03 INFO  RaftServer$Division:1313 - 1@group-6F7570313233: receive requestVote(ELECTION, 3, group-6F7570313233, 3, (t:2, i:3))
-2023-08-09 00:28:03 INFO  VoteContext:49 - 1@group-6F7570313233-CANDIDATE: accept ELECTION from 3: our last entry (t:1, i:1) < candidate's last entry (t:2, i:3)
-2023-08-09 00:28:03 INFO  RaftServer$Division:334 - 1@group-6F7570313233: changes role from CANDIDATE to FOLLOWER at term 3 for candidate:3
-2023-08-09 00:28:03 INFO  RoleInfo:130 - 1: shutdown 1@group-6F7570313233-LeaderElection2
-2023-08-09 00:28:03 INFO  RoleInfo:139 - 1: start 1@group-6F7570313233-FollowerState
-2023-08-09 00:28:03 INFO  StateChangeEvent:25 - New state change event on server 1 to follower
-2023-08-09 00:28:03 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
-2023-08-09 00:28:03 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  RaftServer$Division:1346 - 1@group-6F7570313233 replies to ELECTION vote request: 3<-1#0:OK-t3. Peer's state: 1@group-6F7570313233:t3, leader=null, voted=3, raftlog=Memoized:1@group-6F7570313233-SegmentedRaftLog:OPENED:c0, conf=0: peers:[1|rpc:127.0.0.1:6001|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-09 00:28:03 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 1 to 3
-2023-08-09 00:28:03 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x1d1f657a, L:/127.0.0.1:7075 - R:/127.0.0.1:63215]
-2023-08-09 00:28:03 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
-2023-08-09 00:28:03 INFO  RequestVoteReplyMessage:44 - Invoking request vote reply on server: 1
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-0AAB9D5FAF0F->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-45DD3775AC6D->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-45DD3775AC6D->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader, logIndex=0, commits[1:c0, 2:c2, 3:c0]
-2023-08-09 00:28:03 INFO  RaftServer$Division:317 - 1@group-6F7570313233: change Leader from null to 3 at term 3 for appendEntries, leader elected after 251ms
-2023-08-09 00:28:03 INFO  RaftServer$Division:1624 - 1@group-6F7570313233: Failed appendEntries as previous log entry ((t:2, i:3)) is not found
-2023-08-09 00:28:03 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:3<-1#0:FAIL-t3,INCONSISTENCY,nextIndex=2,followerCommit=0,matchIndex=-1
-2023-08-09 00:28:03 INFO  RaftServer$Division:434 - 1@group-6F7570313233: set configuration 2: peers:[1|rpc:127.0.0.1:6001|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-09 00:28:03 INFO  RaftServer$Division:434 - 1@group-6F7570313233: set configuration 4: peers:[1|rpc:127.0.0.1:6001|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-09 00:28:03 INFO  SegmentedRaftLogWorker:452 - 1@group-6F7570313233-SegmentedRaftLogWorker: Rolling segment log-0_1 to index:1
-2023-08-09 00:28:03 INFO  SegmentedRaftLogWorker:452 - 1@group-6F7570313233-SegmentedRaftLogWorker: Rolling segment log-2_3 to index:3
-2023-08-09 00:28:03 INFO  SegmentedRaftLogWorker:608 - 1@group-6F7570313233-SegmentedRaftLogWorker: Rolled log segment from /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233/current/log_inprogress_0 to /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233/current/log_0-1
-2023-08-09 00:28:03 INFO  SegmentedRaftLogWorker:651 - 1@group-6F7570313233-SegmentedRaftLogWorker: created new log segment /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233/current/log_inprogress_2
-2023-08-09 00:28:03 INFO  RaftServer$Division:434 - 1@group-6F7570313233: set configuration 2: peers:[1|rpc:127.0.0.1:6001|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-09 00:28:03 INFO  RaftServer$Division:434 - 1@group-6F7570313233: set configuration 4: peers:[1|rpc:127.0.0.1:6001|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-09 00:28:03 INFO  SegmentedRaftLogWorker:608 - 1@group-6F7570313233-SegmentedRaftLogWorker: Rolled log segment from /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233/current/log_inprogress_2 to /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233/current/log_2-3
-2023-08-09 00:28:03 INFO  SegmentedRaftLogWorker:651 - 1@group-6F7570313233-SegmentedRaftLogWorker: created new log segment /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233/current/log_inprogress_4
-2023-08-09 00:28:03 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 2) already exists (snapshotIndex: 0, commitIndex: 2)
-2023-08-09 00:28:03 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:3<-1#3:FAIL-t3,INCONSISTENCY,nextIndex=3,followerCommit=2,matchIndex=-1
-2023-08-09 00:28:03 INFO  LeaderElection:92 - 1@group-6F7570313233-LeaderElection2: PRE_VOTE REJECTED received 1 response(s) and 0 exception(s):
-2023-08-09 00:28:03 INFO  LeaderElection:96 -   Response 0: 1<-3#0:FAIL-t2
-2023-08-09 00:28:03 INFO  LeaderElection:334 - 1@group-6F7570313233-LeaderElection2 PRE_VOTE round 1: result REJECTED
-2023-08-09 00:28:03 INFO  RaftServer$Division:434 - 1@group-6F7570313233: set configuration 4: peers:[1|rpc:127.0.0.1:6001|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-09 00:28:03 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 3) already exists (snapshotIndex: 0, commitIndex: 4)
-2023-08-09 00:28:03 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:3<-1#7:FAIL-t3,INCONSISTENCY,nextIndex=5,followerCommit=4,matchIndex=-1
-2023-08-09 00:28:03 INFO  RaftServer$Division:1614 - 1@group-6F7570313233: Failed appendEntries as the first entry (index 3) already exists (snapshotIndex: 0, commitIndex: 4)
-2023-08-09 00:28:03 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:3<-1#8:FAIL-t3,INCONSISTENCY,nextIndex=5,followerCommit=4,matchIndex=-1
-2023-08-09 00:28:03 INFO  RaftServer$Division:1624 - 1@group-6F7570313233: Failed appendEntries as previous log entry ((t:3, i:6)) is not found
-2023-08-09 00:28:03 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:3<-1#9:FAIL-t3,INCONSISTENCY,nextIndex=6,followerCommit=4,matchIndex=-1
-2023-08-09 00:28:03 INFO  RaftServer$Division:1624 - 1@group-6F7570313233: Failed appendEntries as previous log entry ((t:3, i:6)) is not found
-2023-08-09 00:28:03 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:3<-1#10:FAIL-t3,INCONSISTENCY,nextIndex=6,followerCommit=4,matchIndex=-1
-2023-08-09 00:28:03 INFO  RaftServer$Division:1624 - 1@group-6F7570313233: Failed appendEntries as previous log entry ((t:3, i:6)) is not found
-2023-08-09 00:28:03 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:3<-1#11:FAIL-t3,INCONSISTENCY,nextIndex=6,followerCommit=4,matchIndex=-1
-2023-08-09 00:28:03 INFO  RaftServer$Division:1624 - 1@group-6F7570313233: Failed appendEntries as previous log entry ((t:3, i:6)) is not found
-2023-08-09 00:28:03 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:3<-1#12:FAIL-t3,INCONSISTENCY,nextIndex=6,followerCommit=4,matchIndex=-1
-2023-08-09 00:28:03 INFO  RaftServer$Division:1624 - 1@group-6F7570313233: Failed appendEntries as previous log entry ((t:3, i:6)) is not found
-2023-08-09 00:28:03 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:3<-1#13:FAIL-t3,INCONSISTENCY,nextIndex=6,followerCommit=4,matchIndex=-1
-2023-08-09 00:28:03 INFO  RaftServer$Division:1624 - 1@group-6F7570313233: Failed appendEntries as previous log entry ((t:3, i:7)) is not found
-2023-08-09 00:28:03 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:3<-1#15:FAIL-t3,INCONSISTENCY,nextIndex=6,followerCommit=4,matchIndex=-1
-2023-08-09 00:28:03 INFO  RaftServer$Division:1624 - 1@group-6F7570313233: Failed appendEntries as previous log entry ((t:3, i:7)) is not found
-2023-08-09 00:28:03 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:3<-1#16:FAIL-t3,INCONSISTENCY,nextIndex=6,followerCommit=4,matchIndex=-1
-2023-08-09 00:28:03 INFO  RaftServer$Division:1624 - 1@group-6F7570313233: Failed appendEntries as previous log entry ((t:3, i:7)) is not found
-2023-08-09 00:28:03 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:3<-1#17:FAIL-t3,INCONSISTENCY,nextIndex=6,followerCommit=5,matchIndex=-1
-2023-08-09 00:28:03 INFO  RaftServer$Division:1624 - 1@group-6F7570313233: Failed appendEntries as previous log entry ((t:3, i:7)) is not found
-2023-08-09 00:28:03 INFO  RaftServer$Division:1594 - 1@group-6F7570313233: inconsistency entries. Reply:3<-1#18:FAIL-t3,INCONSISTENCY,nextIndex=6,followerCommit=5,matchIndex=-1
-2023-08-09 00:28:03 WARN  GrpcLogAppender:349 - 1@group-6F7570313233->3-GrpcLogAppender:  appendEntries Timeout, request=AppendEntriesRequest:cid=40,entriesCount=1,lastEntry=(t:1, i:1)
-2023-08-09 00:28:03 WARN  GrpcLogAppender:349 - 1@group-6F7570313233->2-GrpcLogAppender: HEARTBEAT appendEntries Timeout, request=AppendEntriesRequest:cid=31,entriesCount=0,lastEntry=null
-2023-08-09 00:28:03 WARN  GrpcLogAppender:349 - 1@group-6F7570313233->2-GrpcLogAppender:  appendEntries Timeout, request=AppendEntriesRequest:cid=30,entriesCount=1,lastEntry=(t:1, i:1)
-2023-08-09 00:28:04 WARN  GrpcLogAppender:349 - 1@group-6F7570313233->3-GrpcLogAppender: HEARTBEAT appendEntries Timeout, request=AppendEntriesRequest:cid=42,entriesCount=0,lastEntry=null
-2023-08-09 00:28:04 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ: [id: 0x6b74e6cf, L:/127.0.0.1:7075 - R:/127.0.0.1:63991]
-2023-08-09 00:28:04 INFO  LoggingHandler:148 - [id: 0x35ac37bb, L:/127.0.0.1:7075] READ COMPLETE
+2023-08-09 01:23:03 INFO  FollowerState:148 - 1@group-6F7570313233-FollowerState: change to CANDIDATE, lastRpcElapsedTime:165403791ns, electionTimeout:159ms
+2023-08-09 01:23:03 INFO  StateChangeEvent:25 - New state change event on server 1 to candidate
+2023-08-09 01:23:03 INFO  StateChangeEvent:17 - New Timeout event on server 1
+2023-08-09 01:23:03 INFO  RoleInfo:110 - 1: shutdown 1@group-6F7570313233-FollowerState
+2023-08-09 01:23:03 INFO  RaftServer$Division:334 - 1@group-6F7570313233: changes role from  FOLLOWER to CANDIDATE at term 0 for changeToCandidate
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.pre-vote = true (default)
+2023-08-09 01:23:03 INFO  RoleInfo:139 - 1: start 1@group-6F7570313233-LeaderElection1
+2023-08-09 01:23:03 INFO  LeaderElection:332 - 1@group-6F7570313233-LeaderElection1 PRE_VOTE round 0: submit vote requests at term 0 for -1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
+2023-08-09 01:23:03 INFO  GrpcServerProtocolClient:65 - Build channel for 2
+2023-08-09 01:23:03 INFO  GrpcServerProtocolClient:65 - Build channel for 3
+2023-08-09 01:23:03 INFO  RequestVoteMessage:33 - Intercepted request vote from server 3 to 1
+2023-08-09 01:23:03 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ: [id: 0xdae3aaa2, L:/127.0.0.1:7075 - R:/127.0.0.1:52645]
+2023-08-09 01:23:03 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ COMPLETE
+2023-08-09 01:23:03 INFO  RequestVoteMessage:45 - Invoking request vote on server: 1
+2023-08-09 01:23:03 INFO  RaftServer$Division:1313 - 1@group-6F7570313233: receive requestVote(PRE_VOTE, 3, group-6F7570313233, 0, (t:0, i:0))
+2023-08-09 01:23:03 INFO  VoteContext:49 - 1@group-6F7570313233-CANDIDATE: accept PRE_VOTE from 3: our priority 0 <= candidate's priority 0
+2023-08-09 01:23:03 INFO  RaftServer$Division:1346 - 1@group-6F7570313233 replies to PRE_VOTE vote request: 3<-1#0:OK-t0. Peer's state: 1@group-6F7570313233:t0, leader=null, voted=, raftlog=Memoized:1@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-09 01:23:03 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 1 to 3
+2023-08-09 01:23:03 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
+2023-08-09 01:23:03 INFO  RequestVoteMessage:33 - Intercepted request vote from server 2 to 1
+2023-08-09 01:23:03 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ: [id: 0x39d17515, L:/127.0.0.1:7075 - R:/127.0.0.1:52654]
+2023-08-09 01:23:03 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ COMPLETE
+2023-08-09 01:23:03 INFO  RequestVoteMessage:45 - Invoking request vote on server: 1
+2023-08-09 01:23:03 INFO  RaftServer$Division:1313 - 1@group-6F7570313233: receive requestVote(PRE_VOTE, 2, group-6F7570313233, 0, (t:0, i:0))
+2023-08-09 01:23:03 INFO  VoteContext:49 - 1@group-6F7570313233-CANDIDATE: accept PRE_VOTE from 2: our priority 0 <= candidate's priority 0
+2023-08-09 01:23:03 INFO  RaftServer$Division:1346 - 1@group-6F7570313233 replies to PRE_VOTE vote request: 2<-1#0:OK-t0. Peer's state: 1@group-6F7570313233:t0, leader=null, voted=, raftlog=Memoized:1@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-09 01:23:03 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 1 to 2
+2023-08-09 01:23:03 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
+2023-08-09 01:23:03 INFO  LeaderElection:92 - 1@group-6F7570313233-LeaderElection1: PRE_VOTE TIMEOUT received 0 response(s) and 0 exception(s):
+2023-08-09 01:23:03 INFO  LeaderElection:334 - 1@group-6F7570313233-LeaderElection1 PRE_VOTE round 0: result TIMEOUT
+2023-08-09 01:23:03 INFO  LeaderElection:332 - 1@group-6F7570313233-LeaderElection1 PRE_VOTE round 1: submit vote requests at term 0 for -1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
+2023-08-09 01:23:03 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ: [id: 0xbe38c450, L:/127.0.0.1:7075 - R:/127.0.0.1:52658]
+2023-08-09 01:23:03 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ COMPLETE
+2023-08-09 01:23:03 INFO  RequestVoteMessage:33 - Intercepted request vote from server 3 to 1
+2023-08-09 01:23:03 INFO  RequestVoteReplyMessage:44 - Invoking request vote reply on server: 1
+2023-08-09 01:23:03 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ: [id: 0x2c01c1fc, L:/127.0.0.1:7075 - R:/127.0.0.1:52668]
+2023-08-09 01:23:03 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ COMPLETE
+2023-08-09 01:23:03 INFO  RequestVoteReplyMessage:44 - Invoking request vote reply on server: 1
+2023-08-09 01:23:03 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ: [id: 0xc6a01638, L:/127.0.0.1:7075 - R:/127.0.0.1:52673]
+2023-08-09 01:23:03 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ COMPLETE
+2023-08-09 01:23:03 INFO  RequestVoteMessage:33 - Intercepted request vote from server 2 to 1
+2023-08-09 01:23:03 INFO  RequestVoteMessage:45 - Invoking request vote on server: 1
+2023-08-09 01:23:03 INFO  RaftServer$Division:1313 - 1@group-6F7570313233: receive requestVote(PRE_VOTE, 3, group-6F7570313233, 0, (t:0, i:0))
+2023-08-09 01:23:03 INFO  VoteContext:49 - 1@group-6F7570313233-CANDIDATE: accept PRE_VOTE from 3: our priority 0 <= candidate's priority 0
+2023-08-09 01:23:03 INFO  RaftServer$Division:1346 - 1@group-6F7570313233 replies to PRE_VOTE vote request: 3<-1#0:OK-t0. Peer's state: 1@group-6F7570313233:t0, leader=null, voted=, raftlog=Memoized:1@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-09 01:23:03 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 1 to 3
+2023-08-09 01:23:03 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
+2023-08-09 01:23:03 INFO  LeaderElection:92 - 1@group-6F7570313233-LeaderElection1: PRE_VOTE DISCOVERED_A_NEW_TERM (term=1) received 1 response(s) and 0 exception(s):
+2023-08-09 01:23:03 INFO  LeaderElection:96 -   Response 0: 1<-2#0:OK-t1
+2023-08-09 01:23:03 INFO  LeaderElection:334 - 1@group-6F7570313233-LeaderElection1 PRE_VOTE round 1: result DISCOVERED_A_NEW_TERM (term=1)
+2023-08-09 01:23:03 INFO  RaftServer$Division:334 - 1@group-6F7570313233: changes role from CANDIDATE to FOLLOWER at term 1 for DISCOVERED_A_NEW_TERM (term=1)
+2023-08-09 01:23:03 INFO  RoleInfo:130 - 1: shutdown 1@group-6F7570313233-LeaderElection1
+2023-08-09 01:23:03 INFO  RoleInfo:139 - 1: start 1@group-6F7570313233-FollowerState
+2023-08-09 01:23:03 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ: [id: 0xd0a0bc16, L:/127.0.0.1:7075 - R:/127.0.0.1:52680]
+2023-08-09 01:23:03 INFO  StateChangeEvent:25 - New state change event on server 1 to follower
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
+2023-08-09 01:23:03 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
+2023-08-09 01:23:03 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ COMPLETE
+2023-08-09 01:23:03 INFO  RequestVoteMessage:45 - Invoking request vote on server: 1
+2023-08-09 01:23:03 INFO  RaftServer$Division:1313 - 1@group-6F7570313233: receive requestVote(ELECTION, 2, group-6F7570313233, 1, (t:0, i:0))
+2023-08-09 01:23:03 INFO  VoteContext:49 - 1@group-6F7570313233-FOLLOWER: accept ELECTION from 2: our priority 0 <= candidate's priority 0
+2023-08-09 01:23:03 INFO  RaftServer$Division:334 - 1@group-6F7570313233: changes role from  FOLLOWER to FOLLOWER at term 1 for candidate:2
+2023-08-09 01:23:03 INFO  RoleInfo:110 - 1: shutdown 1@group-6F7570313233-FollowerState
+2023-08-09 01:23:03 INFO  RoleInfo:139 - 1: start 1@group-6F7570313233-FollowerState
+2023-08-09 01:23:03 INFO  FollowerState:159 - 1@group-6F7570313233-FollowerState was interrupted
+2023-08-09 01:23:03 INFO  StateChangeEvent:25 - New state change event on server 1 to follower
+2023-08-09 01:23:03 INFO  RaftServer$Division:1346 - 1@group-6F7570313233 replies to ELECTION vote request: 2<-1#0:OK-t1. Peer's state: 1@group-6F7570313233:t1, leader=null, voted=2, raftlog=Memoized:1@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-09 01:23:03 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 1 to 2
+2023-08-09 01:23:03 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
+2023-08-09 01:23:03 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ: [id: 0xb396e1cd, L:/127.0.0.1:7075 - R:/127.0.0.1:52689]
+2023-08-09 01:23:03 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ COMPLETE
+2023-08-09 01:23:03 INFO  RequestVoteMessage:33 - Intercepted request vote from server 3 to 1
+2023-08-09 01:23:03 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ: [id: 0x5fbefd1a, L:/127.0.0.1:7075 - R:/127.0.0.1:52694]
+2023-08-09 01:23:03 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ COMPLETE
+2023-08-09 01:23:03 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ: [id: 0x9620a59b, L:/127.0.0.1:7075 - R:/127.0.0.1:52699]
+2023-08-09 01:23:03 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ COMPLETE
+2023-08-09 01:23:04 INFO  RequestVoteMessage:33 - Intercepted request vote from server 2 to 1
+2023-08-09 01:23:04 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ: [id: 0x2af9863e, L:/127.0.0.1:7075 - R:/127.0.0.1:52705]
+2023-08-09 01:23:04 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ COMPLETE
+2023-08-09 01:23:04 INFO  RequestVoteMessage:33 - Intercepted request vote from server 2 to 1
+2023-08-09 01:23:04 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ: [id: 0x5be064da, L:/127.0.0.1:7075 - R:/127.0.0.1:52711]
+2023-08-09 01:23:04 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ COMPLETE
+2023-08-09 01:23:04 INFO  RaftServer$Division:317 - 1@group-6F7570313233: change Leader from null to 2 at term 2 for appendEntries, leader elected after 843ms
+2023-08-09 01:23:04 INFO  RaftServer$Division:434 - 1@group-6F7570313233: set configuration 0: peers:[1|rpc:127.0.0.1:6001|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-09 01:23:04 INFO  SegmentedRaftLogWorker:447 - 1@group-6F7570313233-SegmentedRaftLogWorker: Starting segment from index:0
+2023-08-09 01:23:04 INFO  RaftServer$Division:434 - 1@group-6F7570313233: set configuration 0: peers:[1|rpc:127.0.0.1:6001|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-09 01:23:04 INFO  RaftServer$Division:434 - 1@group-6F7570313233: set configuration 0: peers:[1|rpc:127.0.0.1:6001|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-09 01:23:04 INFO  SegmentedRaftLogWorker:651 - 1@group-6F7570313233-SegmentedRaftLogWorker: created new log segment /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233/current/log_inprogress_0
+2023-08-09 01:23:04 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-AA03DB8DDC31->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002000000000000...(size=12), reply=RaftClientReply:client-AA03DB8DDC31->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c-1, 2:c-1, 3:c-1]
+2023-08-09 01:23:04 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-39F7EAA2EB26->1@group-6F7570313233, cid=0, seq=0, RW, Message:010130023ff000000000...(size=12), reply=RaftClientReply:client-39F7EAA2EB26->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c2, 2:c2, 3:c1]
+2023-08-09 01:23:04 INFO  GrpcClientProtocolService:284 - Failed RaftClientRequest:client-B09BEA29CBE9->1@group-6F7570313233, cid=0, seq=0, RW, Message:01013002400000000000...(size=12), reply=RaftClientReply:client-B09BEA29CBE9->1@group-6F7570313233, cid=0, FAILED org.apache.ratis.protocol.exceptions.NotLeaderException: Server 1@group-6F7570313233 is not the leader 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, logIndex=0, commits[1:c3, 2:c3, 3:c1]
+2023-08-09 01:23:05 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ: [id: 0xb32122a0, L:/127.0.0.1:7075 - R:/127.0.0.1:53299]
+2023-08-09 01:23:05 INFO  LoggingHandler:148 - [id: 0x2ecd0a47, L:/127.0.0.1:7075] READ COMPLETE
 Closing server: 1
-2023-08-09 00:28:04 INFO  RaftServer:416 - 1: close
-2023-08-09 00:28:04 INFO  GrpcService:311 - 1: shutdown server GrpcServerProtocolService now
-2023-08-09 00:28:04 INFO  RaftServer$Division:471 - 1@group-6F7570313233: shutdown
-2023-08-09 00:28:04 INFO  JmxRegister:73 - Successfully un-registered JMX Bean with object name Ratis:service=RaftServer,group=group-6F7570313233,id=1
-2023-08-09 00:28:04 INFO  RoleInfo:110 - 1: shutdown 1@group-6F7570313233-FollowerState
-2023-08-09 00:28:04 INFO  StateMachineUpdater:155 - 1@group-6F7570313233-StateMachineUpdater: set stopIndex = 7
-2023-08-09 00:28:04 INFO  FollowerState:159 - 1@group-6F7570313233-FollowerState was interrupted
-2023-08-09 00:28:04 INFO  StateMachine:102 - Taking a snapshot to file /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233/sm/snapshot.3_7
-2023-08-09 00:28:04 INFO  GrpcServerProtocolClient:103 - 2 Close channels
-2023-08-09 00:28:04 WARN  GrpcServerProtocolService:122 - 1: APPEND_ENTRIES onError, lastRequest: null: org.apache.ratis.thirdparty.io.grpc.StatusRuntimeException: CANCELLED: client cancelled
-2023-08-09 00:28:04 WARN  GrpcServerProtocolService:122 - 1: APPEND_ENTRIES onError, lastRequest: 3->1#19-t3,previous=(t:3, i:5),leaderCommit=7,initializing? true,entries: size=3, first=(t:3, i:6), STATEMACHINELOGENTRY, 0@client-0AAB9D5FAF0F: org.apache.ratis.thirdparty.io.grpc.StatusRuntimeException: CANCELLED: client cancelled
-2023-08-09 00:28:04 INFO  GrpcServerProtocolClient:103 - 3 Close channels
-2023-08-09 00:28:04 INFO  StateChangeEvent:20 - New SnapshotUpdate event on server 1 to 7
-2023-08-09 00:28:04 INFO  GrpcService:320 - 1: shutdown server GrpcServerProtocolService successfully
-2023-08-09 00:28:04 INFO  StateMachineUpdater:291 - 1@group-6F7570313233-StateMachineUpdater: Took a snapshot at index 7
-2023-08-09 00:28:04 INFO  StateMachineUpdater:97 - 1@group-6F7570313233-StateMachineUpdater: snapshotIndex: updateIncreasingly 0 -> 7
-2023-08-09 00:28:04 INFO  RaftServer$Division:472 - 1@group-6F7570313233: closes. applyIndex: -1
+2023-08-09 01:23:05 INFO  RaftServer:416 - 1: close
+2023-08-09 01:23:05 INFO  GrpcService:311 - 1: shutdown server GrpcServerProtocolService now
+2023-08-09 01:23:05 INFO  RaftServer$Division:471 - 1@group-6F7570313233: shutdown
+2023-08-09 01:23:05 INFO  JmxRegister:73 - Successfully un-registered JMX Bean with object name Ratis:service=RaftServer,group=group-6F7570313233,id=1
+2023-08-09 01:23:05 INFO  RoleInfo:110 - 1: shutdown 1@group-6F7570313233-FollowerState
+2023-08-09 01:23:05 INFO  StateMachineUpdater:155 - 1@group-6F7570313233-StateMachineUpdater: set stopIndex = 6
+2023-08-09 01:23:05 INFO  FollowerState:159 - 1@group-6F7570313233-FollowerState was interrupted
+2023-08-09 01:23:05 INFO  StateMachine:102 - Taking a snapshot to file /tmp/ratis/1/64656d6f-5261-6674-4772-6f7570313233/sm/snapshot.2_6
+2023-08-09 01:23:05 INFO  GrpcServerProtocolClient:103 - 2 Close channels
+2023-08-09 01:23:05 INFO  GrpcServerProtocolClient:103 - 3 Close channels
+2023-08-09 01:23:05 WARN  GrpcServerProtocolService:122 - 1: APPEND_ENTRIES onError, lastRequest: null: org.apache.ratis.thirdparty.io.grpc.StatusRuntimeException: CANCELLED: client cancelled
+2023-08-09 01:23:05 WARN  GrpcServerProtocolService:122 - 1: APPEND_ENTRIES onError, lastRequest: 2->1#36-t2,previous=(t:2, i:5),leaderCommit=5,initializing? true,entries: size=1, first=(t:2, i:6), METADATAENTRY(c:5): org.apache.ratis.thirdparty.io.grpc.StatusRuntimeException: CANCELLED: client cancelled
+2023-08-09 01:23:05 INFO  GrpcService:320 - 1: shutdown server GrpcServerProtocolService successfully
+2023-08-09 01:23:05 INFO  StateChangeEvent:20 - New SnapshotUpdate event on server 1 to 6
+2023-08-09 01:23:05 INFO  StateMachineUpdater:291 - 1@group-6F7570313233-StateMachineUpdater: Took a snapshot at index 6
+2023-08-09 01:23:05 INFO  StateMachineUpdater:97 - 1@group-6F7570313233-StateMachineUpdater: snapshotIndex: updateIncreasingly -1 -> 6
+2023-08-09 01:23:05 INFO  RaftServer$Division:472 - 1@group-6F7570313233: closes. applyIndex: -1
+2023-08-09 01:23:05 INFO  SegmentedRaftLogWorker:252 - 1@group-6F7570313233-SegmentedRaftLogWorker close()
+2023-08-09 01:23:05 INFO  JvmPauseMonitor:109 - JvmPauseMonitor-1: Stopped

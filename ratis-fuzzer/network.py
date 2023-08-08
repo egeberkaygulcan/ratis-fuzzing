@@ -142,6 +142,8 @@ class Network:
         self.mailboxes = {}
         self.replicas = {}
         self.event_callbacks = {}
+        self.request_map = {}
+        self.request_ctr = 1
         self.event_trace = []
         self.config = config
         self.client_request_counter = 0
@@ -193,6 +195,13 @@ class Network:
         finally:
             self.lock.release()
         return result
+
+    def _get_request_number(self, data):
+        if data not in self.request_map:
+            self.request_map[data] = self.request_ctr
+            self.request_ctr += 1
+            return self.request_map[data]
+        return self.request_map[data]
     
     def _handle_replica(self, request: Request) -> Response:
         replica = json.loads(request.content)
@@ -207,6 +216,7 @@ class Network:
         return Response.json(HTTPStatus.OK, json.dumps({"message": "Ok"}))
 
     def _get_message_event_params(self, msg):
+        msg.msg = json.loads(base64.b64decode(msg.msg).decode('utf-8'))
         if msg.type == "append_entries_request":
             return {
                 "type": "MsgApp",
@@ -214,7 +224,7 @@ class Network:
                 "from": int(msg.fr),
                 "to": int(msg.to),
                 "log_term": msg.msg["prev_log_term"], 
-                "entries": [{"Term": e["term"], "Data": str(self._get_request_number(e["data"].encode("utf-8")))} for e in msg.msg["entries"] if e["data"] != ""],
+                "entries": [{"Term": msg.msg['entries'][key]["term"], "Data": str(self._get_request_number(msg.msg['entries'][key]["data"]))} for key in msg.msg["entries"].keys() if msg.msg['entries'][key]["data"] != ""],
                 "index": msg.msg["prev_log_idx"],
                 "commit": msg.msg["leader_commit"],
                 "reject": False,
@@ -273,7 +283,7 @@ class Network:
                 self.mailboxes[msg.to].append(msg)
             finally:
                 self.lock.release()
-            # self.add_event({"name": "SendMessage", "params": self._get_message_event_params(msg)})
+            self.add_event({"name": "SendMessage", "params": self._get_message_event_params(msg)})
 
         return Response.json(HTTPStatus.OK, json.dumps({"message": "Ok"}))
     

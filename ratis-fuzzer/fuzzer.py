@@ -48,7 +48,7 @@ class TLCGuider:
         return False
     
 class TLCGuider:
-    def __init__(self, tlc_addr, record_path) -> None:
+    def __init__(self, tlc_addr, record_path=None) -> None:
         self.tlc_addr = tlc_addr
         self.record_path = record_path
         self.states = {}
@@ -115,7 +115,7 @@ class Fuzzer:
             tlc_addr = "127.0.0.1:2023"
             if "tlc_addr" in config:
                 tlc_addr = config["tlc_addr"]
-            new_config.guider = None # TLCGuider(tlc_addr)
+            new_config.guider = TLCGuider(tlc_addr)
         else:
             new_config.guider = config["guider"]
 

@@ -45,7 +45,8 @@ public class AppendEntriesReplyMessage extends Message {
 
         JsonObject json = new JsonObject();
         json.addProperty("type", type);
-        json.addProperty("success", proto.getServerReply().getSuccess());
+        int success = proto.getServerReply().getSuccess() ? 1 : 0;
+        json.addProperty("success", success);
         json.addProperty("term", (double) proto.getTerm());
         json.addProperty("current_idx", (double) proto.getMatchIndex());
         json.addProperty("msg_id", (double) -1);

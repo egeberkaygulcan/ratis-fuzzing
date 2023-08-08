@@ -60,7 +60,8 @@ public class RequestVoteReplyMessage extends Message {
         json.addProperty("term", (double) proto.getTerm());
         json.addProperty("prevote", prevote);
         json.addProperty("request_term", (double) proto.getTerm());
-        json.addProperty("vote_granted", proto.getServerReply().getSuccess());
+        int vote_granted = proto.getServerReply().getSuccess() ? 1 : 0;
+        json.addProperty("vote_granted", vote_granted);
 
         Gson gson = GsonHelper.gson;
 
