@@ -97,7 +97,6 @@ class RatisClient:
     
     def send_request(self, value, filepath, leader_id, timeout=None):
         def run(cmd, timeout, filepath, on_exit):
-            time.sleep(0.1)
             out, err = False, False
             try:
                 f = open(os.path.join(filepath, f'client.txt'), 'a+')

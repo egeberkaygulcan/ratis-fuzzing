@@ -146,7 +146,6 @@ class Network:
         self.config = config
         self.client_request_counter = 0
         self.started = False
-
         router = Router()
         router.add_route("/replica", self._handle_replica)
         router.add_route("/message", self._handle_message)
@@ -261,7 +260,7 @@ class Network:
 
     def _handle_message(self, request: Request) -> Response:
         content = json.loads(request.content)
-        content['data'] = json.loads(base64.b64decode(content["data"]).decode('utf-8'))
+        # content['data'] = json.loads(base64.b64decode(content["data"]).decode('utf-8'))
         msg = Message.from_str(content)
         logging.debug(f'Message received of type {msg.type} from {msg.fr} to {msg.to}.')
         if msg is not None:
@@ -400,7 +399,7 @@ class Network:
             self.lock.acquire()
             # addr = self.replicas[list(self.replicas.keys())[0]]['addr']
             addr = self.replicas[replica]["addr"]
-            msg = Message(0, 1, "shutdown", 0)
+            msg = Message(0, 1, "shutdown", '0')
             requests.post("http://"+addr+"/message", json=json.dumps(msg.__dict__))
         except:
             pass
@@ -412,7 +411,7 @@ class Network:
         try:
             self.lock.acquire()
             addr = self.replicas[replica]["addr"]
-            msg = Message(0, 1, "crash", 0)
+            msg = Message(0, 1, "crash", '0')
             requests.post("http://"+addr+"/message", json=json.dumps(msg.__dict__))
         except:
             traceback.print_exc()
@@ -424,7 +423,7 @@ class Network:
         try:
             self.lock.acquire()
             addr = self.replicas[replica]["addr"]
-            msg = Message(0, 1, "restart", 0)
+            msg = Message(0, 1, "restart", '0')
             requests.post("http://"+addr+"/message", json=json.dumps(msg.__dict__))
         except:
             traceback.print_exc()

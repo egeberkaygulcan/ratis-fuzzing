@@ -150,7 +150,7 @@ class Fuzzer:
             new_config.init_population = config["init_population"]
         
         if "test_harness" not in config:
-            new_config.test_harness = 3
+            new_config.test_harness = 1
         else:
             new_config.test_harness = config["test_harness"]
 
@@ -175,7 +175,7 @@ class Fuzzer:
         # self.cluster.start(0)
 
         # logging.info('Sleeping...')
-        # time.sleep(3)
+        # time.sleep(0.5)
 
         # self.cluster.send_client_request()
 
@@ -280,7 +280,7 @@ class Fuzzer:
         event_trace = []
         pending_requests = 0
         try:
-            for i in tqdm(range(self.config.horizon), disable=not self.args.verbose):
+            for i in range(self.config.horizon): # tqdm(range(self.config.horizon), disable=not self.args.verbose):
                 if self.cluster.check_timeout():
                     break
                 logging.debug("Taking step {}".format(i))
@@ -331,25 +331,40 @@ class Fuzzer:
 
                 if i in client_requests:
                     try:
-                        logging.debug("Executing client request")                        
+                        logging.info(f"Executing client request {i}")                        
                         # self.cluster.execute_async('INCRBY', 'counter', 1, with_retry=False)
-                        pending_requests += 1
+                        self.cluster.send_client_request()
+                        trace.append({"type": "ClientRequest", "step": i})
+                        self.network.add_event({"name": 'ClientRequest', "params": {"leader": self.cluster.get_leader(), "request": self.cluster.client_request_counter-1}})
                     except:
                         pass
                     # trace.append({"type": "ClientRequest", "step": i})
                 
-                if self.cluster.get_leader() is not None:
-                    for _ in range(pending_requests):
-                        self.cluster.send_client_request()
-                        pending_requests -= 1
-                        trace.append({"type": "ClientRequest", "step": i})
-                        self.network.add_event({"name": 'ClientRequest', "params": {"leader": self.cluster.get_leader(), "request": self.cluster.client_request_counter-1}})
+                # if self.cluster.get_leader() is not None:
+                #     for _ in range(pending_requests):
+                #         self.cluster.send_client_request()
+                #         pending_requests -= 1
+                #         trace.append({"type": "ClientRequest", "step": i})
+                #         self.network.add_event({"name": 'ClientRequest', "params": {"leader": self.cluster.get_leader(), "request": self.cluster.client_request_counter-1}})
         except Exception as e:
             print(e)
             # record_logs(path.join(self.config.report_path, "{}_{}.log".format(self.config.record_file_prefix, iteration)), cluster)
         finally:
             logging.debug("Destroying cluster")
             try:
+                i = self.config.horizon - 1
+                while self.cluster.get_completed_requests() < self.config.test_harness:
+                    node_id = -1
+                    node_ids = self.network.check_mailboxes()
+                    while len(node_ids) == 0:
+                        if self.cluster.check_timeout():
+                            break
+                        time.sleep(0.001)
+                        node_ids = self.network.check_mailboxes()
+                    node_id = random.choice(node_ids)
+                    self.network.schedule_replica(node_id)
+                    trace.append({"type": "Schedule", "node": node_id, "step": i, "max_messages": node_id})
+                    i += 1
                 self.cluster.shutdown()
             except:
                 pass

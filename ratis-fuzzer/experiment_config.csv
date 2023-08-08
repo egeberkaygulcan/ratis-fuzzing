@@ -1,2 +1,2 @@
 exp_name,no_iterations,mutations_per_trace,crash_quota,init_population
-naive_random,1,5,1,1
+naive_random,1,5,0,1

@@ -66,12 +66,12 @@ public class Server extends SubCommandBase {
 
     final int port = NetUtils.createSocketAddr(getPeer(peerId).getAddress()).getPort();
     GrpcConfigKeys.Server.setPort(properties, port);
-    // RaftServerConfigKeys.Rpc.setFirstElectionTimeoutMin(properties, TimeDuration.valueOf(300, TimeUnit.MILLISECONDS));
-    // RaftServerConfigKeys.Rpc.setFirstElectionTimeoutMax(properties, TimeDuration.valueOf(600, TimeUnit.MILLISECONDS));
-    // RaftServerConfigKeys.Rpc.setTimeoutMin(properties, TimeDuration.valueOf(300, TimeUnit.MILLISECONDS));
-    // RaftServerConfigKeys.Rpc.setTimeoutMax(properties, TimeDuration.valueOf(600, TimeUnit.MILLISECONDS));
-    // RaftServerConfigKeys.LeaderElection.setLeaderStepDownWaitTime(properties, TimeDuration.valueOf(500, TimeUnit.MILLISECONDS));
     RaftServerConfigKeys.Snapshot.setAutoTriggerEnabled(properties, true);
+    // RaftServerConfigKeys.Rpc.setFirstElectionTimeoutMin(properties, TimeDuration.valueOf(200, TimeUnit.MILLISECONDS));
+    // RaftServerConfigKeys.Rpc.setFirstElectionTimeoutMax(properties, TimeDuration.valueOf(400, TimeUnit.MILLISECONDS));
+    // RaftServerConfigKeys.Rpc.setTimeoutMin(properties, TimeDuration.valueOf(200, TimeUnit.MILLISECONDS));
+    // RaftServerConfigKeys.Rpc.setTimeoutMax(properties, TimeDuration.valueOf(400, TimeUnit.MILLISECONDS));
+    // RaftServerConfigKeys.LeaderElection.setLeaderStepDownWaitTime(properties, TimeDuration.valueOf(1000, TimeUnit.MILLISECONDS));
 
     Optional.ofNullable(getPeer(peerId).getClientAddress()).ifPresent(address ->
         GrpcConfigKeys.Client.setPort(properties, NetUtils.createSocketAddr(address).getPort()));
@@ -138,6 +138,7 @@ public class Server extends SubCommandBase {
     }
 
     System.out.println("Closing server: " + id);
+    System.out.println("Send count: " + fuzzerClient.sendCounter.get() + " , receive count: " + fuzzerClient.receiveCounter.get() + " , invoke count: " + fuzzerClient.invokeCounter.get());
     if (!crashed)
       raftServer.close();
   }
