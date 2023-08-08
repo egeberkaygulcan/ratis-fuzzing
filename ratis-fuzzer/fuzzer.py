@@ -331,7 +331,7 @@ class Fuzzer:
 
                 if i in client_requests:
                     try:
-                        logging.info(f"Executing client request {i}")                        
+                        logging.debug(f"Executing client request {i}")                        
                         # self.cluster.execute_async('INCRBY', 'counter', 1, with_retry=False)
                         self.cluster.send_client_request()
                         trace.append({"type": "ClientRequest", "step": i})
@@ -354,6 +354,8 @@ class Fuzzer:
             try:
                 i = self.config.horizon - 1
                 while self.cluster.get_completed_requests() < self.config.test_harness:
+                    if self.cluster.check_timeout():
+                        break
                     node_id = -1
                     node_ids = self.network.check_mailboxes()
                     while len(node_ids) == 0:

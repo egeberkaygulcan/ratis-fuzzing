@@ -37,14 +37,8 @@ import java.io.IOException;
  */
 public abstract class Client extends SubCommandBase {
 
-  // // private final FuzzerClient fuzzerClient = FuzzerClient.getInstance();
-  // @Parameter(names = {"--providedLeader", "-pl"}, description =
-  //     "Raft leader id", required = true)
-  // private String leaderId;
-
   @Override
   public void run() throws Exception {
-    // System.out.println("Running Client Arithmetic, leader: " + leaderId);
     RaftProperties raftProperties = new RaftProperties();
 
     final RaftGroup raftGroup = RaftGroup.valueOf(RaftGroupId.valueOf(ByteString.copyFromUtf8(getRaftGroupId())),
@@ -52,7 +46,6 @@ public abstract class Client extends SubCommandBase {
 
     RaftClient.Builder builder =
         RaftClient.newBuilder().setProperties(raftProperties);
-    // builder.setLeaderId(RaftPeerId.getRaftPeerId(this.leaderId));
     builder.setRaftGroup(raftGroup);
     builder.setClientRpc(new GrpcFactory(new Parameters()).newRaftClientRpc(ClientId.randomId(), raftProperties));
     RaftClient client = builder.build();

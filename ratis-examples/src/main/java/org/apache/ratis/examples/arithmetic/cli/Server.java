@@ -138,7 +138,6 @@ public class Server extends SubCommandBase {
     }
 
     System.out.println("Closing server: " + id);
-    System.out.println("Send count: " + fuzzerClient.sendCounter.get() + " , receive count: " + fuzzerClient.receiveCounter.get() + " , invoke count: " + fuzzerClient.invokeCounter.get());
     if (!crashed)
       raftServer.close();
   }

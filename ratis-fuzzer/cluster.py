@@ -72,7 +72,7 @@ class RatisServer:
                 self.state = ServerState.FOLLOWER
         finally:
             self.state_lock.release()
-        logging.info(f'Server {self.id} changed its state to {self.state}')
+        logging.debug(f'Server {self.id} changed its state to {self.state}')
 
     def handle_event(self, event):
         type = event['type']
@@ -89,6 +89,7 @@ class RatisClient:
         self.errors = []
         # self.expected_output = []
         # self.isAssign = True
+        self.threads = []
         self.lock = threading.Lock()
         self.name_counter = 0
         self.completed_requests = 0
@@ -120,6 +121,7 @@ class RatisClient:
         cmd = f'./client_assign.sh {name} {value} {self.peers}'
         thread = threading.Thread(target=run, args=(cmd, timeout, filepath, self.on_exit))
         thread.start()
+        self.threads.append(thread)
         self.pending_requests += 1
         logging.info('Client request sent.')
         # logging.info(f'Client request sent: {"assign" if not self.isAssign else "get"}, {name}')
@@ -133,6 +135,10 @@ class RatisClient:
     def reset(self):
         self.req_count = 0
         self.errors = []
+
+    def timeout(self):
+        for thread in self.threads:
+            thread.join()
     
     def validate(self):
         return None
@@ -155,7 +161,7 @@ class RatisCluster:
     
     def send_client_request(self):
         path = os.path.join(self.config.parent_dir, '_'.join([self.config.exp_name, str(self.run_id)]))
-        timeout = 15 if self.average_run_time == 0 else int(math.ceil(self.average_run_time)) + 1
+        timeout = 15 if self.average_run_time == 0 else int(math.ceil(self.average_run_time)) + 5
         # TODO - Add write-write-read loop
         self.client.send_request(self.client_request_counter, path, self.get_leader(), timeout)
         self.client_request_counter += 1
@@ -172,7 +178,7 @@ class RatisCluster:
             shutil.rmtree(path)
         os.makedirs(path)
 
-        timeout = 15 if self.average_run_time == 0 else int(math.ceil(self.average_run_time)) + 1
+        timeout = 15 if self.average_run_time == 0 else int(math.ceil(self.average_run_time)) + 5
         self.start_time = time.time()
         self.network.run()
         for server in self.servers:
@@ -224,6 +230,7 @@ class RatisCluster:
     def check_timeout(self):
         for server in self.servers:
             if server.timeout_:
+                self.client.timeout()
                 return True
         return False
 
