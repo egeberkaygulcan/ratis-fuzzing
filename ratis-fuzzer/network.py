@@ -279,7 +279,7 @@ class Network:
         return Response.json(HTTPStatus.OK, json.dumps({"message": "Ok"}))
     
     def _handle_event(self, request: Request) -> Response:
-        logging.info("Received event: {}".format(request.content))
+        logging.debug("Received event: {}".format(request.content))
         event = json.loads(request.content)
         if "server_id" in event:
             try:

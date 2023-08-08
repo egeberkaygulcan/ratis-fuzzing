@@ -95,9 +95,9 @@ class RatisClient:
         self.pending_requests = 0
         logging.info('RatisClient created.')
     
-    def send_request(self, value, filepath, timeout=None):
+    def send_request(self, value, filepath, leader_id, timeout=None):
         def run(cmd, timeout, filepath, on_exit):
-            time.sleep(0.01)
+            time.sleep(0.1)
             out, err = False, False
             try:
                 f = open(os.path.join(filepath, f'client.txt'), 'a+')
@@ -158,7 +158,7 @@ class RatisCluster:
         path = os.path.join(self.config.parent_dir, '_'.join([self.config.exp_name, str(self.run_id)]))
         timeout = 15 if self.average_run_time == 0 else int(math.ceil(self.average_run_time)) + 1
         # TODO - Add write-write-read loop
-        self.client.send_request(self.client_request_counter, path, timeout)
+        self.client.send_request(self.client_request_counter, path, self.get_leader(), timeout)
         self.client_request_counter += 1
 
     def validate(self):

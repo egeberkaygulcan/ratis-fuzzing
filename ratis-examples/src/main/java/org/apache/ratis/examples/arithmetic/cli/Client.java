@@ -26,54 +26,38 @@ import org.apache.ratis.protocol.ClientId;
 import org.apache.ratis.protocol.RaftGroup;
 import org.apache.ratis.protocol.RaftGroupId;
 import org.apache.ratis.protocol.RaftPeerId;
-import org.apache.ratis.server.fuzzer.FuzzerClient;
 import org.apache.ratis.thirdparty.com.google.protobuf.ByteString;
 
+import com.beust.jcommander.Parameter;
+
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Client to connect arithmetic example cluster.
  */
 public abstract class Client extends SubCommandBase {
 
-  // private final FuzzerClient fuzzerClient = FuzzerClient.getInstance();
+  // // private final FuzzerClient fuzzerClient = FuzzerClient.getInstance();
+  // @Parameter(names = {"--providedLeader", "-pl"}, description =
+  //     "Raft leader id", required = true)
+  // private String leaderId;
 
   @Override
   public void run() throws Exception {
+    // System.out.println("Running Client Arithmetic, leader: " + leaderId);
     RaftProperties raftProperties = new RaftProperties();
 
     final RaftGroup raftGroup = RaftGroup.valueOf(RaftGroupId.valueOf(ByteString.copyFromUtf8(getRaftGroupId())),
             getPeers());
-    
-    // fuzzerClient.initServer();
-    // fuzzerClient.registerServer("client");
-    
-    // fuzzerClient.askLeaderId();
-    // RaftPeerId leaderId = fuzzerClient.getLeaderId();
-    // int timeout = 0;
-    // while (leaderId == null && timeout < 100) {
-    //   TimeUnit.MILLISECONDS.sleep(10);
-    //   leaderId = fuzzerClient.getLeaderId();
-    //   timeout++;
-    // }
-
-    // if (leaderId == null) {
-    //   System.out.println("Timeout, could not get leaderId");
-    //   return;
-    // }
-
-    // System.out.println("Client builder leaderId: " + leaderId.toString());
 
     RaftClient.Builder builder =
-        RaftClient.newBuilder().setProperties(raftProperties); // .setLeaderId(leaderId);
+        RaftClient.newBuilder().setProperties(raftProperties);
+    // builder.setLeaderId(RaftPeerId.getRaftPeerId(this.leaderId));
     builder.setRaftGroup(raftGroup);
     builder.setClientRpc(new GrpcFactory(new Parameters()).newRaftClientRpc(ClientId.randomId(), raftProperties));
     RaftClient client = builder.build();
 
     operation(client);
-
-
   }
 
   protected abstract void operation(RaftClient client) throws IOException;

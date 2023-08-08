@@ -66,11 +66,11 @@ public class Server extends SubCommandBase {
 
     final int port = NetUtils.createSocketAddr(getPeer(peerId).getAddress()).getPort();
     GrpcConfigKeys.Server.setPort(properties, port);
-    RaftServerConfigKeys.Rpc.setFirstElectionTimeoutMin(properties, TimeDuration.valueOf(300, TimeUnit.MILLISECONDS));
-    RaftServerConfigKeys.Rpc.setFirstElectionTimeoutMax(properties, TimeDuration.valueOf(600, TimeUnit.MILLISECONDS));
-    RaftServerConfigKeys.Rpc.setTimeoutMin(properties, TimeDuration.valueOf(300, TimeUnit.MILLISECONDS));
-    RaftServerConfigKeys.Rpc.setTimeoutMax(properties, TimeDuration.valueOf(600, TimeUnit.MILLISECONDS));
-    RaftServerConfigKeys.LeaderElection.setLeaderStepDownWaitTime(properties, TimeDuration.valueOf(500, TimeUnit.MILLISECONDS));
+    // RaftServerConfigKeys.Rpc.setFirstElectionTimeoutMin(properties, TimeDuration.valueOf(300, TimeUnit.MILLISECONDS));
+    // RaftServerConfigKeys.Rpc.setFirstElectionTimeoutMax(properties, TimeDuration.valueOf(600, TimeUnit.MILLISECONDS));
+    // RaftServerConfigKeys.Rpc.setTimeoutMin(properties, TimeDuration.valueOf(300, TimeUnit.MILLISECONDS));
+    // RaftServerConfigKeys.Rpc.setTimeoutMax(properties, TimeDuration.valueOf(600, TimeUnit.MILLISECONDS));
+    // RaftServerConfigKeys.LeaderElection.setLeaderStepDownWaitTime(properties, TimeDuration.valueOf(500, TimeUnit.MILLISECONDS));
     RaftServerConfigKeys.Snapshot.setAutoTriggerEnabled(properties, true);
 
     Optional.ofNullable(getPeer(peerId).getClientAddress()).ifPresent(address ->

@@ -125,7 +125,7 @@ class Fuzzer:
             new_config.no_iterations = config["no_iterations"]
 
         if "horizon" not in config:
-            new_config.horizon = 100
+            new_config.horizon = 50
         else:
             new_config.horizon = config["horizon"]
 
@@ -188,7 +188,7 @@ class Fuzzer:
         # time.sleep(1)
 
         # self.cluster.shutdown()
-        print(self.config.no_iterations)
+
         if self.config.exp_name == 'naive_random':
             for i in range(self.config.no_iterations):
                 (trace, event_trace) = self.run_iteration(i)
@@ -202,8 +202,8 @@ class Fuzzer:
                 # self.trace_queue.append(trace)
                 # new_states = self.guider.check_new_state(trace, event_trace) 
             # (trace, event_trace) = self.run_iteration(1, mimic=self.trace_queue.pop(0))
-        else:
-            pass
+        # else:
+        #     pass
             # for i in range(self.config.init_population):
             #     (trace, event_trace) = self.run_iteration(i)
                 # for j in range(self.config.mutations_per_trace):
@@ -346,7 +346,6 @@ class Fuzzer:
                         self.network.add_event({"name": 'ClientRequest', "params": {"leader": self.cluster.get_leader(), "request": self.cluster.client_request_counter-1}})
         except Exception as e:
             print(e)
-            traceback.print_exc(e)
             # record_logs(path.join(self.config.report_path, "{}_{}.log".format(self.config.record_file_prefix, iteration)), cluster)
         finally:
             logging.debug("Destroying cluster")

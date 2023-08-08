@@ -29,7 +29,9 @@ public class AppendEntriesMessage extends Message {
         this.logAppender = logAppender;
         this.invokeServerId = invokeServerId;
 
+
         LOG.info("Intercepted append entries from server " + this.proto.getServerRequest().getRequestorId().toStringUtf8() + " to " + this.proto.getServerRequest().getReplyId().toStringUtf8());
+        LOG.info("Heartbeat: " + request.isHeartbeat());
         
         if (!fuzzerClient.isControlledExecution())
             invoke();
@@ -74,7 +76,7 @@ public class AppendEntriesMessage extends Message {
             entryJson.addProperty("id", (int) entry.getIndex());
             entryJson.addProperty("session", ""); // Not applicable for Ratis
             entryJson.addProperty("type", "str"); // Not applicable for Ratis
-            entryJson.addProperty("data_len", entry.getStateMachineLogEntry().getStateMachineEntry().toString().length());
+            entryJson.addProperty("data_len", entry.getAllFields().toString());
             if (entry.getStateMachineLogEntry().getLogData().size() > 0) {
                 entryJson.addProperty("data", entry.getAllFields().toString());
             } else {

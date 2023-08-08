@@ -314,7 +314,7 @@ public class GrpcLogAppender extends LogAppenderBase {
       request = new AppendEntriesRequest(pending, getFollowerId(), grpcServerMetrics);
     }
 
-    if (heartbeat) {
+    if (heartbeat || request.isHeartbeat()) {
       appendLog_(pending, request, heartbeat);
     } else {
       interceptAppendEntries(new AppendEntriesMessage(pending, request, this, this.invokeServerId));
@@ -791,7 +791,7 @@ public class GrpcLogAppender extends LogAppenderBase {
       timerContext.stop();
     }
 
-    boolean isHeartbeat() {
+    public boolean isHeartbeat() {
       return entriesCount == 0;
     }
 

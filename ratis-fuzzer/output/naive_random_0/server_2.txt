@@ -1,182 +1,651 @@
 Found /Users/berkay/Documents/Research/ratis-fuzzing/ratis-examples/target/ratis-examples-2.5.1.jar
-2023-08-08 14:29:09 INFO  RaftServer:46 - raft.rpc.type = GRPC (default)
-2023-08-08 14:29:09 INFO  GrpcConfigKeys:53 - raft.grpc.admin.host = null (fallback to raft.grpc.server.host)
-2023-08-08 14:29:09 INFO  GrpcConfigKeys:53 - raft.grpc.admin.port = 6002 (fallback to raft.grpc.server.port)
-2023-08-08 14:29:09 INFO  GrpcConfigKeys:53 - raft.grpc.client.host = null (fallback to raft.grpc.server.host)
-2023-08-08 14:29:09 INFO  GrpcConfigKeys:53 - raft.grpc.client.port = 6002 (fallback to raft.grpc.server.port)
-2023-08-08 14:29:09 INFO  GrpcConfigKeys:46 - raft.grpc.server.host = null (default)
-2023-08-08 14:29:09 INFO  GrpcConfigKeys:46 - raft.grpc.server.port = 6002 (custom)
-2023-08-08 14:29:09 INFO  GrpcService:46 - raft.grpc.message.size.max = 64MB (=67108864) (default)
-2023-08-08 14:29:09 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
-2023-08-08 14:29:09 INFO  GrpcService:46 - raft.grpc.flow.control.window = 1MB (=1048576) (default)
-2023-08-08 14:29:09 INFO  RaftServerConfigKeys:46 - raft.server.rpc.request.timeout = 3000ms (default)
-2023-08-08 14:29:09 INFO  GrpcConfigKeys:46 - raft.grpc.server.heartbeat.channel = true (default)
-2023-08-08 14:29:09 INFO  GrpcConfigKeys:46 - raft.grpc.server.async.request.thread.pool.cached = true (default)
-2023-08-08 14:29:09 INFO  GrpcConfigKeys:46 - raft.grpc.server.async.request.thread.pool.size = 32 (default)
-2023-08-08 14:29:09 INFO  DataStreamServerImpl:46 - raft.datastream.type = DISABLED (default)
-2023-08-08 14:29:09 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.proxy.cached = true (default)
-2023-08-08 14:29:09 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.proxy.size = 0 (default)
-2023-08-08 14:29:09 INFO  RaftServerConfigKeys:46 - raft.server.rpc.slowness.timeout = 60s (default)
-2023-08-08 14:29:09 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.leader.step-down.wait-time = 500ms (custom)
-2023-08-08 14:29:09 INFO  RaftServerConfigKeys:46 - raft.server.storage.dir = [/tmp/ratis/2] (custom)
-2023-08-08 14:29:09 INFO  RaftServer:98 - 2: addNew group-6F7570313233:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER] returns group-6F7570313233:java.util.concurrent.CompletableFuture@babafc2[Not completed]
-2023-08-08 14:29:09 INFO  RaftServer$Division:203 - 2: new RaftServerImpl for group-6F7570313233:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER] with ArithmeticStateMachine:uninitialized
-2023-08-08 14:29:09 INFO  RaftServerConfigKeys:46 - raft.server.rpc.timeout.min = 300ms (custom)
-2023-08-08 14:29:09 INFO  RaftServerConfigKeys:46 - raft.server.rpc.timeout.max = 600ms (custom)
-2023-08-08 14:29:09 INFO  RaftServerConfigKeys:46 - raft.server.rpc.sleep.time = 25ms (default)
-2023-08-08 14:29:09 INFO  RaftServerConfigKeys:46 - raft.server.rpc.slowness.timeout = 60s (default)
-2023-08-08 14:29:09 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.leader.step-down.wait-time = 500ms (custom)
-2023-08-08 14:29:09 INFO  RaftServerConfigKeys:46 - raft.server.sleep.deviation.threshold = 300ms (default)
-2023-08-08 14:29:09 INFO  RaftServer$Division:120 - 2@group-6F7570313233: ConfigurationManager, init=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null, confs=<EMPTY_MAP>
-2023-08-08 14:29:09 INFO  RaftServerConfigKeys:46 - raft.server.storage.dir = [/tmp/ratis/2] (custom)
-2023-08-08 14:29:09 INFO  RaftServerConfigKeys:46 - raft.server.log.corruption.policy = EXCEPTION (default)
-2023-08-08 14:29:09 INFO  RaftServerConfigKeys:46 - raft.server.storage.free-space.min = 0MB (=0) (default)
+2023-08-08 21:41:19 INFO  RaftServer:46 - raft.rpc.type = GRPC (default)
+2023-08-08 21:41:19 INFO  GrpcConfigKeys:53 - raft.grpc.admin.host = null (fallback to raft.grpc.server.host)
+2023-08-08 21:41:19 INFO  GrpcConfigKeys:53 - raft.grpc.admin.port = 6002 (fallback to raft.grpc.server.port)
+2023-08-08 21:41:19 INFO  GrpcConfigKeys:53 - raft.grpc.client.host = null (fallback to raft.grpc.server.host)
+2023-08-08 21:41:19 INFO  GrpcConfigKeys:53 - raft.grpc.client.port = 6002 (fallback to raft.grpc.server.port)
+2023-08-08 21:41:19 INFO  GrpcConfigKeys:46 - raft.grpc.server.host = null (default)
+2023-08-08 21:41:19 INFO  GrpcConfigKeys:46 - raft.grpc.server.port = 6002 (custom)
+2023-08-08 21:41:19 INFO  GrpcService:46 - raft.grpc.message.size.max = 64MB (=67108864) (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-08-08 21:41:19 INFO  GrpcService:46 - raft.grpc.flow.control.window = 1MB (=1048576) (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.rpc.request.timeout = 3000ms (default)
+2023-08-08 21:41:19 INFO  GrpcConfigKeys:46 - raft.grpc.server.heartbeat.channel = true (default)
+2023-08-08 21:41:19 INFO  GrpcConfigKeys:46 - raft.grpc.server.async.request.thread.pool.cached = true (default)
+2023-08-08 21:41:19 INFO  GrpcConfigKeys:46 - raft.grpc.server.async.request.thread.pool.size = 32 (default)
+2023-08-08 21:41:19 INFO  DataStreamServerImpl:46 - raft.datastream.type = DISABLED (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.proxy.cached = true (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.proxy.size = 0 (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.rpc.slowness.timeout = 60s (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.leader.step-down.wait-time = 10s (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.storage.dir = [/tmp/ratis/2] (custom)
+2023-08-08 21:41:19 INFO  RaftServer:98 - 2: addNew group-6F7570313233:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER] returns group-6F7570313233:java.util.concurrent.CompletableFuture@60410cd[Not completed]
+2023-08-08 21:41:19 INFO  RaftServer$Division:203 - 2: new RaftServerImpl for group-6F7570313233:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER] with ArithmeticStateMachine:uninitialized
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.rpc.timeout.min = 150ms (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.rpc.timeout.max = 300ms (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.rpc.sleep.time = 25ms (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.rpc.slowness.timeout = 60s (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.leader.step-down.wait-time = 10s (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.sleep.deviation.threshold = 300ms (default)
+2023-08-08 21:41:19 INFO  RaftServer$Division:120 - 2@group-6F7570313233: ConfigurationManager, init=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null, confs=<EMPTY_MAP>
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.storage.dir = [/tmp/ratis/2] (custom)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.corruption.policy = EXCEPTION (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.storage.free-space.min = 0MB (=0) (default)
 RUNNING FUZZERCLIENT
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.notification.no-leader.timeout = 60s (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.read.timeout = 10s (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.retrycache.expirytime = 60s (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.retrycache.statistics.expirytime = 100μs (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.read.option = DEFAULT (default)
-2023-08-08 14:29:10 INFO  MetricRegistries:64 - Loaded MetricRegistries class org.apache.ratis.metrics.impl.MetricRegistriesImpl
-2023-08-08 14:29:10 INFO  LoggingHandler:148 - [id: 0x773234eb] REGISTERED
-2023-08-08 14:29:10 INFO  LoggingHandler:148 - [id: 0x773234eb] BIND: /127.0.0.1:7076
-2023-08-08 14:29:10 INFO  LoggingHandler:148 - [id: 0x773234eb, L:/127.0.0.1:7076] ACTIVE
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.rpc.request.timeout = 3000ms (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.install.snapshot.enabled = true (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.server.cached = true (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.server.size = 0 (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.client.cached = true (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.client.size = 0 (default)
-2023-08-08 14:29:10 INFO  RaftStorageDirectory:137 - The storage directory /private/tmp/ratis/2/64656d6f-5261-6674-4772-6f7570313233 does not exist. Creating ...
-2023-08-08 14:29:10 INFO  RaftStorageDirectory:231 - Lock on /tmp/ratis/2/64656d6f-5261-6674-4772-6f7570313233/in_use.lock acquired by nodename 88399@eges-mbp.home
-2023-08-08 14:29:10 INFO  RaftStorage:96 - Storage directory /tmp/ratis/2/64656d6f-5261-6674-4772-6f7570313233 has been successfully formatted.
-2023-08-08 14:29:10 WARN  StateMachine:121 - The snapshot info is null.
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.use.memory = false (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.gap = 1024 (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.read.timeout = 1000ms (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.preservation.log.num = 0 (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.size.max = 8MB (=8388608) (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.cache.num.max = 6 (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.cache.size.max = 200MB (=209715200) (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
-2023-08-08 14:29:10 INFO  SegmentedRaftLogWorker:188 - new 2@group-6F7570313233-SegmentedRaftLogWorker for RaftStorageImpl:Storage Directory /tmp/ratis/2/64656d6f-5261-6674-4772-6f7570313233
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.queue.byte-limit = 64MB (=67108864) (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.queue.element-limit = 4096 (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.size.max = 8MB (=8388608) (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.preallocated.size = 4MB (=4194304) (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.force.sync.num = 128 (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync = true (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync.timeout = 10s (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync.timeout.retry = -1 (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.write.buffer.size = 64KB (=65536) (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.unsafe-flush.enabled = false (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.async-flush.enabled = false (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.caching.enabled = false (default)
-2023-08-08 14:29:10 INFO  SegmentedRaftLogWorker:135 - 2@group-6F7570313233-SegmentedRaftLogWorker: flushIndex: setUnconditionally 0 -> -1
-2023-08-08 14:29:10 INFO  SegmentedRaftLogWorker:135 - 2@group-6F7570313233-SegmentedRaftLogWorker: safeCacheEvictIndex: setUnconditionally 0 -> -1
-2023-08-08 14:29:10 INFO  RaftServer$Division:347 - 2@group-6F7570313233: start as a follower, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-08 14:29:10 INFO  RaftServer$Division:334 - 2@group-6F7570313233: changes role from      null to FOLLOWER at term 0 for startAsFollower
-2023-08-08 14:29:10 INFO  RoleInfo:139 - 2: start 2@group-6F7570313233-FollowerState
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.rpc.first-election.timeout.min = 300ms (custom)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.rpc.first-election.timeout.max = 600ms (custom)
-2023-08-08 14:29:10 INFO  JmxRegister:44 - Successfully registered JMX Bean with object name Ratis:service=RaftServer,group=group-6F7570313233,id=2
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.snapshot.auto.trigger.enabled = true (custom)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.snapshot.auto.trigger.threshold = 400000 (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.snapshot.retention.file.num = -1 (default)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.upto.snapshot.index = false (default)
-2023-08-08 14:29:10 INFO  RaftServer:400 - 2: start RPC server
-2023-08-08 14:29:10 INFO  GrpcService:302 - 2: GrpcService started, listening on 6002
-2023-08-08 14:29:10 INFO  JvmPauseMonitor:103 - JvmPauseMonitor-2: Started
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.notification.no-leader.timeout = 60s (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.read.timeout = 10s (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.retrycache.expirytime = 60s (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.retrycache.statistics.expirytime = 100μs (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.read.option = DEFAULT (default)
+2023-08-08 21:41:19 INFO  MetricRegistries:64 - Loaded MetricRegistries class org.apache.ratis.metrics.impl.MetricRegistriesImpl
+2023-08-08 21:41:19 INFO  LoggingHandler:148 - [id: 0x1ed109e9] REGISTERED
+2023-08-08 21:41:19 INFO  LoggingHandler:148 - [id: 0x1ed109e9] BIND: /127.0.0.1:7076
+2023-08-08 21:41:19 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] ACTIVE
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.rpc.request.timeout = 3000ms (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.install.snapshot.enabled = true (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.server.cached = true (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.server.size = 0 (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.client.cached = true (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.threadpool.client.size = 0 (default)
+2023-08-08 21:41:19 INFO  RaftStorageDirectory:137 - The storage directory /private/tmp/ratis/2/64656d6f-5261-6674-4772-6f7570313233 does not exist. Creating ...
+2023-08-08 21:41:19 INFO  RaftStorageDirectory:231 - Lock on /tmp/ratis/2/64656d6f-5261-6674-4772-6f7570313233/in_use.lock acquired by nodename 19723@eges-mbp.home
+2023-08-08 21:41:19 INFO  RaftStorage:96 - Storage directory /tmp/ratis/2/64656d6f-5261-6674-4772-6f7570313233 has been successfully formatted.
+2023-08-08 21:41:19 WARN  StateMachine:121 - The snapshot info is null.
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.use.memory = false (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.gap = 1024 (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.read.timeout = 1000ms (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.preservation.log.num = 0 (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.size.max = 8MB (=8388608) (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.cache.num.max = 6 (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.cache.size.max = 200MB (=209715200) (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-08-08 21:41:19 INFO  SegmentedRaftLogWorker:188 - new 2@group-6F7570313233-SegmentedRaftLogWorker for RaftStorageImpl:Storage Directory /tmp/ratis/2/64656d6f-5261-6674-4772-6f7570313233
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.queue.byte-limit = 64MB (=67108864) (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.queue.element-limit = 4096 (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.segment.size.max = 8MB (=8388608) (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.preallocated.size = 4MB (=4194304) (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.force.sync.num = 128 (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync = true (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync.timeout = 10s (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.sync.timeout.retry = -1 (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.write.buffer.size = 64KB (=65536) (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.unsafe-flush.enabled = false (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.async-flush.enabled = false (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.statemachine.data.caching.enabled = false (default)
+2023-08-08 21:41:19 INFO  SegmentedRaftLogWorker:135 - 2@group-6F7570313233-SegmentedRaftLogWorker: flushIndex: setUnconditionally 0 -> -1
+2023-08-08 21:41:19 INFO  SegmentedRaftLogWorker:135 - 2@group-6F7570313233-SegmentedRaftLogWorker: safeCacheEvictIndex: setUnconditionally 0 -> -1
+2023-08-08 21:41:19 INFO  RaftServer$Division:347 - 2@group-6F7570313233: start as a follower, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:19 INFO  RaftServer$Division:334 - 2@group-6F7570313233: changes role from      null to FOLLOWER at term 0 for startAsFollower
+2023-08-08 21:41:19 INFO  RoleInfo:139 - 2: start 2@group-6F7570313233-FollowerState
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
+2023-08-08 21:41:19 INFO  JmxRegister:44 - Successfully registered JMX Bean with object name Ratis:service=RaftServer,group=group-6F7570313233,id=2
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.snapshot.auto.trigger.enabled = true (custom)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.snapshot.auto.trigger.threshold = 400000 (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.snapshot.retention.file.num = -1 (default)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.log.purge.upto.snapshot.index = false (default)
+2023-08-08 21:41:19 INFO  RaftServer:400 - 2: start RPC server
+2023-08-08 21:41:19 INFO  GrpcService:302 - 2: GrpcService started, listening on 6002
+2023-08-08 21:41:19 INFO  JvmPauseMonitor:103 - JvmPauseMonitor-2: Started
 Registering server
-2023-08-08 14:29:10 INFO  RequestVoteMessage:33 - Intercepted request vote from server 1 to 2
-2023-08-08 14:29:10 INFO  LoggingHandler:148 - [id: 0x773234eb, L:/127.0.0.1:7076] READ: [id: 0x003c5bee, L:/127.0.0.1:7076 - R:/127.0.0.1:53622]
-2023-08-08 14:29:10 INFO  LoggingHandler:148 - [id: 0x773234eb, L:/127.0.0.1:7076] READ COMPLETE
-2023-08-08 14:29:10 INFO  FollowerState:148 - 2@group-6F7570313233-FollowerState: change to CANDIDATE, lastRpcElapsedTime:567794917ns, electionTimeout:565ms
-2023-08-08 14:29:10 INFO  StateChangeEvent:25 - New state change event on server 2 to candidate
-2023-08-08 14:29:10 INFO  StateChangeEvent:17 - New Timeout event on server 2
-2023-08-08 14:29:10 INFO  RoleInfo:110 - 2: shutdown 2@group-6F7570313233-FollowerState
-2023-08-08 14:29:10 INFO  RaftServer$Division:334 - 2@group-6F7570313233: changes role from  FOLLOWER to CANDIDATE at term 0 for changeToCandidate
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.pre-vote = true (default)
-2023-08-08 14:29:10 INFO  RoleInfo:139 - 2: start 2@group-6F7570313233-LeaderElection1
-2023-08-08 14:29:10 INFO  LeaderElection:332 - 2@group-6F7570313233-LeaderElection1 PRE_VOTE round 0: submit vote requests at term 0 for -1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.rpc.first-election.timeout.min = 300ms (custom)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.rpc.first-election.timeout.max = 600ms (custom)
-2023-08-08 14:29:10 INFO  GrpcServerProtocolClient:65 - Build channel for 3
-2023-08-08 14:29:10 INFO  GrpcServerProtocolClient:65 - Build channel for 1
-2023-08-08 14:29:10 INFO  RequestVoteMessage:45 - Invoking request vote on server: 2
-2023-08-08 14:29:10 INFO  RaftServer$Division:1313 - 2@group-6F7570313233: receive requestVote(PRE_VOTE, 1, group-6F7570313233, 0, (t:0, i:0))
-2023-08-08 14:29:10 INFO  VoteContext:49 - 2@group-6F7570313233-CANDIDATE: accept PRE_VOTE from 1: our priority 0 <= candidate's priority 0
-2023-08-08 14:29:10 INFO  RaftServer$Division:1346 - 2@group-6F7570313233 replies to PRE_VOTE vote request: 1<-2#0:OK-t0. Peer's state: 2@group-6F7570313233:t0, leader=null, voted=, raftlog=Memoized:2@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-08 14:29:10 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 2 to 1
-2023-08-08 14:29:10 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
-2023-08-08 14:29:10 INFO  LoggingHandler:148 - [id: 0x773234eb, L:/127.0.0.1:7076] READ: [id: 0x098e3519, L:/127.0.0.1:7076 - R:/127.0.0.1:53627]
-2023-08-08 14:29:10 INFO  LoggingHandler:148 - [id: 0x773234eb, L:/127.0.0.1:7076] READ COMPLETE
-2023-08-08 14:29:10 INFO  RequestVoteReplyMessage:44 - Invoking request vote reply on server: 2
-2023-08-08 14:29:10 INFO  RequestVoteMessage:33 - Intercepted request vote from server 1 to 2
-2023-08-08 14:29:10 INFO  LoggingHandler:148 - [id: 0x773234eb, L:/127.0.0.1:7076] READ: [id: 0x925a0bba, L:/127.0.0.1:7076 - R:/127.0.0.1:53634]
-2023-08-08 14:29:10 INFO  LoggingHandler:148 - [id: 0x773234eb, L:/127.0.0.1:7076] READ COMPLETE
-2023-08-08 14:29:10 INFO  RequestVoteMessage:45 - Invoking request vote on server: 2
-2023-08-08 14:29:10 INFO  RaftServer$Division:1313 - 2@group-6F7570313233: receive requestVote(ELECTION, 1, group-6F7570313233, 1, (t:0, i:0))
-2023-08-08 14:29:10 INFO  VoteContext:49 - 2@group-6F7570313233-CANDIDATE: accept ELECTION from 1: our priority 0 <= candidate's priority 0
-2023-08-08 14:29:10 INFO  RaftServer$Division:334 - 2@group-6F7570313233: changes role from CANDIDATE to FOLLOWER at term 1 for candidate:1
-2023-08-08 14:29:10 INFO  RoleInfo:130 - 2: shutdown 2@group-6F7570313233-LeaderElection1
-2023-08-08 14:29:10 INFO  RoleInfo:139 - 2: start 2@group-6F7570313233-FollowerState
-2023-08-08 14:29:10 INFO  StateChangeEvent:25 - New state change event on server 2 to follower
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.rpc.first-election.timeout.min = 300ms (custom)
-2023-08-08 14:29:10 INFO  RaftServerConfigKeys:46 - raft.server.rpc.first-election.timeout.max = 600ms (custom)
-2023-08-08 14:29:10 INFO  RaftServer$Division:1346 - 2@group-6F7570313233 replies to ELECTION vote request: 1<-2#0:OK-t1. Peer's state: 2@group-6F7570313233:t1, leader=null, voted=1, raftlog=Memoized:2@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-08 14:29:10 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 2 to 1
-2023-08-08 14:29:10 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
-2023-08-08 14:29:10 INFO  RequestVoteMessage:33 - Intercepted request vote from server 3 to 2
-2023-08-08 14:29:10 INFO  LoggingHandler:148 - [id: 0x773234eb, L:/127.0.0.1:7076] READ: [id: 0x9660cbc1, L:/127.0.0.1:7076 - R:/127.0.0.1:53650]
-2023-08-08 14:29:10 INFO  LoggingHandler:148 - [id: 0x773234eb, L:/127.0.0.1:7076] READ COMPLETE
-2023-08-08 14:29:10 INFO  LeaderElection:92 - 2@group-6F7570313233-LeaderElection1: PRE_VOTE DISCOVERED_A_NEW_TERM (term=1) received 1 response(s) and 0 exception(s):
-2023-08-08 14:29:10 INFO  LeaderElection:96 -   Response 0: 2<-3#0:OK-t1
-2023-08-08 14:29:10 INFO  LeaderElection:334 - 2@group-6F7570313233-LeaderElection1 PRE_VOTE round 0: result DISCOVERED_A_NEW_TERM (term=1)
-2023-08-08 14:29:10 INFO  RequestVoteMessage:45 - Invoking request vote on server: 2
-2023-08-08 14:29:10 INFO  RaftServer$Division:1313 - 2@group-6F7570313233: receive requestVote(PRE_VOTE, 3, group-6F7570313233, 0, (t:0, i:0))
-2023-08-08 14:29:10 INFO  VoteContext:49 - 2@group-6F7570313233-FOLLOWER: accept PRE_VOTE from 3: our priority 0 <= candidate's priority 0
-2023-08-08 14:29:10 INFO  RaftServer$Division:1346 - 2@group-6F7570313233 replies to PRE_VOTE vote request: 3<-2#0:OK-t1. Peer's state: 2@group-6F7570313233:t1, leader=null, voted=1, raftlog=Memoized:2@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-08 14:29:10 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 2 to 3
-2023-08-08 14:29:10 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
-2023-08-08 14:29:10 INFO  LoggingHandler:148 - [id: 0x773234eb, L:/127.0.0.1:7076] READ: [id: 0x8f97caf4, L:/127.0.0.1:7076 - R:/127.0.0.1:53653]
-2023-08-08 14:29:10 INFO  LoggingHandler:148 - [id: 0x773234eb, L:/127.0.0.1:7076] READ COMPLETE
-2023-08-08 14:29:10 INFO  LoggingHandler:148 - [id: 0x773234eb, L:/127.0.0.1:7076] READ: [id: 0xb4949f76, L:/127.0.0.1:7076 - R:/127.0.0.1:53656]
-2023-08-08 14:29:10 INFO  LoggingHandler:148 - [id: 0x773234eb, L:/127.0.0.1:7076] READ COMPLETE
-2023-08-08 14:29:10 INFO  RaftServer$Division:317 - 2@group-6F7570313233: change Leader from null to 1 at term 1 for appendEntries, leader elected after 885ms
-2023-08-08 14:29:10 INFO  RaftServer$Division:434 - 2@group-6F7570313233: set configuration 0: peers:[1|rpc:127.0.0.1:6001|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-08 14:29:10 INFO  SegmentedRaftLogWorker:447 - 2@group-6F7570313233-SegmentedRaftLogWorker: Starting segment from index:0
-2023-08-08 14:29:10 INFO  RaftServer$Division:434 - 2@group-6F7570313233: set configuration 0: peers:[1|rpc:127.0.0.1:6001|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
-2023-08-08 14:29:11 INFO  SegmentedRaftLogWorker:651 - 2@group-6F7570313233-SegmentedRaftLogWorker: created new log segment /tmp/ratis/2/64656d6f-5261-6674-4772-6f7570313233/current/log_inprogress_0
-2023-08-08 14:29:12 INFO  LoggingHandler:148 - [id: 0x773234eb, L:/127.0.0.1:7076] READ: [id: 0x1a378c35, L:/127.0.0.1:7076 - R:/127.0.0.1:53968]
-2023-08-08 14:29:12 INFO  LoggingHandler:148 - [id: 0x773234eb, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:19 INFO  FollowerState:148 - 2@group-6F7570313233-FollowerState: change to CANDIDATE, lastRpcElapsedTime:221544750ns, electionTimeout:220ms
+2023-08-08 21:41:19 INFO  StateChangeEvent:25 - New state change event on server 2 to candidate
+2023-08-08 21:41:19 INFO  StateChangeEvent:17 - New Timeout event on server 2
+2023-08-08 21:41:19 INFO  RoleInfo:110 - 2: shutdown 2@group-6F7570313233-FollowerState
+2023-08-08 21:41:19 INFO  RaftServer$Division:334 - 2@group-6F7570313233: changes role from  FOLLOWER to CANDIDATE at term 0 for changeToCandidate
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.pre-vote = true (default)
+2023-08-08 21:41:19 INFO  RoleInfo:139 - 2: start 2@group-6F7570313233-LeaderElection1
+2023-08-08 21:41:19 INFO  LeaderElection:332 - 2@group-6F7570313233-LeaderElection1 PRE_VOTE round 0: submit vote requests at term 0 for -1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
+2023-08-08 21:41:19 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
+2023-08-08 21:41:19 INFO  GrpcServerProtocolClient:65 - Build channel for 1
+2023-08-08 21:41:19 INFO  GrpcServerProtocolClient:65 - Build channel for 3
+2023-08-08 21:41:20 INFO  RequestVoteMessage:33 - Intercepted request vote from server 3 to 2
+2023-08-08 21:41:20 INFO  RequestVoteMessage:33 - Intercepted request vote from server 1 to 2
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0x5147904d, L:/127.0.0.1:7076 - R:/127.0.0.1:57956]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  RequestVoteMessage:45 - Invoking request vote on server: 2
+2023-08-08 21:41:20 INFO  RaftServer$Division:1313 - 2@group-6F7570313233: receive requestVote(PRE_VOTE, 3, group-6F7570313233, 0, (t:0, i:0))
+2023-08-08 21:41:20 INFO  VoteContext:49 - 2@group-6F7570313233-CANDIDATE: accept PRE_VOTE from 3: our priority 0 <= candidate's priority 0
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0xedb9744b, L:/127.0.0.1:7076 - R:/127.0.0.1:57958]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  RaftServer$Division:1346 - 2@group-6F7570313233 replies to PRE_VOTE vote request: 3<-2#0:OK-t0. Peer's state: 2@group-6F7570313233:t0, leader=null, voted=, raftlog=Memoized:2@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 2 to 3
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
+2023-08-08 21:41:20 INFO  RequestVoteMessage:45 - Invoking request vote on server: 2
+2023-08-08 21:41:20 INFO  RaftServer$Division:1313 - 2@group-6F7570313233: receive requestVote(PRE_VOTE, 1, group-6F7570313233, 0, (t:0, i:0))
+2023-08-08 21:41:20 INFO  VoteContext:49 - 2@group-6F7570313233-CANDIDATE: accept PRE_VOTE from 1: our priority 0 <= candidate's priority 0
+2023-08-08 21:41:20 INFO  RaftServer$Division:1346 - 2@group-6F7570313233 replies to PRE_VOTE vote request: 1<-2#0:OK-t0. Peer's state: 2@group-6F7570313233:t0, leader=null, voted=, raftlog=Memoized:2@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 2 to 1
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
+2023-08-08 21:41:20 INFO  RequestVoteMessage:33 - Intercepted request vote from server 1 to 2
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0x3b907890, L:/127.0.0.1:7076 - R:/127.0.0.1:57969]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:44 - Invoking request vote reply on server: 2
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0x499fa86e, L:/127.0.0.1:7076 - R:/127.0.0.1:57974]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:44 - Invoking request vote reply on server: 2
+2023-08-08 21:41:20 INFO  RequestVoteMessage:33 - Intercepted request vote from server 3 to 2
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0x5ec1cab4, L:/127.0.0.1:7076 - R:/127.0.0.1:57979]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  RequestVoteMessage:45 - Invoking request vote on server: 2
+2023-08-08 21:41:20 INFO  RaftServer$Division:1313 - 2@group-6F7570313233: receive requestVote(PRE_VOTE, 1, group-6F7570313233, 0, (t:0, i:0))
+2023-08-08 21:41:20 INFO  VoteContext:49 - 2@group-6F7570313233-CANDIDATE: accept PRE_VOTE from 1: our priority 0 <= candidate's priority 0
+2023-08-08 21:41:20 INFO  RaftServer$Division:1346 - 2@group-6F7570313233 replies to PRE_VOTE vote request: 1<-2#0:OK-t0. Peer's state: 2@group-6F7570313233:t0, leader=null, voted=, raftlog=Memoized:2@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 2 to 1
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
+2023-08-08 21:41:20 INFO  RequestVoteMessage:33 - Intercepted request vote from server 1 to 2
+2023-08-08 21:41:20 INFO  LeaderElection:92 - 2@group-6F7570313233-LeaderElection1: PRE_VOTE PASSED received 1 response(s) and 0 exception(s):
+2023-08-08 21:41:20 INFO  LeaderElection:96 -   Response 0: 2<-1#0:OK-t0
+2023-08-08 21:41:20 INFO  LeaderElection:334 - 2@group-6F7570313233-LeaderElection1 PRE_VOTE round 0: result PASSED
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0xeabf3f4a, L:/127.0.0.1:7076 - R:/127.0.0.1:57986]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  LeaderElection:332 - 2@group-6F7570313233-LeaderElection1 ELECTION round 0: submit vote requests at term 1 for -1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:20 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
+2023-08-08 21:41:20 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
+2023-08-08 21:41:20 INFO  RequestVoteMessage:45 - Invoking request vote on server: 2
+2023-08-08 21:41:20 INFO  RaftServer$Division:1313 - 2@group-6F7570313233: receive requestVote(ELECTION, 3, group-6F7570313233, 1, (t:0, i:0))
+2023-08-08 21:41:20 INFO  VoteContext:49 - 2@group-6F7570313233-CANDIDATE: reject ELECTION from 3: already has voted for 2 at current term 1
+2023-08-08 21:41:20 INFO  RaftServer$Division:1346 - 2@group-6F7570313233 replies to ELECTION vote request: 3<-2#0:FAIL-t1. Peer's state: 2@group-6F7570313233:t1, leader=null, voted=2, raftlog=Memoized:2@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 2 to 3
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0x972b8950, L:/127.0.0.1:7076 - R:/127.0.0.1:57994]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:44 - Invoking request vote reply on server: 2
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0xc84cf7de, L:/127.0.0.1:7076 - R:/127.0.0.1:57996]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:44 - Invoking request vote reply on server: 2
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0x409819d2, L:/127.0.0.1:7076 - R:/127.0.0.1:58001]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  RequestVoteMessage:45 - Invoking request vote on server: 2
+2023-08-08 21:41:20 INFO  RaftServer$Division:1313 - 2@group-6F7570313233: receive requestVote(ELECTION, 1, group-6F7570313233, 1, (t:0, i:0))
+2023-08-08 21:41:20 INFO  VoteContext:49 - 2@group-6F7570313233-CANDIDATE: reject ELECTION from 1: already has voted for 2 at current term 1
+2023-08-08 21:41:20 INFO  RaftServer$Division:1346 - 2@group-6F7570313233 replies to ELECTION vote request: 1<-2#0:FAIL-t1. Peer's state: 2@group-6F7570313233:t1, leader=null, voted=2, raftlog=Memoized:2@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 2 to 1
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0xcab326c2, L:/127.0.0.1:7076 - R:/127.0.0.1:58005]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:44 - Invoking request vote reply on server: 2
+2023-08-08 21:41:20 INFO  LeaderElection:92 - 2@group-6F7570313233-LeaderElection1: ELECTION TIMEOUT received 1 response(s) and 0 exception(s):
+2023-08-08 21:41:20 INFO  LeaderElection:96 -   Response 0: 2<-1#0:FAIL-t1
+2023-08-08 21:41:20 INFO  LeaderElection:334 - 2@group-6F7570313233-LeaderElection1 ELECTION round 0: result TIMEOUT
+2023-08-08 21:41:20 INFO  LeaderElection:332 - 2@group-6F7570313233-LeaderElection1 PRE_VOTE round 1: submit vote requests at term 1 for -1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:20 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
+2023-08-08 21:41:20 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
+2023-08-08 21:41:20 INFO  RequestVoteMessage:33 - Intercepted request vote from server 1 to 2
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0xcb6c7dc7, L:/127.0.0.1:7076 - R:/127.0.0.1:58014]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  RequestVoteMessage:45 - Invoking request vote on server: 2
+2023-08-08 21:41:20 INFO  RaftServer$Division:1313 - 2@group-6F7570313233: receive requestVote(PRE_VOTE, 1, group-6F7570313233, 1, (t:0, i:0))
+2023-08-08 21:41:20 INFO  VoteContext:49 - 2@group-6F7570313233-CANDIDATE: accept PRE_VOTE from 1: our priority 0 <= candidate's priority 0
+2023-08-08 21:41:20 INFO  RaftServer$Division:1346 - 2@group-6F7570313233 replies to PRE_VOTE vote request: 1<-2#0:OK-t1. Peer's state: 2@group-6F7570313233:t1, leader=null, voted=2, raftlog=Memoized:2@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 2 to 1
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0x0528807b, L:/127.0.0.1:7076 - R:/127.0.0.1:58017]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  LeaderElection:92 - 2@group-6F7570313233-LeaderElection1: PRE_VOTE PASSED received 1 response(s) and 0 exception(s):
+2023-08-08 21:41:20 INFO  LeaderElection:96 -   Response 0: 2<-1#0:OK-t1
+2023-08-08 21:41:20 INFO  LeaderElection:334 - 2@group-6F7570313233-LeaderElection1 PRE_VOTE round 1: result PASSED
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:44 - Invoking request vote reply on server: 2
+2023-08-08 21:41:20 INFO  LeaderElection:332 - 2@group-6F7570313233-LeaderElection1 ELECTION round 1: submit vote requests at term 2 for -1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:20 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
+2023-08-08 21:41:20 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
+2023-08-08 21:41:20 INFO  RequestVoteMessage:33 - Intercepted request vote from server 3 to 2
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0x0d7398c5, L:/127.0.0.1:7076 - R:/127.0.0.1:58021]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  RequestVoteMessage:45 - Invoking request vote on server: 2
+2023-08-08 21:41:20 INFO  RaftServer$Division:1313 - 2@group-6F7570313233: receive requestVote(PRE_VOTE, 3, group-6F7570313233, 1, (t:0, i:0))
+2023-08-08 21:41:20 INFO  VoteContext:49 - 2@group-6F7570313233-CANDIDATE: accept PRE_VOTE from 3: our priority 0 <= candidate's priority 0
+2023-08-08 21:41:20 INFO  RaftServer$Division:1346 - 2@group-6F7570313233 replies to PRE_VOTE vote request: 3<-2#0:OK-t2. Peer's state: 2@group-6F7570313233:t2, leader=null, voted=2, raftlog=Memoized:2@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 2 to 3
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
+2023-08-08 21:41:20 INFO  RequestVoteMessage:33 - Intercepted request vote from server 1 to 2
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0x8094c3cb, L:/127.0.0.1:7076 - R:/127.0.0.1:58031]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:44 - Invoking request vote reply on server: 2
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0x257ee6f5, L:/127.0.0.1:7076 - R:/127.0.0.1:58038]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  RequestVoteMessage:45 - Invoking request vote on server: 2
+2023-08-08 21:41:20 INFO  RaftServer$Division:1313 - 2@group-6F7570313233: receive requestVote(ELECTION, 1, group-6F7570313233, 2, (t:0, i:0))
+2023-08-08 21:41:20 INFO  VoteContext:49 - 2@group-6F7570313233-CANDIDATE: reject ELECTION from 1: already has voted for 2 at current term 2
+2023-08-08 21:41:20 INFO  RaftServer$Division:1346 - 2@group-6F7570313233 replies to ELECTION vote request: 1<-2#0:FAIL-t2. Peer's state: 2@group-6F7570313233:t2, leader=null, voted=2, raftlog=Memoized:2@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 2 to 1
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0x7e7cdd56, L:/127.0.0.1:7076 - R:/127.0.0.1:58042]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:44 - Invoking request vote reply on server: 2
+2023-08-08 21:41:20 INFO  LeaderElection:92 - 2@group-6F7570313233-LeaderElection1: ELECTION TIMEOUT received 1 response(s) and 0 exception(s):
+2023-08-08 21:41:20 INFO  LeaderElection:96 -   Response 0: 2<-1#0:FAIL-t2
+2023-08-08 21:41:20 INFO  LeaderElection:334 - 2@group-6F7570313233-LeaderElection1 ELECTION round 1: result TIMEOUT
+2023-08-08 21:41:20 INFO  LeaderElection:332 - 2@group-6F7570313233-LeaderElection1 PRE_VOTE round 2: submit vote requests at term 2 for -1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:20 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
+2023-08-08 21:41:20 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
+2023-08-08 21:41:20 INFO  RequestVoteMessage:33 - Intercepted request vote from server 1 to 2
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0x2bc5274b, L:/127.0.0.1:7076 - R:/127.0.0.1:58049]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  RequestVoteMessage:45 - Invoking request vote on server: 2
+2023-08-08 21:41:20 INFO  RaftServer$Division:1313 - 2@group-6F7570313233: receive requestVote(PRE_VOTE, 1, group-6F7570313233, 2, (t:0, i:0))
+2023-08-08 21:41:20 INFO  VoteContext:49 - 2@group-6F7570313233-CANDIDATE: accept PRE_VOTE from 1: our priority 0 <= candidate's priority 0
+2023-08-08 21:41:20 INFO  RaftServer$Division:1346 - 2@group-6F7570313233 replies to PRE_VOTE vote request: 1<-2#0:OK-t2. Peer's state: 2@group-6F7570313233:t2, leader=null, voted=2, raftlog=Memoized:2@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 2 to 1
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0xa5fca2fd, L:/127.0.0.1:7076 - R:/127.0.0.1:58053]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:44 - Invoking request vote reply on server: 2
+2023-08-08 21:41:20 INFO  LeaderElection:92 - 2@group-6F7570313233-LeaderElection1: PRE_VOTE PASSED received 1 response(s) and 0 exception(s):
+2023-08-08 21:41:20 INFO  LeaderElection:96 -   Response 0: 2<-1#0:OK-t2
+2023-08-08 21:41:20 INFO  LeaderElection:334 - 2@group-6F7570313233-LeaderElection1 PRE_VOTE round 2: result PASSED
+2023-08-08 21:41:20 INFO  RequestVoteMessage:33 - Intercepted request vote from server 1 to 2
+2023-08-08 21:41:20 INFO  LeaderElection:332 - 2@group-6F7570313233-LeaderElection1 ELECTION round 2: submit vote requests at term 3 for -1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:20 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
+2023-08-08 21:41:20 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0xeb7487a6, L:/127.0.0.1:7076 - R:/127.0.0.1:58059]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  RequestVoteMessage:45 - Invoking request vote on server: 2
+2023-08-08 21:41:20 INFO  RaftServer$Division:1313 - 2@group-6F7570313233: receive requestVote(ELECTION, 1, group-6F7570313233, 3, (t:0, i:0))
+2023-08-08 21:41:20 INFO  VoteContext:49 - 2@group-6F7570313233-CANDIDATE: reject ELECTION from 1: already has voted for 2 at current term 3
+2023-08-08 21:41:20 INFO  RaftServer$Division:1346 - 2@group-6F7570313233 replies to ELECTION vote request: 1<-2#0:FAIL-t3. Peer's state: 2@group-6F7570313233:t3, leader=null, voted=2, raftlog=Memoized:2@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 2 to 1
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0xfdbd21da, L:/127.0.0.1:7076 - R:/127.0.0.1:58064]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:44 - Invoking request vote reply on server: 2
+2023-08-08 21:41:20 INFO  RequestVoteMessage:33 - Intercepted request vote from server 1 to 2
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0x0e3e46c4, L:/127.0.0.1:7076 - R:/127.0.0.1:58069]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  RequestVoteMessage:45 - Invoking request vote on server: 2
+2023-08-08 21:41:20 INFO  RaftServer$Division:1313 - 2@group-6F7570313233: receive requestVote(PRE_VOTE, 1, group-6F7570313233, 3, (t:0, i:0))
+2023-08-08 21:41:20 INFO  VoteContext:49 - 2@group-6F7570313233-CANDIDATE: accept PRE_VOTE from 1: our priority 0 <= candidate's priority 0
+2023-08-08 21:41:20 INFO  RaftServer$Division:1346 - 2@group-6F7570313233 replies to PRE_VOTE vote request: 1<-2#0:OK-t3. Peer's state: 2@group-6F7570313233:t3, leader=null, voted=2, raftlog=Memoized:2@group-6F7570313233-SegmentedRaftLog:OPENED:c-1, conf=-1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:31 - Intercepted request vote reply from server 2 to 1
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:32 - responseObserver name: org.apache.ratis.thirdparty.io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl , ServerCallStreamObserverImpl
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0xf225bcc3, L:/127.0.0.1:7076 - R:/127.0.0.1:58075]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:20 INFO  RequestVoteReplyMessage:44 - Invoking request vote reply on server: 2
+2023-08-08 21:41:20 INFO  LeaderElection:137 - 2@group-6F7570313233-LeaderElection1 got exception when requesting votes: java.util.concurrent.ExecutionException: org.apache.ratis.thirdparty.io.grpc.StatusRuntimeException: CANCELLED: RST_STREAM closed stream. HTTP/2 error code: CANCEL
+2023-08-08 21:41:20 INFO  LeaderElection:92 - 2@group-6F7570313233-LeaderElection1: ELECTION REJECTED received 1 response(s) and 1 exception(s):
+2023-08-08 21:41:20 INFO  LeaderElection:96 -   Response 0: 2<-1#0:FAIL-t3
+2023-08-08 21:41:20 INFO  LeaderElection:137 -   Exception 1: java.util.concurrent.ExecutionException: org.apache.ratis.thirdparty.io.grpc.StatusRuntimeException: CANCELLED: RST_STREAM closed stream. HTTP/2 error code: CANCEL
+2023-08-08 21:41:20 INFO  LeaderElection:334 - 2@group-6F7570313233-LeaderElection1 ELECTION round 2: result REJECTED
+2023-08-08 21:41:20 INFO  RaftServer$Division:334 - 2@group-6F7570313233: changes role from CANDIDATE to FOLLOWER at term 3 for REJECTED
+2023-08-08 21:41:20 INFO  RoleInfo:130 - 2: shutdown 2@group-6F7570313233-LeaderElection1
+2023-08-08 21:41:20 INFO  RoleInfo:139 - 2: start 2@group-6F7570313233-FollowerState
+2023-08-08 21:41:20 INFO  StateChangeEvent:25 - New state change event on server 2 to follower
+2023-08-08 21:41:20 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.min = 150ms (fallback to raft.server.rpc.timeout.min)
+2023-08-08 21:41:20 INFO  RaftServerConfigKeys:53 - raft.server.rpc.first-election.timeout.max = 300ms (fallback to raft.server.rpc.timeout.max)
+2023-08-08 21:41:20 INFO  RequestVoteMessage:33 - Intercepted request vote from server 1 to 2
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0xb842372b, L:/127.0.0.1:7076 - R:/127.0.0.1:58079]
+2023-08-08 21:41:20 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:21 INFO  RequestVoteMessage:33 - Intercepted request vote from server 1 to 2
+2023-08-08 21:41:21 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0xb1e4e1bc, L:/127.0.0.1:7076 - R:/127.0.0.1:58081]
+2023-08-08 21:41:21 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:21 INFO  FollowerState:148 - 2@group-6F7570313233-FollowerState: change to CANDIDATE, lastRpcElapsedTime:258482417ns, electionTimeout:253ms
+2023-08-08 21:41:21 INFO  StateChangeEvent:25 - New state change event on server 2 to candidate
+2023-08-08 21:41:21 INFO  StateChangeEvent:17 - New Timeout event on server 2
+2023-08-08 21:41:21 INFO  RoleInfo:110 - 2: shutdown 2@group-6F7570313233-FollowerState
+2023-08-08 21:41:21 INFO  RaftServer$Division:334 - 2@group-6F7570313233: changes role from  FOLLOWER to CANDIDATE at term 3 for changeToCandidate
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.pre-vote = true (default)
+2023-08-08 21:41:21 INFO  RoleInfo:139 - 2: start 2@group-6F7570313233-LeaderElection2
+2023-08-08 21:41:21 INFO  LeaderElection:332 - 2@group-6F7570313233-LeaderElection2 PRE_VOTE round 0: submit vote requests at term 3 for -1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:21 INFO  LeaderElection:137 - 2@group-6F7570313233-LeaderElection2 got exception when requesting votes: java.util.concurrent.ExecutionException: org.apache.ratis.thirdparty.io.grpc.StatusRuntimeException: UNAVAILABLE: io exception
+2023-08-08 21:41:21 INFO  LeaderElection:92 - 2@group-6F7570313233-LeaderElection2: PRE_VOTE DISCOVERED_A_NEW_TERM (term=4) received 1 response(s) and 1 exception(s):
+2023-08-08 21:41:21 INFO  LeaderElection:96 -   Response 0: 2<-1#0:OK-t4
+2023-08-08 21:41:21 INFO  LeaderElection:137 -   Exception 1: java.util.concurrent.ExecutionException: org.apache.ratis.thirdparty.io.grpc.StatusRuntimeException: UNAVAILABLE: io exception
+2023-08-08 21:41:21 INFO  LeaderElection:334 - 2@group-6F7570313233-LeaderElection2 PRE_VOTE round 0: result DISCOVERED_A_NEW_TERM (term=4)
+2023-08-08 21:41:21 INFO  RaftServer$Division:334 - 2@group-6F7570313233: changes role from CANDIDATE to FOLLOWER at term 4 for DISCOVERED_A_NEW_TERM (term=4)
+2023-08-08 21:41:21 INFO  RoleInfo:130 - 2: shutdown 2@group-6F7570313233-LeaderElection2
+2023-08-08 21:41:21 INFO  RoleInfo:139 - 2: start 2@group-6F7570313233-FollowerState
+2023-08-08 21:41:21 INFO  StateChangeEvent:25 - New state change event on server 2 to follower
+2023-08-08 21:41:21 INFO  RequestVoteMessage:33 - Intercepted request vote from server 1 to 2
+2023-08-08 21:41:21 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0xfe1546bf, L:/127.0.0.1:7076 - R:/127.0.0.1:58091]
+2023-08-08 21:41:21 INFO  FollowerState:148 - 2@group-6F7570313233-FollowerState: change to CANDIDATE, lastRpcElapsedTime:157100166ns, electionTimeout:152ms
+2023-08-08 21:41:21 INFO  StateChangeEvent:25 - New state change event on server 2 to candidate
+2023-08-08 21:41:21 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:21 INFO  StateChangeEvent:17 - New Timeout event on server 2
+2023-08-08 21:41:21 INFO  RoleInfo:110 - 2: shutdown 2@group-6F7570313233-FollowerState
+2023-08-08 21:41:21 INFO  RaftServer$Division:334 - 2@group-6F7570313233: changes role from  FOLLOWER to CANDIDATE at term 4 for changeToCandidate
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.leaderelection.pre-vote = true (default)
+2023-08-08 21:41:21 INFO  RoleInfo:139 - 2: start 2@group-6F7570313233-LeaderElection3
+2023-08-08 21:41:21 INFO  LeaderElection:332 - 2@group-6F7570313233-LeaderElection3 PRE_VOTE round 0: submit vote requests at term 4 for -1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:21 INFO  LeaderElection:137 - 2@group-6F7570313233-LeaderElection3 got exception when requesting votes: java.util.concurrent.ExecutionException: org.apache.ratis.thirdparty.io.grpc.StatusRuntimeException: UNAVAILABLE: io exception
+2023-08-08 21:41:21 INFO  LeaderElection:92 - 2@group-6F7570313233-LeaderElection3: PRE_VOTE PASSED received 1 response(s) and 1 exception(s):
+2023-08-08 21:41:21 INFO  LeaderElection:96 -   Response 0: 2<-1#0:OK-t4
+2023-08-08 21:41:21 INFO  LeaderElection:137 -   Exception 1: java.util.concurrent.ExecutionException: org.apache.ratis.thirdparty.io.grpc.StatusRuntimeException: UNAVAILABLE: io exception
+2023-08-08 21:41:21 INFO  LeaderElection:334 - 2@group-6F7570313233-LeaderElection3 PRE_VOTE round 0: result PASSED
+2023-08-08 21:41:21 INFO  LeaderElection:332 - 2@group-6F7570313233-LeaderElection3 ELECTION round 0: submit vote requests at term 5 for -1: peers:[1|rpc:127.0.0.1:6001|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:21 INFO  LeaderElection:137 - 2@group-6F7570313233-LeaderElection3 got exception when requesting votes: java.util.concurrent.ExecutionException: org.apache.ratis.thirdparty.io.grpc.StatusRuntimeException: UNAVAILABLE: io exception
+2023-08-08 21:41:21 INFO  LeaderElection:92 - 2@group-6F7570313233-LeaderElection3: ELECTION PASSED received 1 response(s) and 1 exception(s):
+2023-08-08 21:41:21 INFO  LeaderElection:96 -   Response 0: 2<-1#0:OK-t5
+2023-08-08 21:41:21 INFO  LeaderElection:137 -   Exception 1: java.util.concurrent.ExecutionException: org.apache.ratis.thirdparty.io.grpc.StatusRuntimeException: UNAVAILABLE: io exception
+2023-08-08 21:41:21 INFO  LeaderElection:334 - 2@group-6F7570313233-LeaderElection3 ELECTION round 0: result PASSED
+2023-08-08 21:41:21 INFO  RoleInfo:130 - 2: shutdown 2@group-6F7570313233-LeaderElection3
+2023-08-08 21:41:21 INFO  RaftServer$Division:334 - 2@group-6F7570313233: changes role from CANDIDATE to LEADER at term 5 for changeToLeader
+2023-08-08 21:41:21 INFO  RaftServer$Division:317 - 2@group-6F7570313233: change Leader from null to 2 at term 5 for becomeLeader, leader elected after 1730ms
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.staging.catchup.gap = 1000 (default)
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.write.element-limit = 4096 (default)
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.write.byte-limit = 64MB (=67108864) (default)
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.watch.timeout = 10s (default)
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.watch.timeout.denomination = 1s (default)
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.watch.element-limit = 65536 (default)
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.write.element-limit = 4096 (default)
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.write.follower.gap.ratio.max = -1.0 (default)
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.snapshot.chunk.size.max = 16MB (=16777216) (default)
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.element-limit = 0 (default)
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.wait-time.min = 10ms (default)
+2023-08-08 21:41:21 INFO  GrpcConfigKeys:46 - raft.grpc.server.leader.outstanding.appends.max = 128 (default)
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.rpc.request.timeout = 3000ms (default)
+2023-08-08 21:41:21 INFO  GrpcConfigKeys:46 - raft.grpc.server.install_snapshot.request.element-limit = 8 (default)
+2023-08-08 21:41:21 INFO  GrpcConfigKeys:46 - raft.grpc.server.install_snapshot.request.timeout = 3000ms (default)
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.install.snapshot.enabled = true (default)
+2023-08-08 21:41:21 INFO  GrpcConfigKeys:46 - raft.grpc.server.heartbeat.channel = true (default)
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.snapshot.chunk.size.max = 16MB (=16777216) (default)
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.byte-limit = 4MB (=4194304) (default)
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.buffer.element-limit = 0 (default)
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.wait-time.min = 10ms (default)
+2023-08-08 21:41:21 INFO  GrpcConfigKeys:46 - raft.grpc.server.leader.outstanding.appends.max = 128 (default)
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.rpc.request.timeout = 3000ms (default)
+2023-08-08 21:41:21 INFO  GrpcConfigKeys:46 - raft.grpc.server.install_snapshot.request.element-limit = 8 (default)
+2023-08-08 21:41:21 INFO  GrpcConfigKeys:46 - raft.grpc.server.install_snapshot.request.timeout = 3000ms (default)
+2023-08-08 21:41:21 INFO  RaftServerConfigKeys:46 - raft.server.log.appender.install.snapshot.enabled = true (default)
+2023-08-08 21:41:21 INFO  GrpcConfigKeys:46 - raft.grpc.server.heartbeat.channel = true (default)
+2023-08-08 21:41:21 INFO  RoleInfo:139 - 2: start 2@group-6F7570313233-LeaderStateImpl
+2023-08-08 21:41:21 INFO  SegmentedRaftLogWorker:447 - 2@group-6F7570313233-SegmentedRaftLogWorker: Starting segment from index:0
+2023-08-08 21:41:21 INFO  RaftServer$Division:434 - 2@group-6F7570313233: set configuration 0: peers:[1|rpc:127.0.0.1:6001|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 2|rpc:127.0.0.1:6002|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER, 3|rpc:127.0.0.1:6003|admin:|client:|dataStream:|priority:0|startupRole:FOLLOWER]|listeners:[], old=null
+2023-08-08 21:41:21 INFO  StateChangeEvent:25 - New state change event on server 2 to leader
+2023-08-08 21:41:21 INFO  StateChangeEvent:19 - New BecomeLeader event on server 2
+2023-08-08 21:41:21 WARN  GrpcLogAppender:122 - 2@group-6F7570313233->3-AppendLogResponseHandler: Failed appendEntries: org.apache.ratis.thirdparty.io.grpc.StatusRuntimeException: UNAVAILABLE: io exception
+2023-08-08 21:41:21 WARN  GrpcLogAppender:122 - 2@group-6F7570313233->3-AppendLogResponseHandler: Failed appendEntries: org.apache.ratis.thirdparty.io.grpc.StatusRuntimeException: UNAVAILABLE: io exception
+2023-08-08 21:41:21 INFO  AppendEntriesMessage:33 - Intercepted append entries from server 2 to 3
+2023-08-08 21:41:21 INFO  AppendEntriesMessage:34 - Heartbeat: false
+2023-08-08 21:41:21 INFO  AppendEntriesMessage:33 - Intercepted append entries from server 2 to 1
+2023-08-08 21:41:21 INFO  AppendEntriesMessage:34 - Heartbeat: false
+2023-08-08 21:41:21 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 1 to 2 with id: 2_27
+{ratis.common.LogEntryProto.term=5, ratis.common.LogEntryProto.configurationEntry=peers {
+  id: "1"
+  address: "127.0.0.1:6001"
+  startupRole: FOLLOWER
+}
+peers {
+  id: "2"
+  address: "127.0.0.1:6002"
+  startupRole: FOLLOWER
+}
+peers {
+  id: "3"
+  address: "127.0.0.1:6003"
+  startupRole: FOLLOWER
+}
+}
+2023-08-08 21:41:21 WARN  GrpcLogAppender:122 - 2@group-6F7570313233->3-AppendLogResponseHandler: Failed appendEntries: org.apache.ratis.thirdparty.io.grpc.StatusRuntimeException: UNAVAILABLE: io exception
+{ratis.common.LogEntryProto.term=5, ratis.common.LogEntryProto.configurationEntry=peers {
+  id: "1"
+  address: "127.0.0.1:6001"
+  startupRole: FOLLOWER
+}
+peers {
+  id: "2"
+  address: "127.0.0.1:6002"
+  startupRole: FOLLOWER
+}
+peers {
+  id: "3"
+  address: "127.0.0.1:6003"
+  startupRole: FOLLOWER
+}
+}
+2023-08-08 21:41:21 WARN  GrpcLogAppender:122 - 2@group-6F7570313233->3-AppendLogResponseHandler: Failed appendEntries: org.apache.ratis.thirdparty.io.grpc.StatusRuntimeException: UNAVAILABLE: io exception
+2023-08-08 21:41:21 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0x823146b2, L:/127.0.0.1:7076 - R:/127.0.0.1:58113]
+2023-08-08 21:41:21 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+com.google.gson.JsonSyntaxException: com.google.gson.stream.MalformedJsonException: Unterminated object at line 1 column 394 path $.msg...
+	at com.google.gson.Gson.fromJson(Gson.java:1241)
+	at com.google.gson.Gson.fromJson(Gson.java:1137)
+	at com.google.gson.Gson.fromJson(Gson.java:1047)
+	at com.google.gson.Gson.fromJson(Gson.java:982)
+	at org.apache.ratis.server.fuzzer.comm.JsonMessage.fromJsonString(JsonMessage.java:68)
+	at org.apache.ratis.server.fuzzer.comm.MessageHandler.getMessageFromReq(MessageHandler.java:77)
+	at org.apache.ratis.server.fuzzer.comm.MessageHandler.handle(MessageHandler.java:32)
+	at org.apache.ratis.server.fuzzer.comm.Route.handleRequest(Route.java:42)
+	at org.apache.ratis.server.fuzzer.comm.NettyRouter.handleRequest(NettyRouter.java:26)
+	at org.apache.ratis.server.fuzzer.comm.NettyServer.channelRead0(NettyServer.java:39)
+	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:99)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412)
+	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412)
+	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:346)
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:318)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412)
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1410)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:440)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:919)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:166)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:788)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:724)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:650)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:562)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:1623)
+Caused by: com.google.gson.stream.MalformedJsonException: Unterminated object at line 1 column 394 path $.msg...
+	at com.google.gson.stream.JsonReader.syntaxError(JsonReader.java:1659)
+	at com.google.gson.stream.JsonReader.doPeek(JsonReader.java:500)
+	at com.google.gson.stream.JsonReader.skipValue(JsonReader.java:1256)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:391)
+	at com.google.gson.Gson.fromJson(Gson.java:1227)
+	... 35 more
+2023-08-08 21:41:21 INFO  AppendEntriesReplyMessage:27 - Intercepted append entries reply from server 1 to 2 with id: 2_28
+2023-08-08 21:41:21 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0x48ca3e0f, L:/127.0.0.1:7076 - R:/127.0.0.1:58118]
+2023-08-08 21:41:21 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:21 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 2
+2023-08-08 21:41:21 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0x3e5c5748, L:/127.0.0.1:7076 - R:/127.0.0.1:58120]
+2023-08-08 21:41:21 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:21 INFO  AppendEntriesMessage:33 - Intercepted append entries from server 2 to 1
+com.google.gson.JsonSyntaxException: com.google.gson.stream.MalformedJsonException: Unterminated object at line 1 column 394 path $.msg...
+2023-08-08 21:41:21 INFO  AppendEntriesMessage:34 - Heartbeat: false
+	at com.google.gson.Gson.fromJson(Gson.java:1241)
+	at com.google.gson.Gson.fromJson(Gson.java:1137)
+	at com.google.gson.Gson.fromJson(Gson.java:1047)
+	at com.google.gson.Gson.fromJson(Gson.java:982)
+2023-08-08 21:41:21 INFO  SegmentedRaftLogWorker:651 - 2@group-6F7570313233-SegmentedRaftLogWorker: created new log segment /tmp/ratis/2/64656d6f-5261-6674-4772-6f7570313233/current/log_inprogress_0
+	at org.apache.ratis.server.fuzzer.comm.JsonMessage.fromJsonString(JsonMessage.java:68)
+	at org.apache.ratis.server.fuzzer.comm.MessageHandler.getMessageFromReq(MessageHandler.java:77)
+	at org.apache.ratis.server.fuzzer.comm.MessageHandler.handle(MessageHandler.java:32)
+	at org.apache.ratis.server.fuzzer.comm.Route.handleRequest(Route.java:42)
+	at org.apache.ratis.server.fuzzer.comm.NettyRouter.handleRequest(NettyRouter.java:26)
+	at org.apache.ratis.server.fuzzer.comm.NettyServer.channelRead0(NettyServer.java:39)
+	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:99)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412)
+	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412)
+	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:346)
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:318)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412)
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1410)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:440)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:919)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:166)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:788)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:724)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:650)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:562)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:1623)
+Caused by: com.google.gson.stream.MalformedJsonException: Unterminated object at line 1 column 394 path $.msg...
+	at com.google.gson.stream.JsonReader.syntaxError(JsonReader.java:1659)
+	at com.google.gson.stream.JsonReader.doPeek(JsonReader.java:500)
+	at com.google.gson.stream.JsonReader.skipValue(JsonReader.java:1256)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:391)
+	at com.google.gson.Gson.fromJson(Gson.java:1227)
+	... 35 more
+{ratis.common.LogEntryProto.term=5, ratis.common.LogEntryProto.configurationEntry=peers {
+  id: "1"
+  address: "127.0.0.1:6001"
+  startupRole: FOLLOWER
+}
+peers {
+  id: "2"
+  address: "127.0.0.1:6002"
+  startupRole: FOLLOWER
+}
+peers {
+  id: "3"
+  address: "127.0.0.1:6003"
+  startupRole: FOLLOWER
+}
+}
+2023-08-08 21:41:21 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0x2e1108fe, L:/127.0.0.1:7076 - R:/127.0.0.1:58122]
+2023-08-08 21:41:21 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:21 INFO  AppendEntriesReplyMessage:37 - Invoking append entries reply on server: 2
+2023-08-08 21:41:21 INFO  AppendEntriesMessage:33 - Intercepted append entries from server 2 to 1
+2023-08-08 21:41:21 INFO  AppendEntriesMessage:34 - Heartbeat: false
+2023-08-08 21:41:21 INFO  AppendEntriesMessage:33 - Intercepted append entries from server 2 to 3
+2023-08-08 21:41:21 INFO  AppendEntriesMessage:34 - Heartbeat: false
+{ratis.common.LogEntryProto.term=5, ratis.common.LogEntryProto.configurationEntry=peers {
+  id: "1"
+  address: "127.0.0.1:6001"
+  startupRole: FOLLOWER
+}
+peers {
+  id: "2"
+  address: "127.0.0.1:6002"
+  startupRole: FOLLOWER
+}
+peers {
+  id: "3"
+  address: "127.0.0.1:6003"
+  startupRole: FOLLOWER
+}
+}
+2023-08-08 21:41:21 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0xf95f739c, L:/127.0.0.1:7076 - R:/127.0.0.1:58124]
+2023-08-08 21:41:21 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
+2023-08-08 21:41:21 INFO  AppendEntriesMessage:33 - Intercepted append entries from server 2 to 1
+2023-08-08 21:41:21 INFO  AppendEntriesMessage:34 - Heartbeat: false
+com.google.gson.JsonSyntaxException: com.google.gson.stream.MalformedJsonException: Unterminated object at line 1 column 394 path $.msg...
+	at com.google.gson.Gson.fromJson(Gson.java:1241)
+	at com.google.gson.Gson.fromJson(Gson.java:1137)
+	at com.google.gson.Gson.fromJson(Gson.java:1047)
+	at com.google.gson.Gson.fromJson(Gson.java:982)
+	at org.apache.ratis.server.fuzzer.comm.JsonMessage.fromJsonString(JsonMessage.java:68)
+	at org.apache.ratis.server.fuzzer.comm.MessageHandler.getMessageFromReq(MessageHandler.java:77)
+	at org.apache.ratis.server.fuzzer.comm.MessageHandler.handle(MessageHandler.java:32)
+	at org.apache.ratis.server.fuzzer.comm.Route.handleRequest(Route.java:42)
+	at org.apache.ratis.server.fuzzer.comm.NettyRouter.handleRequest(NettyRouter.java:26)
+	at org.apache.ratis.server.fuzzer.comm.NettyServer.channelRead0(NettyServer.java:39)
+	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:99)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412)
+	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412)
+	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:346)
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:318)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412)
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1410)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:440)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420)
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:919)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:166)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:788)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:724)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:650)
+{ratis.common.LogEntryProto.term=5, ratis.common.LogEntryProto.configurationEntry=peers {
+  id: "1"
+  address: "127.0.0.1:6001"
+  startupRole: FOLLOWER
+}
+peers {
+  id: "2"
+  address: "127.0.0.1:6002"
+  startupRole: FOLLOWER
+}
+peers {
+  id: "3"
+  address: "127.0.0.1:6003"
+  startupRole: FOLLOWER
+}
+}
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:562)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:1623)
+Caused by: com.google.gson.stream.MalformedJsonException: Unterminated object at line 1 column 394 path $.msg...
+	at com.google.gson.stream.JsonReader.syntaxError(JsonReader.java:1659)
+	at com.google.gson.stream.JsonReader.doPeek(JsonReader.java:500)
+	at com.google.gson.stream.JsonReader.skipValue(JsonReader.java:1256)
+	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:391)
+	at com.google.gson.Gson.fromJson(Gson.java:1227)
+	... 35 more
+2023-08-08 21:41:21 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ: [id: 0xcd03043e, L:/127.0.0.1:7076 - R:/127.0.0.1:58127]
+2023-08-08 21:41:21 INFO  LoggingHandler:148 - [id: 0x1ed109e9, L:/127.0.0.1:7076] READ COMPLETE
 Closing server: 2
-2023-08-08 14:29:12 INFO  RaftServer:416 - 2: close
-2023-08-08 14:29:12 INFO  GrpcService:311 - 2: shutdown server GrpcServerProtocolService now
-2023-08-08 14:29:12 INFO  RaftServer$Division:471 - 2@group-6F7570313233: shutdown
-2023-08-08 14:29:12 INFO  JmxRegister:73 - Successfully un-registered JMX Bean with object name Ratis:service=RaftServer,group=group-6F7570313233,id=2
-2023-08-08 14:29:12 INFO  RoleInfo:110 - 2: shutdown 2@group-6F7570313233-FollowerState
-2023-08-08 14:29:12 INFO  StateMachineUpdater:155 - 2@group-6F7570313233-StateMachineUpdater: set stopIndex = 0
-2023-08-08 14:29:12 INFO  FollowerState:159 - 2@group-6F7570313233-FollowerState was interrupted
-2023-08-08 14:29:12 INFO  StateMachine:102 - Taking a snapshot to file /tmp/ratis/2/64656d6f-5261-6674-4772-6f7570313233/sm/snapshot.1_0
-2023-08-08 14:29:12 INFO  GrpcServerProtocolClient:103 - 1 Close channels
-2023-08-08 14:29:12 INFO  GrpcServerProtocolClient:103 - 3 Close channels
-2023-08-08 14:29:12 WARN  GrpcServerProtocolService:122 - 2: APPEND_ENTRIES onError, lastRequest: null: org.apache.ratis.thirdparty.io.grpc.StatusRuntimeException: CANCELLED: client cancelled
-2023-08-08 14:29:12 INFO  GrpcService:320 - 2: shutdown server GrpcServerProtocolService successfully
-2023-08-08 14:29:12 INFO  StateChangeEvent:20 - New SnapshotUpdate event on server 2 to 0
-2023-08-08 14:29:12 INFO  StateMachineUpdater:291 - 2@group-6F7570313233-StateMachineUpdater: Took a snapshot at index 0
-2023-08-08 14:29:12 INFO  StateMachineUpdater:97 - 2@group-6F7570313233-StateMachineUpdater: snapshotIndex: updateIncreasingly -1 -> 0
-2023-08-08 14:29:12 INFO  RaftServer$Division:472 - 2@group-6F7570313233: closes. applyIndex: -1
-2023-08-08 14:29:12 INFO  GrpcServerProtocolService:159 - 2: Completed APPEND_ENTRIES, lastRequest: 1->2#6-t1,previous=(t:0, i:0),leaderCommit=-1,initializing? true,entries: size=1, first=(t:1, i:0), CONFIGURATIONENTRY(current:id: "1"
-address: "127.0.0.1:6001"
-startupRole: FOLLOWER
-,id: "2"
-address: "127.0.0.1:6002"
-startupRole: FOLLOWER
-,id: "3"
-address: "127.0.0.1:6003"
-startupRole: FOLLOWER
-, old:)
-2023-08-08 14:29:12 INFO  GrpcServerProtocolService:161 - 2: Completed APPEND_ENTRIES, lastReply: null
+2023-08-08 21:41:21 INFO  AppendEntriesMessage:33 - Intercepted append entries from server 2 to 3
+2023-08-08 21:41:21 INFO  AppendEntriesMessage:34 - Heartbeat: false
+{ratis.common.LogEntryProto.term=5, ratis.common.LogEntryProto.configurationEntry=peers {
+  id: "1"
+  address: "127.0.0.1:6001"
+  startupRole: FOLLOWER
+}
+peers {
+  id: "2"
+  address: "127.0.0.1:6002"
+  startupRole: FOLLOWER
+}
+peers {
+  id: "3"
+  address: "127.0.0.1:6003"
+  startupRole: FOLLOWER
+}
+}
+2023-08-08 21:41:21 INFO  RaftServer:416 - 2: close
+2023-08-08 21:41:21 INFO  GrpcService:311 - 2: shutdown server GrpcServerProtocolService now
+2023-08-08 21:41:21 INFO  RaftServer$Division:471 - 2@group-6F7570313233: shutdown
+2023-08-08 21:41:21 INFO  JmxRegister:73 - Successfully un-registered JMX Bean with object name Ratis:service=RaftServer,group=group-6F7570313233,id=2
+2023-08-08 21:41:21 INFO  RoleInfo:93 - 2: shutdown 2@group-6F7570313233-LeaderStateImpl
+2023-08-08 21:41:21 INFO  PendingRequests:289 - 2@group-6F7570313233-PendingRequests: sendNotLeaderResponses
+2023-08-08 21:41:21 INFO  StateMachineUpdater:155 - 2@group-6F7570313233-StateMachineUpdater: set stopIndex = -1
+{ratis.common.LogEntryProto.term=5, ratis.common.LogEntryProto.configurationEntry=peers {
+  id: "1"
+  address: "127.0.0.1:6001"
+  startupRole: FOLLOWER
+}
+peers {
+  id: "2"
+  address: "127.0.0.1:6002"
+  startupRole: FOLLOWER
+}
+peers {
+  id: "3"
+  address: "127.0.0.1:6003"
+  startupRole: FOLLOWER
+}
+}
+2023-08-08 21:41:21 INFO  GrpcServerProtocolClient:103 - 1 Close channels
+2023-08-08 21:41:21 INFO  GrpcServerProtocolClient:103 - 3 Close channels
+2023-08-08 21:41:21 INFO  RaftServer$Division:472 - 2@group-6F7570313233: closes. applyIndex: -1
+2023-08-08 21:41:21 INFO  GrpcLogAppender:452 - 2@group-6F7570313233->1-GrpcLogAppender is already stopped
+2023-08-08 21:41:21 INFO  GrpcLogAppender:452 - 2@group-6F7570313233->1-GrpcLogAppender is already stopped
+2023-08-08 21:41:21 INFO  GrpcService:320 - 2: shutdown server GrpcServerProtocolService successfully
