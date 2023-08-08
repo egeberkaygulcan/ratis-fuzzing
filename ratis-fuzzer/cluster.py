@@ -162,7 +162,6 @@ class RatisCluster:
     def send_client_request(self):
         path = os.path.join(self.config.parent_dir, '_'.join([self.config.exp_name, str(self.run_id)]))
         timeout = 15 if self.average_run_time == 0 else int(math.ceil(self.average_run_time)) + 5
-        # TODO - Add write-write-read loop
         self.client.send_request(self.client_request_counter, path, self.get_leader(), timeout)
         self.client_request_counter += 1
 

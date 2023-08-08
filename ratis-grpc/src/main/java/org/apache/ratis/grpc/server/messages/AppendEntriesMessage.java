@@ -1,5 +1,7 @@
 package org.apache.ratis.grpc.server.messages;
 
+import java.util.Base64;
+
 import org.apache.ratis.grpc.server.GrpcLogAppender;
 import org.apache.ratis.grpc.server.GrpcLogAppender.AppendEntriesRequest;
 import org.apache.ratis.proto.RaftProtos.AppendEntriesRequestProto;
@@ -31,7 +33,6 @@ public class AppendEntriesMessage extends Message {
 
 
         LOG.info("Intercepted append entries from server " + this.proto.getServerRequest().getRequestorId().toStringUtf8() + " to " + this.proto.getServerRequest().getReplyId().toStringUtf8());
-        LOG.info("Heartbeat: " + request.isHeartbeat());
         
         if (!fuzzerClient.isControlledExecution())
             invoke();
@@ -70,21 +71,24 @@ public class AppendEntriesMessage extends Message {
 
         JsonObject entries = new JsonObject();
         int i = 0;
+        String entryStr;
         for(LogEntryProto entry : proto.getEntriesList()) {
-            JsonObject entryJson = new JsonObject();
-            entryJson.addProperty("term", (double) entry.getTerm());
-            entryJson.addProperty("id", (int) entry.getIndex());
-            entryJson.addProperty("session", ""); // Not applicable for Ratis
-            entryJson.addProperty("type", "str"); // Not applicable for Ratis
-            entryJson.addProperty("data_len", entry.getAllFields().toString());
-            if (entry.getStateMachineLogEntry().getLogData().size() > 0) {
-                entryJson.addProperty("data", entry.getAllFields().toString());
-            } else {
-                entryJson.addProperty("data", "");
+            if (entry.hasStateMachineLogEntry()) {
+                JsonObject entryJson = new JsonObject();
+                entryJson.addProperty("term", (double) entry.getTerm());
+                entryJson.addProperty("id", (int) entry.getIndex());
+                entryJson.addProperty("session", ""); // Not applicable for Ratis
+                entryJson.addProperty("type", "str"); // Not applicable for Ratis
+                entryStr = Base64.getEncoder().encodeToString(entry.getStateMachineLogEntry().getLogData().toByteArray());
+                entryJson.addProperty("data_len", entryStr.length());
+                if (entryStr.length() > 0) {
+                    entryJson.addProperty("data", entryStr);
+                } else {
+                    entryJson.addProperty("data", "");
+                }
+                entries.add(Integer.toString(i), entryJson);
+                i++;
             }
-            entries.add(Integer.toString(i), entryJson);
-            System.out.println(entry.getAllFields().toString());
-            i++;
         }
         json.add("entries", entries);
 
