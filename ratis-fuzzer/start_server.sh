@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-BIN=/Users/berkay/Documents/Research/ratis-fuzzing/ratis-examples/src/main/bin
+BIN=../ratis-examples/src/main/bin
 PEERS=$2
 PORT=$3
 
