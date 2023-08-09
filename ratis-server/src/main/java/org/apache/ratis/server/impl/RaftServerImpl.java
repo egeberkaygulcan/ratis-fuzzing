@@ -46,6 +46,7 @@ import org.apache.ratis.server.RaftServerMXBean;
 import org.apache.ratis.server.RaftServerRpc;
 import org.apache.ratis.server.fuzzer.FuzzerClient;
 import org.apache.ratis.server.fuzzer.events.Event;
+import org.apache.ratis.server.fuzzer.events.LogUpdateEvent;
 import org.apache.ratis.server.fuzzer.events.StateChangeEvent;
 import org.apache.ratis.server.impl.LeaderElection.Phase;
 import org.apache.ratis.server.impl.RetryCacheImpl.CacheEntry;
@@ -1577,6 +1578,7 @@ class RaftServerImpl implements RaftServer.Division,
       logAppendEntries(isHeartbeat, () -> getMemberId() + ": succeeded to handle AppendEntries. Reply: "
           + ServerStringUtils.toAppendEntriesReplyString(reply));
       timer.stop();  // TODO: future never completes exceptionally?
+      sendEvent(new LogUpdateEvent(getId().toString(), entries));
       return reply;
     });
   }

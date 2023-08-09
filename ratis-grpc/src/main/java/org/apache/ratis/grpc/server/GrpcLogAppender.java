@@ -31,6 +31,7 @@ import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.server.RaftServerConfigKeys;
 import org.apache.ratis.server.fuzzer.FuzzerClient;
 import org.apache.ratis.server.fuzzer.comm.FuzzerCaller;
+import org.apache.ratis.server.fuzzer.events.CommitUpdateEvent;
 import org.apache.ratis.server.fuzzer.messages.Message;
 import org.apache.ratis.server.leader.FollowerInfo;
 import org.apache.ratis.server.leader.LeaderState;
@@ -385,11 +386,16 @@ public class GrpcLogAppender extends LogAppenderBase {
      */
     @Override
     public void onNext(AppendEntriesReplyProto reply) {
-      interceptAppendEntriesReply(new AppendEntriesReplyMessage(reply, this, getServer().getId().toString()));
+      if(reply.getIsHearbeat())
+        onNext_(reply);
+      else
+        interceptAppendEntriesReply(new AppendEntriesReplyMessage(reply, this, getServer().getId().toString()));
     }
 
     public void onNext_(AppendEntriesReplyProto reply) {
       AppendEntriesRequest request = pendingRequests.remove(reply);
+      if (!reply.getIsHearbeat())
+        fuzzerClient.sendEvent(new CommitUpdateEvent(getFollower().getId().toString(), (int)reply.getFollowerCommit()));
       if (request != null) {
         request.stopRequestTimer(); // Update completion time
       }

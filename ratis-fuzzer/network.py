@@ -139,19 +139,22 @@ class Network:
         self.addr = addr
         self.lock = Lock()
         self.event_lock = Lock()
+        self.config = config
+        self.started = False
+        self.paused = False
+        
+        router = Router()
+        router.add_route("/replica", self._handle_replica)
+        router.add_route("/message", self._handle_message)
+        router.add_route("/event", self._handle_event)
+
+        self.client_request_counter = 0
         self.mailboxes = {}
         self.replicas = {}
         self.event_callbacks = {}
         self.request_map = {}
         self.request_ctr = 1
         self.event_trace = []
-        self.config = config
-        self.client_request_counter = 0
-        self.started = False
-        router = Router()
-        router.add_route("/replica", self._handle_replica)
-        router.add_route("/message", self._handle_message)
-        router.add_route("/event", self._handle_event)
 
         self.server = Server(addr, router)
         self.server_thread = Thread(target=self.server.serve_forever)
@@ -161,6 +164,8 @@ class Network:
             self.server_thread.start()
             self.started = True
             logging.info('Network started.')
+        else:
+            self.paused = False
     
     def shutdown(self):
         self.server.shutdown()
@@ -169,10 +174,14 @@ class Network:
     
     def reset(self):
         self.lock.acquire()
+        self.client_request_counter = 0
         self.mailboxes = {}
         self.replicas = {}
-        self.event_trace = []
         self.event_callbacks = {}
+        self.request_map = {}
+        self.request_ctr = 1
+        self.event_trace = []
+        self.paused = True
         self.lock.release()
     
     def check_mailboxes(self):
@@ -204,6 +213,8 @@ class Network:
         return self.request_map[data]
     
     def _handle_replica(self, request: Request) -> Response:
+        if self.paused:
+            return Response.json(HTTPStatus.NOT_FOUND, json.dumps({"message": "Ok"}))
         replica = json.loads(request.content)
         logging.info(f'Replica {replica["id"]} received.')
         if "id" in replica:
@@ -269,6 +280,8 @@ class Network:
 
 
     def _handle_message(self, request: Request) -> Response:
+        if self.paused:
+            return Response.json(HTTPStatus.NOT_FOUND, json.dumps({"message": "Ok"}))
         content = json.loads(request.content)
         # content['data'] = json.loads(base64.b64decode(content["data"]).decode('utf-8'))
         msg = Message.from_str(content)
@@ -288,6 +301,8 @@ class Network:
         return Response.json(HTTPStatus.OK, json.dumps({"message": "Ok"}))
     
     def _handle_event(self, request: Request) -> Response:
+        if self.paused:
+            return Response.json(HTTPStatus.NOT_FOUND, json.dumps({"message": "Ok"}))
         logging.debug("Received event: {}".format(request.content))
         event = json.loads(request.content)
         if "server_id" in event:
@@ -338,8 +353,29 @@ class Network:
             finally:
                 self.lock.release()
             return None
+        elif event["type"] == 'commit_update':
+            try:
+                self.lock.acquire()
+                self.event_callbacks[event['server_id']](event)
+            finally:
+                self.lock.release()
+            return None
+        elif event["type"] == 'log_update':
+            try:
+                self.lock.acquire()
+                self.event_callbacks[event['server_id']](event)
+            finally:
+                self.lock.release()
+            return None
+        elif event["type"] == 'term_update':
+            try:
+                self.lock.acquire()
+                self.event_callbacks[event['server_id']](event)
+            finally:
+                self.lock.release()
+            return None
         else:
-            -1
+            return None
     
     def set_event_callback(self, server_id, callback):
         try:

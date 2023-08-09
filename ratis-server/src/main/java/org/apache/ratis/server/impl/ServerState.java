@@ -23,6 +23,8 @@ import org.apache.ratis.protocol.*;
 import org.apache.ratis.protocol.exceptions.StateMachineException;
 import org.apache.ratis.server.RaftConfiguration;
 import org.apache.ratis.server.RaftServerConfigKeys;
+import org.apache.ratis.server.fuzzer.FuzzerClient;
+import org.apache.ratis.server.fuzzer.events.CommitUpdateEvent;
 import org.apache.ratis.server.impl.LeaderElection.Phase;
 import org.apache.ratis.server.protocol.TermIndex;
 import org.apache.ratis.server.raftlog.LogProtoUtils;
@@ -101,6 +103,7 @@ class ServerState implements Closeable {
    * Further, this will not get updated when SM does snapshots itself.
    */
   private final AtomicReference<TermIndex> latestInstalledSnapshot = new AtomicReference<>();
+  private final FuzzerClient fuzzerClient = FuzzerClient.getInstance();
 
   ServerState(RaftPeerId id, RaftGroup group, RaftProperties prop,
               RaftServerImpl server, StateMachine stateMachine)
@@ -251,10 +254,12 @@ class ServerState implements Closeable {
   boolean updateCurrentTerm(long newTerm) {
     final long current = currentTerm.getAndUpdate(curTerm -> Math.max(curTerm, newTerm));
     if (newTerm > current) {
+      fuzzerClient.sendEvent(new CommitUpdateEvent(server.getId().toString(), (int) newTerm));
       votedFor = null;
       setLeader(null, "updateCurrentTerm");
       return true;
     }
+    fuzzerClient.sendEvent(new CommitUpdateEvent(server.getId().toString(), (int) current));
     return false;
   }
 

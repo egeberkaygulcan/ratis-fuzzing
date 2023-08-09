@@ -8,6 +8,7 @@ import org.apache.ratis.proto.RaftProtos.AppendEntriesRequestProto;
 import org.apache.ratis.proto.RaftProtos.LogEntryProto;
 import org.apache.ratis.server.fuzzer.comm.GsonHelper;
 import org.apache.ratis.server.fuzzer.comm.JsonMessage;
+import org.apache.ratis.server.fuzzer.events.LogUpdateEvent;
 import org.apache.ratis.server.fuzzer.messages.Message;
 import org.apache.ratis.server.protocol.TermIndex;
 import org.slf4j.Logger;
@@ -31,6 +32,7 @@ public class AppendEntriesMessage extends Message {
         this.logAppender = logAppender;
         this.invokeServerId = invokeServerId;
 
+        fuzzerClient.sendEvent(new LogUpdateEvent(this.proto.getServerRequest().getRequestorId().toStringUtf8(), this.proto.getEntriesList()));
 
         LOG.info("Intercepted append entries from server " + this.proto.getServerRequest().getRequestorId().toStringUtf8() + " to " + this.proto.getServerRequest().getReplyId().toStringUtf8());
         

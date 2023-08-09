@@ -22,6 +22,7 @@ import org.apache.ratis.grpc.server.messages.RequestVoteMessage;
 import org.apache.ratis.protocol.RaftPeerId;
 import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.server.fuzzer.FuzzerClient;
+import org.apache.ratis.server.fuzzer.events.CommitUpdateEvent;
 import org.apache.ratis.server.fuzzer.messages.Message;
 import org.apache.ratis.server.protocol.RaftServerProtocol;
 import org.apache.ratis.server.util.ServerStringUtils;
@@ -156,7 +157,6 @@ class GrpcServerProtocolService extends RaftServerProtocolServiceImplBase {
     @Override
     public void onCompleted() {
       if (isClosed.compareAndSet(false, true)) {
-        // TODO - Append Entries event for validation, lastReply: null/lastRequest: null check
         LOG.info("{}: Completed {}, lastRequest: {}", getId(), op, getPreviousRequestString());
         requestFuture.get().thenAccept(reply -> {
           LOG.info("{}: Completed {}, lastReply: {}", getId(), op, reply);
