@@ -198,9 +198,9 @@ class RatisClient:
             logging.error('Pending requests do not match with completed requests.')
             err = True
 
-        if self.timeout_:
-            logging.error('Client timeout flag set.')
-            err = True
+        # if self.timeout_:
+        #     logging.error('Client timeout flag set.')
+        #     err = True
 
         if  err:
             src = os.path.join(self.config.tmp_dir, self.dir_)
