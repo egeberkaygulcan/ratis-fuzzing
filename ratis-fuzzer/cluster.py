@@ -265,7 +265,7 @@ class RatisCluster:
             shutil.rmtree(path)
         os.makedirs(path)
 
-        timeout = 15 if self.average_run_time == 0 else int(math.ceil(self.average_run_time/1e9)) + 10
+        timeout = 30 if self.average_run_time == 0 else int(math.ceil(self.average_run_time/1e9)) + 10
         self.start_time = time.time_ns()
         self.network.run()
         for server in self.servers:
@@ -276,7 +276,7 @@ class RatisCluster:
     
     def send_client_request(self):
         self.client.set_dir_('_'.join([self.config.exp_name, str(self.run_id)]))
-        timeout = 15 if self.average_run_time == 0 else int(math.ceil(self.average_run_time/1e9)) + 10
+        timeout = 30 if self.average_run_time == 0 else int(math.ceil(self.average_run_time/1e9)) + 10
         self.client.send_request(self.client_request_counter, timeout)
         self.client_request_counter += 1
     
