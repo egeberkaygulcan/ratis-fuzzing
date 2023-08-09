@@ -372,12 +372,12 @@ class Fuzzer:
             new_config.guider = TLCGuider(tlc_addr, tlc_record_path)
 
         if 'out_dir' not in config:
-            new_config.out_dir = '/Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/output'
+            new_config.out_dir = './output'
         else:
             new_config.out_dir = config['out_dir']
 
         if 'tmp_dir' not in config:
-            new_config.tmp_dir = '/Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/tmp'
+            new_config.tmp_dir = './tmp'
         else:
             new_config.tmp_dir = config['tmp_dir']
 
@@ -390,7 +390,7 @@ class Fuzzer:
         if "snapshots_path" in config:
             new_config.snapshots_path = config["snapshots_path"]
             
-        save_dir = '/Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/saved'
+        save_dir = './saved'
         if "save_dir" in config:
             new_config.save_dir = config["save_dir"]
         else:
