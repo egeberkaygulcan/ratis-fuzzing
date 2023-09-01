@@ -245,10 +245,6 @@ public class FuzzerClient extends Thread{
         return this.restartFlag;
     }
 
-    public boolean isControlledExecution() {
-        return true;
-    }
-
     public void setServerClientPort(int port) {
         this.serverClientPort = port;
     }
@@ -264,5 +260,9 @@ public class FuzzerClient extends Thread{
     public void clearMessageQueue() {
         this.messageMap.clear();
         this.messageHandler.clearMessages();
+    }
+
+    public boolean isControlledExecution() {
+        return false;
     }
 }

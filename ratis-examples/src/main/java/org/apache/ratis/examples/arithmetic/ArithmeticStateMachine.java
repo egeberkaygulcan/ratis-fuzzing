@@ -75,6 +75,10 @@ public class ArithmeticStateMachine extends BaseStateMachine {
     setLastAppliedTermIndex(null);
   }
 
+  public static ArithmeticStateMachine get(RaftServer.Division s) {
+    return (ArithmeticStateMachine)s.getStateMachine();
+  }
+
   @Override
   public void initialize(RaftServer server, RaftGroupId groupId,
       RaftStorage raftStorage) throws IOException {
