@@ -37,11 +37,11 @@ public class MessageHandler{
             if (m.type.equals("shutdown")) {
                 fuzzerClient.startShutdown();
             } else if (m.type.equals("crash")) {
-                fuzzerClient.startCrash();
+                fuzzerClient.addCrash(new String(m.data, StandardCharsets.UTF_8));
             } else if (m.type.equals("restart")) {
-                fuzzerClient.startRestart();
-            // } else if (m.type.equals("set_leader_id")){
-            //     fuzzerClient.setLeaderId(RaftPeerId.getRaftPeerId(m.id));
+                fuzzerClient.addRestart(new String(m.data, StandardCharsets.UTF_8));
+            } else if (m.type.equals("client_request")){
+                fuzzerClient.addClientRequest();
             } else {
                 lock.lock();
                 messages.add(m);

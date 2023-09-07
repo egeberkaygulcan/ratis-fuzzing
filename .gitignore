@@ -19,3 +19,4 @@ patchprocess
 dependency-reduced-pom.xml
 .mvn/wrapper/maven-wrapper.jar
 .vscode/
+ratis-examples/src/main/java/org/apache/ratis/examples/counter/server/tmp

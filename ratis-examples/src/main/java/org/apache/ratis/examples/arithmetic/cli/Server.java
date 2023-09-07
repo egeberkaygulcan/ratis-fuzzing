@@ -92,54 +92,55 @@ public class Server extends SubCommandBase {
     FuzzerClient fuzzerClient = FuzzerClient.getInstance();
     fuzzerClient.setServerClientPort(Integer.parseInt(serverClientPort));
     fuzzerClient.initServer();
-
-    raftServer.start();
-    fuzzerClient.registerServer(id);
-    System.out.println("Registering server");
-
-    boolean crashed = false;
-    // int snapshotCounter = 0;
-    for(; raftServer.getLifeCycleState() != LifeCycle.State.CLOSED || crashed;) {
-      // snapshotCounter++;
-      // if (snapshotCounter % 100 == 0) {
-      //   stateMachine.takeSnapshot();
-      // }
-      if (fuzzerClient.shouldShutdown())
-        break;
-      
-      if (fuzzerClient.shouldCrash() && !crashed) {
-        System.out.println("Crashing server: " + id);
-        crashed = true;
-        raftServer.close();
-        fuzzerClient.crashed();
-        System.out.println("Crashed server: " + id);
-      }
-
-      if (fuzzerClient.shouldRestart() && crashed) {
-        System.out.println("Restarting server: " + id);
-
-        raftServer = RaftServer.newBuilder()
-          .setServerId(RaftPeerId.valueOf(id))
-          .setStateMachine(stateMachine).setProperties(properties)
-          .setGroup(raftGroup)
-          .build();
-        raftServer.start();
-        crashed = false;
-
-        fuzzerClient.clearMessageQueue();
-        fuzzerClient.restarted();
-        System.out.println("Restarted server: " + id);
-      }
-
-      if(!crashed) {
-        fuzzerClient.getAndExecuteMessages();
-      }
-      TimeUnit.MILLISECONDS.sleep(1);
-    }
-
-    System.out.println("Closing server: " + id);
-    if (!crashed)
-      raftServer.close();
   }
+
+  //   raftServer.start();
+  //   fuzzerClient.registerServer(id);
+  //   System.out.println("Registering server");
+
+  //   boolean crashed = false;
+  //   // int snapshotCounter = 0;
+  //   for(; raftServer.getLifeCycleState() != LifeCycle.State.CLOSED || crashed;) {
+  //     // snapshotCounter++;
+  //     // if (snapshotCounter % 100 == 0) {
+  //     //   stateMachine.takeSnapshot();
+  //     // }
+  //     if (fuzzerClient.shouldShutdown())
+  //       break;
+      
+  //     if (fuzzerClient.shouldCrash() && !crashed) {
+  //       System.out.println("Crashing server: " + id);
+  //       crashed = true;
+  //       raftServer.close();
+  //       fuzzerClient.crashed();
+  //       System.out.println("Crashed server: " + id);
+  //     }
+
+  //     if (fuzzerClient.shouldRestart() && crashed) {
+  //       System.out.println("Restarting server: " + id);
+
+  //       raftServer = RaftServer.newBuilder()
+  //         .setServerId(RaftPeerId.valueOf(id))
+  //         .setStateMachine(stateMachine).setProperties(properties)
+  //         .setGroup(raftGroup)
+  //         .build();
+  //       raftServer.start();
+  //       crashed = false;
+
+  //       fuzzerClient.clearMessageQueue();
+  //       fuzzerClient.restarted();
+  //       System.out.println("Restarted server: " + id);
+  //     }
+
+  //     if(!crashed) {
+  //       fuzzerClient.getAndExecuteMessages();
+  //     }
+  //     TimeUnit.MILLISECONDS.sleep(1);
+  //   }
+
+  //   System.out.println("Closing server: " + id);
+  //   if (!crashed)
+  //     raftServer.close();
+  // }
 
 }

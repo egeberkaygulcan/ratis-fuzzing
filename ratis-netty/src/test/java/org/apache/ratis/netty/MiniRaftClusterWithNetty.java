@@ -67,4 +67,10 @@ public class MiniRaftClusterWithNetty extends MiniRaftCluster.RpcBase {
     RaftTestUtil.blockQueueAndSetDelay(getServers(), sendServerRequest,
         leaderId, delayMs, getTimeoutMax());
   }
+
+  @Override
+  public void setBlockRequestsFrom(String src, boolean block) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setBlockRequestsFrom'");
+  }
 }

@@ -18,11 +18,13 @@
 package org.apache.ratis.examples.counter.server;
 
 import org.apache.ratis.conf.RaftProperties;
+import org.apache.ratis.examples.common.ClusterWrapper;
 import org.apache.ratis.examples.common.Constants;
 import org.apache.ratis.grpc.GrpcConfigKeys;
 import org.apache.ratis.protocol.RaftPeer;
 import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.server.RaftServerConfigKeys;
+import org.apache.ratis.server.fuzzer.FuzzerClient;
 import org.apache.ratis.util.NetUtils;
 import org.apache.ratis.util.TimeDuration;
 
@@ -90,26 +92,35 @@ public final class CounterServer implements Closeable {
 
   public static void main(String[] args) {
     try {
+      // int fuzzerPort = Integer.parseInt(args[0]);
+      int numNodes = Integer.parseInt(args[0]);
+      int port = Integer.parseInt(args[1]);
+
+      System.setProperty("exp.build.data", "./data");
       //get peerIndex from the arguments
-      if (args.length != 1) {
-        throw new IllegalArgumentException("Invalid argument number: expected to be 1 but actual is " + args.length);
-      }
-      final int peerIndex = Integer.parseInt(args[0]);
-      if (peerIndex < 0 || peerIndex > 2) {
-        throw new IllegalArgumentException("The server index must be 0, 1 or 2: peerIndex=" + peerIndex);
-      }
-      TimeDuration simulatedSlowness = Optional.ofNullable(Constants.SIMULATED_SLOWNESS)
-                  .map(slownessList -> slownessList.get(peerIndex))
-                  .orElse(TimeDuration.ZERO);
-      startServer(peerIndex, simulatedSlowness);
+      // if (args.length != 1) {
+      //   throw new IllegalArgumentException("Invalid argument number: expected to be 1 but actual is " + args.length);
+      // }
+      // final int peerIndex = Integer.parseInt(args[0]);
+      // if (peerIndex < 0 || peerIndex > 2) {
+      //   throw new IllegalArgumentException("The server index must be 0, 1 or 2: peerIndex=" + peerIndex);
+      // }
+      // TimeDuration simulatedSlowness = Optional.ofNullable(Constants.SIMULATED_SLOWNESS)
+      //             .map(slownessList -> slownessList.get(peerIndex))
+      //             .orElse(TimeDuration.ZERO);
+      // startServer(peerIndex, simulatedSlowness);
+      FuzzerClient fuzzerClient = FuzzerClient.getInstance();
+      fuzzerClient.setServerClientPort(port);
+      fuzzerClient.initServer();
+      // fuzzerClient.setServerClientPort(fuzzerPort);
+      ClusterWrapper cluster = new ClusterWrapper(numNodes);
+      long start = System.currentTimeMillis();
+      cluster.run();
+      long timeElapsed = System.currentTimeMillis() - start;
+      System.out.println("Total runtime: " + timeElapsed);
+      System.exit(0);
     } catch(Throwable e) {
       e.printStackTrace();
-      System.err.println();
-      System.err.println("args = " + Arrays.toString(args));
-      System.err.println();
-      System.err.println("Usage: java org.apache.ratis.examples.counter.server.CounterServer peer_index");
-      System.err.println();
-      System.err.println("       peer_index must be 0, 1 or 2");
       System.exit(1);
     }
   }
@@ -117,7 +128,7 @@ public final class CounterServer implements Closeable {
   private static void startServer(int peerIndex, TimeDuration simulatedSlowness) throws IOException {
     //get peer and define storage dir
     final RaftPeer currentPeer = Constants.PEERS.get(peerIndex);
-    final File storageDir = new File("./" + currentPeer.getId());
+    final File storageDir = new File("/Users/berkay/Documents/Research/ratis-fuzzing/ratis-examples/src/main/java/org/apache/ratis/examples/counter/server/tmp/" + currentPeer.getId());
 
     //start a counter server
     try(CounterServer counterServer = new CounterServer(currentPeer, storageDir, simulatedSlowness)) {

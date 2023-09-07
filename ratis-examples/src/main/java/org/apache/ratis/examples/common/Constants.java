@@ -91,7 +91,7 @@ public final class Constants {
     final List<RaftPeer> peers = new ArrayList<>(addresses.length);
     for (int i = 0; i < addresses.length; i++) {
       final int priority = priorities == null ? 0 : Integer.parseInt(priorities[i]);
-      peers.add(RaftPeer.newBuilder().setId("n" + i).setAddress(addresses[i]).setPriority(priority).build());
+      peers.add(RaftPeer.newBuilder().setId(Integer.toString(i)).setAddress(addresses[i]).setPriority(priority).build());
     }
     PEERS = Collections.unmodifiableList(peers);
   }

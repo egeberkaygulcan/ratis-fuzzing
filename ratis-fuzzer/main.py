@@ -9,7 +9,7 @@ from pandas import read_csv
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('-c', '--config', type=str, default='experiment_config.csv')
+    parser.add_argument('-c', '--config', type=str, default='random_state_config.csv')
     parser.add_argument('-l', '--load', action='store_true')
 
     return parser.parse_args()

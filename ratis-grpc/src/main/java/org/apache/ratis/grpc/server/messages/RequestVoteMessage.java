@@ -40,8 +40,9 @@ public class RequestVoteMessage extends Message{
     public void invoke() {
         if (fuzzerClient.shouldShutdown())
             return;
-        if (!fuzzerClient.getElection())
-            return;
+        // TODO - Test
+        // if (!fuzzerClient.getElection())
+        //     return;
         LOG.info("Invoking request vote on server: " + invokeServerId);
         try {
             final RequestVoteReplyProto reply = server.requestVote(proto);

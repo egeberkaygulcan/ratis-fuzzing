@@ -142,6 +142,7 @@ class Network:
         self.config = config
         self.started = False
         self.paused = False
+        self.cluster_address = '127.0.0.1:7080'
         
         router = Router()
         router.add_route("/replica", self._handle_replica)
@@ -151,10 +152,10 @@ class Network:
         self.client_request_counter = 0
         self.mailboxes = {}
         self.replicas = {}
-        self.event_callbacks = {}
         self.request_map = {}
         self.request_ctr = 1
         self.event_trace = []
+        self.leader_id = -1
 
         self.server = Server(addr, router)
         self.server_thread = Thread(target=self.server.serve_forever)
@@ -172,16 +173,16 @@ class Network:
         self.server_thread.join()
         logging.info('Network shutdown.')
     
-    def reset(self):
+    def reset(self, new_port):
         self.lock.acquire()
         self.client_request_counter = 0
         self.mailboxes = {}
         self.replicas = {}
-        self.event_callbacks = {}
         self.request_map = {}
         self.request_ctr = 1
         self.event_trace = []
         self.paused = True
+        self.cluster_address = f'127.0.0.1:{new_port}'
         self.lock.release()
     
     def check_mailboxes(self):
@@ -195,11 +196,11 @@ class Network:
             self.lock.release()
         return queued_mailboxes
     
-    def check_replicas(self, num_nodes):
+    def check_replicas(self):
         result = True
         try:
             self.lock.acquire()
-            if len(self.replicas) >= num_nodes:
+            if len(self.replicas) > 0:
                 return False
         finally:
             self.lock.release()
@@ -291,9 +292,14 @@ class Network:
                 return Response.json(HTTPStatus.OK, json.dumps({'nodes': self.config.nodes}))
             try:
                 self.lock.acquire()
-                if msg.to not in self.mailboxes:
-                    self.mailboxes[msg.to] = []
-                self.mailboxes[msg.to].append(msg)
+                to = None
+                if msg.type == 'request_vote_request' or msg.type == 'append_entries_response':
+                    to = msg.to
+                elif msg.type == 'request_vote_response' or msg.type == 'append_entries_request':
+                    to = msg.fr
+                if to not in self.mailboxes:
+                    self.mailboxes[to] = []
+                self.mailboxes[to].append(msg)
             finally:
                 self.lock.release()
             self.add_event({"name": "SendMessage", "params": self._get_message_event_params(msg)})
@@ -328,6 +334,8 @@ class Network:
                 "request": self.client_request_counter-1
             }
         elif event["type"] == "BecomeLeader":
+            self.leader_id = event["node"]
+            logging.debug(f'Leader elected: {self.leader_id}')
             return {
                 "node": int(event["node"]),
                 "term": int(event["term"])
@@ -346,43 +354,8 @@ class Network:
                 "node": int(event["node"]),
                 "snapshot_index": int(event["snapshot_index"]),
             }
-        elif event["type"] == 'state_change':
-            try:
-                self.lock.acquire()
-                self.event_callbacks[event['server_id']](event)
-            finally:
-                self.lock.release()
-            return None
-        elif event["type"] == 'commit_update':
-            try:
-                self.lock.acquire()
-                self.event_callbacks[event['server_id']](event)
-            finally:
-                self.lock.release()
-            return None
-        elif event["type"] == 'log_update':
-            try:
-                self.lock.acquire()
-                self.event_callbacks[event['server_id']](event)
-            finally:
-                self.lock.release()
-            return None
-        elif event["type"] == 'term_update':
-            try:
-                self.lock.acquire()
-                self.event_callbacks[event['server_id']](event)
-            finally:
-                self.lock.release()
-            return None
         else:
             return None
-    
-    def set_event_callback(self, server_id, callback):
-        try:
-            self.lock.acquire()
-            self.event_callbacks[server_id] = callback
-        finally:
-            self.lock.release()
     
     def get_replicas(self):
         replicas = []
@@ -419,19 +392,16 @@ class Network:
             self.lock.acquire()
             for m in self.mailboxes[replica]:
                 messages_to_deliver.append(m)
-                if m.type == 'request_vote_request' or m.type == 'append_entries_response':
-                    addr = self.replicas[m.to]["addr"]
-                elif m.type == 'request_vote_response' or m.type == 'append_entries_request':
-                    addr = self.replicas[m.fr]["addr"]
-                else:
-                    addr = self.replicas[replica]["addr"]
-                addr_list.append(addr)
+                
+                # else:
+                #     addr = self.replicas[replica]["addr"]
+                # addr_list.append(addr)
             self.mailboxes[str(replica)] = []
         finally:
             self.lock.release()
         for i, next_msg in enumerate(messages_to_deliver):
             try:
-                requests.post("http://"+addr_list[i]+"/message", json=json.dumps(next_msg.__dict__))
+                requests.post("http://"+self.cluster_address+"/message", json=json.dumps(next_msg.__dict__))
             except:
                 pass
                 # logging.error(f'COULD NOT SEND MESSAGE')
@@ -439,14 +409,14 @@ class Network:
             finally:
                 continue
     
-    def send_shutdown(self, replica):
-        logging.info(f'Sending shutdown to {replica}')
+    def send_shutdown(self):
+        logging.info(f'Sending shutdown to cluster.')
         try:
             self.lock.acquire()
             # addr = self.replicas[list(self.replicas.keys())[0]]['addr']
-            addr = self.replicas[replica]["addr"]
+            # addr = self.replicas[replica]["addr"]
             msg = Message(0, 1, "shutdown", '0')
-            requests.post("http://"+addr+"/message", json=json.dumps(msg.__dict__))
+            requests.post("http://"+self.cluster_address+"/message", json=json.dumps(msg.__dict__))
         except:
             pass
         finally:
@@ -455,10 +425,19 @@ class Network:
     def send_crash(self, replica):
         # logging.info(f'Sending crash to {replica}')
         try:
+            # addr = self.replicas[replica]["addr"]
+            msg = Message(0, 1, "crash", replica)
+            requests.post("http://"+self.cluster_address+"/message", json=json.dumps(msg.__dict__))
+        except:
+            traceback.print_exc()
+
+    def send_client_request(self):
+        logging.debug(f'Sending client request to {self.cluster_address}')
+        try:
             self.lock.acquire()
-            addr = self.replicas[replica]["addr"]
-            msg = Message(0, 1, "crash", '0')
-            requests.post("http://"+addr+"/message", json=json.dumps(msg.__dict__))
+            # addr = self.replicas[replica]["addr"]
+            msg = Message(0, 1, "client_request", "0")
+            requests.post("http://"+self.cluster_address+"/message", json=json.dumps(msg.__dict__))
         except:
             traceback.print_exc()
         finally:
@@ -467,14 +446,11 @@ class Network:
     def send_restart(self, replica):
         # logging.info(f'Sending restart to {replica}')
         try:
-            self.lock.acquire()
-            addr = self.replicas[replica]["addr"]
-            msg = Message(0, 1, "restart", '0')
-            requests.post("http://"+addr+"/message", json=json.dumps(msg.__dict__))
+            # addr = self.replicas[replica]["addr"]
+            msg = Message(0, 1, "restart", replica)
+            requests.post("http://"+self.cluster_address+"/message", json=json.dumps(msg.__dict__))
         except:
             traceback.print_exc()
-        finally:
-            self.lock.release()
 
     def clear_mailboxes(self):
         try:

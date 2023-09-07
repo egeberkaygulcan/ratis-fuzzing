@@ -114,21 +114,23 @@ public final class CounterClient implements Closeable {
                 final String countValue = r.getMessage().getContent().toStringUtf8();
                 System.out.println("read from " + p.getId() + " and get counter value: " + countValue
                     + ", time elapsed: " + elapsedSec + " seconds");
+                assert countValue.equals(count);
               });
       futures.add(f);
     });
-
     for (Future<RaftClientReply> f : futures) {
       f.get();
     }
+    client.close();
   }
 
   public static void main(String[] args) {
     try(CounterClient client = new CounterClient()) {
-      //the number of INCREMENT commands, default is 10
-      final int increment = args.length > 0 ? Integer.parseInt(args[0]) : 10;
+      //the number of INCREMENT commands, default is 1
+      final int increment = args.length > 0 ? Integer.parseInt(args[0]) : 1;
       final boolean io = args.length > 1 && "io".equalsIgnoreCase(args[1]);
       client.run(increment, io);
+      System.exit(0);
     } catch (Throwable e) {
       e.printStackTrace();
       System.err.println();

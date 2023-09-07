@@ -270,7 +270,7 @@ public abstract class MiniRaftCluster implements Closeable {
 
   private static final Supplier<File> rootTestDir_ = JavaUtils.memoize(
       () -> JavaUtils.callAsUnchecked(() -> {
-        final File dir = new File(System.getProperty("test.build.data", "target/test/data"),
+        final File dir = new File(System.getProperty("exp.build.data", "target/src/data"),
             Integer.toHexString(ThreadLocalRandom.current().nextInt()));
         if (dir.exists() && !dir.isDirectory()) {
           throw new IOException(dir + " already exists and is not a directory");
@@ -291,7 +291,7 @@ public abstract class MiniRaftCluster implements Closeable {
   public static String[] generateIds(int numServers, int base) {
     String[] ids = new String[numServers];
     for (int i = 0; i < numServers; i++) {
-      ids[i] = "s" + (i + base);
+      ids[i] = Integer.toString(i + base + 1); // "s" + (i + base);
     }
     return ids;
   }

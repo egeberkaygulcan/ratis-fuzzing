@@ -1,7 +1,10 @@
 package org.apache.ratis.server.fuzzer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -32,25 +35,22 @@ public class FuzzerClient extends Thread{
     private final String fuzzerAddress = "127.0.0.1";
     private final int fuzzerPort = 7074;
     private final String serverClientAddress = "127.0.0.1";
-    private int serverClientPort = 7080;
+    private int serverClientPort;
 
     private FuzzerCaller client;
     private ReentrantLock clientLock;
     private NettyServer server;
-    Channel serverChannel;
+    private Channel serverChannel;
     private MessageHandler messageHandler;
 
-    ConcurrentHashMap<String, Message> messageMap;
+    private ConcurrentHashMap<String, Message> messageMap;
     AtomicInteger msgIdCounter;
 
-    // private RaftPeerId leaderId;
-
+    private AtomicInteger clientRequests;
+    private CopyOnWriteArrayList<String> crashList;
+    private CopyOnWriteArrayList<String> restartList;
     private boolean shutdownFlag;
-    private boolean crashFlag;
-    private boolean restartFlag;
     private boolean electionFlag;
-
-    private String serverId;
 
     public FuzzerClient() {
         this.client = new FuzzerCaller(fuzzerAddress + ":" + Integer.toString(fuzzerPort));
@@ -58,11 +58,11 @@ public class FuzzerClient extends Thread{
         this.messageHandler = new MessageHandler();
         this.messageMap = new ConcurrentHashMap<String, Message>();
         this.msgIdCounter = new AtomicInteger(0);
+        this.clientRequests = new AtomicInteger(0);
+        this.crashList = new CopyOnWriteArrayList<>();
+        this.restartList = new CopyOnWriteArrayList<>();
         this.shutdownFlag = false;
-        this.crashFlag = false;
-        this.restartFlag = false;
         this.electionFlag = false;
-        // this.leaderId = null;
     }
 
     private static class SingletonClient {
@@ -125,9 +125,7 @@ public class FuzzerClient extends Thread{
         }
     }
 
-    public void registerServer(String id) {
-        this.serverId = id;
-
+    public void registerCluster(String id) {
         JsonObject json = new JsonObject();
         json.addProperty("id", id);
         json.addProperty("ready", true);
@@ -146,7 +144,7 @@ public class FuzzerClient extends Thread{
     }
 
     public String generateId() {
-        return this.serverId + "_" + Integer.valueOf(this.msgIdCounter.getAndIncrement()).toString();
+        return Integer.valueOf(this.msgIdCounter.getAndIncrement()).toString();
     }
 
     public void interceptMessage(Message m) {
@@ -186,24 +184,21 @@ public class FuzzerClient extends Thread{
                 try {
                     msgImpl.invoke();
                 } catch (Exception e) {
-                    System.out.println(msgImpl.getType());
+                    System.out.println("Error on message invoke: " + msgImpl.getType());
                     e.printStackTrace();
                 }
         }
     }
 
-    // public void askLeaderId() {
-    //     this.sendEvent(new AskLeaderEvent());
-    // }
+    public void addClientRequest() {
+        this.clientRequests.incrementAndGet();
+    }
 
-    // public void setLeaderId(RaftPeerId id) {
-
-    //     this.leaderId = id;
-    // }
-
-    // public RaftPeerId getLeaderId() {
-    //     return this.leaderId;
-    // }
+    public int getClientRequests() {
+        int ret = this.clientRequests.get();
+        this.clientRequests.set(0);
+        return ret;
+    }
 
     public void startShutdown() {
         this.shutdownFlag = true;
@@ -217,44 +212,33 @@ public class FuzzerClient extends Thread{
         return this.electionFlag;
     }
 
-    public void startCrash() {
-        this.crashFlag = true;
+    public void addCrash(String id) {
+        this.crashList.add(id);
     }
 
-    public void startRestart() {
-        this.restartFlag = true;
+    public ArrayList<String> getCrash() {
+        ArrayList<String> ret = new ArrayList<>(this.crashList);
+        this.crashList.clear();
+        return ret;
+    }
+
+    public void addRestart(String id) {
+        this.restartList.add(id);
+        // this.restartFlag = true;
+    }
+
+    public ArrayList<String> getRestart() {
+        ArrayList<String> ret = new ArrayList<>(this.restartList);
+        this.restartList.clear();
+        return ret;
     }
 
     public boolean shouldShutdown() {
         return this.shutdownFlag;
     }
 
-    public void crashed() {
-        this.crashFlag = false;
-    }
-
-    public boolean shouldCrash() {
-        return this.crashFlag;
-    }
-
-    public void restarted() {
-        this.restartFlag = false;
-    }
-
-    public boolean shouldRestart() {
-        return this.restartFlag;
-    }
-
     public void setServerClientPort(int port) {
         this.serverClientPort = port;
-    }
-
-    public void setServerId(String id) { 
-        this.serverId = id;
-    }
-
-    public String getServerId() {
-        return this.serverId;
     }
     
     public void clearMessageQueue() {
@@ -263,6 +247,6 @@ public class FuzzerClient extends Thread{
     }
 
     public boolean isControlledExecution() {
-        return false;
+        return true;
     }
 }

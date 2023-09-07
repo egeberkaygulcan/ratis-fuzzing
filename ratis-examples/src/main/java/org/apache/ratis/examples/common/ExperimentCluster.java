@@ -1,62 +1,40 @@
 package org.apache.ratis.examples.common;
 
 import org.apache.ratis.server.impl.MiniRaftCluster;
-import org.apache.ratis.server.impl.SimpleMessage;
 import org.apache.ratis.client.RaftClient;
 import org.apache.ratis.conf.RaftProperties;
-import org.apache.ratis.examples.arithmetic.ArithmeticStateMachine;
-import org.apache.ratis.proto.RaftProtos.LogEntryProto;
-import org.apache.ratis.protocol.exceptions.ChecksumException;
-import org.apache.ratis.protocol.Message;
+import org.apache.ratis.examples.counter.CounterCommand;
+import org.apache.ratis.examples.counter.server.CounterStateMachine;
 import org.apache.ratis.protocol.RaftClientReply;
 import org.apache.ratis.protocol.RaftPeerId;
-import org.apache.ratis.protocol.exceptions.StateMachineException;
-import org.apache.ratis.server.protocol.TermIndex;
-import org.apache.ratis.server.raftlog.LogProtoUtils;
 import org.apache.ratis.server.raftlog.RaftLog;
-import org.apache.ratis.server.raftlog.RaftLogIOException;
-import org.apache.ratis.server.raftlog.segmented.SegmentedRaftLogFormat;
 import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.server.RaftServerConfigKeys;
-import org.apache.ratis.server.RaftServerConfigKeys.Log;
 import org.apache.ratis.server.fuzzer.FuzzerClient;
-import org.apache.ratis.server.raftlog.segmented.LogSegmentPath;
 import org.apache.ratis.statemachine.StateMachine;
-import org.apache.ratis.util.CollectionUtils;
-import org.apache.ratis.util.FileUtils;
-import org.apache.ratis.util.JavaUtils;
 import org.apache.ratis.util.Slf4jUtils;
-import org.apache.ratis.util.Preconditions;
 import org.apache.ratis.util.SizeInBytes;
-import org.apache.ratis.util.StringUtils;
 import org.apache.ratis.util.TimeDuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
-/**
- * Test restarting raft peers.
- */
 public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
     implements MiniRaftCluster.Factory.Get<CLUSTER> {
   {
-    Slf4jUtils.setLogLevel(RaftLog.LOG, Level.DEBUG);
+    Slf4jUtils.setLogLevel(RaftServer.Division.LOG, Level.INFO);
+    Slf4jUtils.setLogLevel(RaftLog.LOG, Level.INFO);
+    Slf4jUtils.setLogLevel(RaftClient.LOG, Level.INFO);
   }
 
-  static int NUM_SERVERS;
+  // public static int NUM_SERVERS;
+  static final int NUM_SERVERS = 3;
   public final Logger LOG = LoggerFactory.getLogger(getClass());
 
   public static final TimeDuration HUNDRED_MILLIS = TimeDuration.valueOf(100, TimeUnit.MILLISECONDS);
@@ -66,8 +44,11 @@ public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
   {
     final RaftProperties prop = getProperties();
     prop.setClass(MiniRaftCluster.STATEMACHINE_CLASS_KEY,
-        ArithmeticStateMachine.class, StateMachine.class);
+        CounterStateMachine.class, StateMachine.class);
     RaftServerConfigKeys.Log.setSegmentSizeMax(prop, SizeInBytes.valueOf("8KB"));
+    RaftServerConfigKeys.Snapshot.setAutoTriggerEnabled(prop, true);
+    RaftServerConfigKeys.Read.setOption(prop, RaftServerConfigKeys.Read.Option.LINEARIZABLE);
+    RaftServerConfigKeys.Read.setTimeout(prop, TimeDuration.ONE_SECOND);
   }
 
   public void controlledExperiment() throws Exception {
@@ -77,13 +58,76 @@ public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
   void runControlledExperiment(MiniRaftCluster cluster) throws Exception {
     // raftServer.getLifeCycleState() != LifeCycle.State.CLOSED
     FuzzerClient fuzzerClient = FuzzerClient.getInstance();
-    while(!fuzzerClient.shouldShutdown()) {
-        // TODO - Crash Server
-        // TODO - Restart Server
+    fuzzerClient.registerCluster("1");
 
-        fuzzerClient.getAndExecuteMessages();
-        TimeUnit.MILLISECONDS.sleep(1);
+    ArrayList<String> crashList;
+    ArrayList<String> restartList;
+
+    final ArrayList<Future<RaftClientReply>> futures = new ArrayList<>();
+    int clientRequests = 0;
+    
+    while(!fuzzerClient.shouldShutdown()) {
+      // MiniRaftCluster.waitForLeader(cluster);
+      // final RaftPeerId leaderId = cluster.getLeader().getId();
+      /* ---------- CRASH SERVER ---------- */ 
+      crashList = fuzzerClient.getCrash();
+      if (crashList.size() > 0) {
+        for (String id: crashList) {
+          RaftPeerId peerId = RaftPeerId.getRaftPeerId(id);
+          cluster.crashServer(peerId);
+        }
+      }
+
+
+      /* ---------- RESTART SERVER ---------- */ 
+      restartList = fuzzerClient.getRestart();
+      if (restartList.size() > 0) {
+        for (String id: restartList) {
+          RaftPeerId peerId = RaftPeerId.getRaftPeerId(id);
+          cluster.restartAfterCrash(peerId, false);
+        }
+      }
+      
+
+      /* ---------- SEND CLIENT REQUESTS ---------- */ 
+      clientRequests = fuzzerClient.getClientRequests();
+      if (clientRequests > 0) {
+        ExecutorService executor = Executors.newFixedThreadPool(clientRequests);
+        for(int i = 0; i < clientRequests; i++) {
+          final Future<RaftClientReply> f = executor.submit(
+            () -> {
+              final RaftClient client = cluster.createClient();
+              return client.io().send(CounterCommand.INCREMENT.getMessage());
+            });
+        futures.add(f);
+        }
+      }
+
+      
+      /* ---------- RECEIVE CLIENT REQUESTS ---------- */ 
+      for (int i = 0; i < futures.size(); i++) {
+        Future<RaftClientReply> f = futures.get(i);
+        if (f.isDone()) {
+          futures.remove(i);
+          final RaftClientReply reply = f.get();
+          if (reply.isSuccess()) {
+            long timestamp = System.currentTimeMillis();
+            final String count = reply.getMessage().getContent().toStringUtf8();
+            System.out.println("Counter is incremented to " + count);
+          } else {
+            System.err.println("Failed " + reply);
+          }
+        } else if (f.isCancelled()) {
+          futures.remove(i);
+        }
+      }
+      // TODO - Linearizability check
+
+      fuzzerClient.getAndExecuteMessages();
+      TimeUnit.NANOSECONDS.sleep(100);
     }
+    cluster.shutdown();
+    return;
   }
 
 //   public void testRestartFollower() throws Exception {
