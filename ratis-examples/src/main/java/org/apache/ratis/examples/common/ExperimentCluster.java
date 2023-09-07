@@ -126,8 +126,6 @@ public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
       fuzzerClient.getAndExecuteMessages();
       TimeUnit.NANOSECONDS.sleep(100);
     }
-    cluster.shutdown();
-    return;
   }
 
 //   public void testRestartFollower() throws Exception {

@@ -418,15 +418,15 @@ class Network:
             msg = Message(0, 1, "shutdown", '0')
             requests.post("http://"+self.cluster_address+"/message", json=json.dumps(msg.__dict__))
         except:
-            pass
+            logging.error('Error on send_shutdown')
         finally:
             self.lock.release()
     
     def send_crash(self, replica):
-        # logging.info(f'Sending crash to {replica}')
+        logging.debug(f'Sending crash to {replica}')
         try:
             # addr = self.replicas[replica]["addr"]
-            msg = Message(0, 1, "crash", replica)
+            msg = Message(0, replica, "crash", replica)
             requests.post("http://"+self.cluster_address+"/message", json=json.dumps(msg.__dict__))
         except:
             traceback.print_exc()
@@ -444,10 +444,10 @@ class Network:
             self.lock.release()
     
     def send_restart(self, replica):
-        # logging.info(f'Sending restart to {replica}')
+        logging.debug(f'Sending restart to {replica}')
         try:
             # addr = self.replicas[replica]["addr"]
-            msg = Message(0, 1, "restart", replica)
+            msg = Message(0, replica, "restart", replica)
             requests.post("http://"+self.cluster_address+"/message", json=json.dumps(msg.__dict__))
         except:
             traceback.print_exc()

@@ -19,9 +19,10 @@ class RatisCluster:
         self.nodes = config.nodes
         self.config = config
         self.network = network
-        self.timeout = 10
+        self.timeout = 15
         self.ports = cycle([7080, 7081, 7082, 7083, 7084, 7085])
         self.current_port = next(self.ports)
+        self.thread = None
 
         self.client_request_counter = 0
         self.average_run_time = 0
@@ -35,6 +36,8 @@ class RatisCluster:
         self.error_flag = False
         self.client_request_counter = 0
         self.run_id = -1
+        self.thread.join()
+        self.thread = None
         self.current_port = next(self.ports)
         self.network.reset(self.current_port)
         if os.path.exists('./data'):
@@ -69,11 +72,13 @@ class RatisCluster:
                 logging.error(e.stdout)
                 # TODO - Handle timeout
             finally:
-                return
+                kill_cmd = "pkill -f 'java -cp'"
+                subprocess.run(kill_cmd, shell=True)
+            return
 
         cmd = f'java -ea -cp {self.config.jar_path} org.apache.ratis.examples.counter.server.CounterServer {self.config.nodes} {self.current_port}'
-        thread = threading.Thread(target=run, args=(cmd, self.timeout))
-        thread.start()
+        self.thread = threading.Thread(target=run, args=(cmd, self.timeout))
+        self.thread.start()
         logging.info('Cluster started.')
 
     # def get_pid(self):

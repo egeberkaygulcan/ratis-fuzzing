@@ -37,9 +37,9 @@ public class MessageHandler{
             if (m.type.equals("shutdown")) {
                 fuzzerClient.startShutdown();
             } else if (m.type.equals("crash")) {
-                fuzzerClient.addCrash(new String(m.data, StandardCharsets.UTF_8));
+                fuzzerClient.addCrash(m.to);
             } else if (m.type.equals("restart")) {
-                fuzzerClient.addRestart(new String(m.data, StandardCharsets.UTF_8));
+                fuzzerClient.addRestart(m.to);
             } else if (m.type.equals("client_request")){
                 fuzzerClient.addClientRequest();
             } else {
