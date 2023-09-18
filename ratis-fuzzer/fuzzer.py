@@ -162,7 +162,8 @@ class TLCGuider:
                 logging.info("Received error response from TLC, code: {}, text: {}".format(r.status_code, r.content))
         except Exception as e:
             logging.info("Error received from TLC: {}".format(e))
-            pass
+        finally:
+            return 0
 
         return 0
     
@@ -188,32 +189,35 @@ class TraceGuider:
     
     def check_new_state(self, trace, event_trace, name, record = False) -> int:
         trace_str = ''
+        ret = 0
         for step in trace:
             if step['type'] == 'ClientRequest':
                 trace_str = trace_str + 'ClientRequest_'
             else:
                 trace_str = trace_str + f'{step["type"]}_{step["node"]}_'
         if trace_str not in self.traces:
+            ret = 1
             self.traces.append(trace_str)
             trace_to_send = event_trace
             trace_to_send.append({"reset": True})
-            logging.debug("Sending trace to TLC: {}".format(trace_to_send))
-            try:
-                r = requests.post("http://"+self.tlc_addr+"/execute", json=trace_to_send)
-                if r.ok:
-                    response = r.json()
-                    logging.debug("Received response from TLC: {}".format(response))               
-                    new_states = 0
-                    for i in range(len(response["states"])):
-                        tlc_state = {"state": response["states"][i], "key" : response["keys"][i]}
-                        if tlc_state["key"] not in self.states:
-                            self.states[tlc_state["key"]] = tlc_state
-                            new_states += 1
-                    return new_states
-            except Exception as e:
-                logging.info("Error received from TLC: {}".format(e))
-                pass
-        return 0
+        logging.debug("Sending trace to TLC: {}".format(trace_to_send))
+        try:
+            r = requests.post("http://"+self.tlc_addr+"/execute", json=trace_to_send)
+            if r.ok:
+                response = r.json()
+                logging.debug("Received response from TLC: {}".format(response))               
+                new_states = 0
+                for i in range(len(response["states"])):
+                    tlc_state = {"state": response["states"][i], "key" : response["keys"][i]}
+                    if tlc_state["key"] not in self.states:
+                        self.states[tlc_state["key"]] = tlc_state
+                        new_states += 1
+                return ret
+        except Exception as e:
+            logging.error("Error received from TLC: {}".format(e))
+        finally:
+            return ret
+        return ret
                 
     
     def coverage(self):
