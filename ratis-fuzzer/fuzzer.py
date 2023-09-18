@@ -372,7 +372,7 @@ class Fuzzer:
             new_config.exp_name = config['exp_name']
         
         if 'jar_path' not in config:
-            new_config.jar_path = '/Users/berkay/Documents/Research/ratis-fuzzing/ratis-examples/target/ratis-examples-2.5.1.jar'
+            new_config.jar_path = '../ratis-examples/target/ratis-examples-2.5.1.jar'
         else:
             new_config.jar_path = config['jar_path']
 
