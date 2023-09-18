@@ -47,6 +47,7 @@ class RatisCluster:
     
     def shutdown(self):
         self.network.shutdown()
+        self.thread.join()
         if os.path.exists('./data'):
             shutil.rmtree('./data')
         logging.info('Cluster shutdown.')

@@ -279,7 +279,7 @@ class Fuzzer:
         self.prev_iters = max(dirs)
         path = os.path.join(self.config.save_dir, str(self.prev_iters))
 
-        self.guider.load(os.path.join(path, f'{self.config.exp_name}_states.pkl'))
+        self.guider.load_states(os.path.join(path, f'{self.config.exp_name}_states.pkl'))
         with open(os.path.join(path, f'{self.config.exp_name}_traces.pkl'), 'rb') as f:
             self.trace_queue = pickle.load(f)
         
@@ -390,7 +390,7 @@ class Fuzzer:
         os.makedirs(save_dir, exist_ok=True)
         
         if 'save_every' not in config:
-            new_config.save_every = 50
+            new_config.save_every = 100
         else:
             new_config.save_every = config['save_every']
 
@@ -409,9 +409,11 @@ class Fuzzer:
         start = time.time_ns()
         for i in range(self.config.iterations):
             iter_count = i + self.prev_iters
+            if iter_count >= self.config.iterations:
+                return True
             if i != 0 and i % self.config.save_every == 0:
                 self.save(iter_count)
-            logging.info(f'##### Starting fuzzer iteration {i} #####')
+            logging.info(f'##### Starting fuzzer iteration {iter_count} #####')
             if i % self.config.seed_frequency == 0 and not naive_random:
                 self.seed(iter_count)
 
@@ -423,13 +425,20 @@ class Fuzzer:
             else:
                 self.stats["mutated_traces"] += 1
             try:
-                (trace, event_trace) = self.run_iteration("fuzz_{}".format(iter_count), to_mimic)
+                traces = self.run_iteration("fuzz_{}".format(iter_count), to_mimic)
+                if traces is not None:
+                    (trace, event_trace) = traces
+                else:
+                    self.cluster.shutdown()
+                    return False
             except Exception as ex:
                 logging.error(f"Error running iteration {iter_count}: {ex}")
+                self.cluster.shutdown()
+                return False
             else:
-                pass
                 new_states = self.guider.check_new_state(trace, event_trace, str(iter_count), record=False)
                 logging.info(f'New states: {new_states}')
+                logging.info(f'Total states: {self.guider.coverage()}')
                 if new_states > 0 and not naive_random:
                     for j in range(new_states * self.config.mutations_per_trace):
                         try:
@@ -444,6 +453,7 @@ class Fuzzer:
         self.stats["runtime"] = time.time_ns() - start
         self.save(self.config.iterations)
         self.cluster.shutdown()
+        return True
 
         
 
@@ -547,10 +557,15 @@ class Fuzzer:
         finally:
             try:
                 logging.debug("Shutting down cluster")
-                self.network.send_shutdown()
+                ret = True
+                if not self.cluster.error_flag:
+                    ret = self.network.send_shutdown()
+                if ret is False:
+                    return None
             except Exception as e:
                 logging.error('Cannot send shutdown!')
                 logging.error(e)
+                return None
 
         event_trace = self.network.get_event_trace()
 
@@ -565,9 +580,9 @@ class Fuzzer:
             with open(os.path.join(path, 'trace.log'), 'w+') as f:
                 for trace in event_trace:
                     f.write(f'{str(trace)}\n')
+            return None
 
 
 
         self.cluster.reset()
-
         return (trace, event_trace)

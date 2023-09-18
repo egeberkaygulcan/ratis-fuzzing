@@ -27,5 +27,10 @@ if __name__ == '__main__':
     load = args.load
     for index, row in experiment_config.iterrows():
         fuzzer = Fuzzer(args, load, row.to_dict())
-        fuzzer.run()
+        ret = fuzzer.run()
         load = True
+        while ret is False:
+            logging.error("Restarting run!")
+            fuzzer = Fuzzer(args, load, row.to_dict())
+            ret = fuzzer.run()
+        

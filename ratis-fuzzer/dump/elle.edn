@@ -1,5 +1,3 @@
-{:type :invoke, :f :add, :value 1, :op-index 1, :process 0, :time 1695055220220, :index 0}
-{:type :ok, :f :add, :value 1, :op-index 1, :process 0, :time 1695055220722, :index 2}
-{:type :invoke, :f :add, :value 1, :op-index 2, :process 0, :time 1695055220267, :index 1}
-{:type :ok, :f :add, :value 1, :op-index 2, :process 0, :time 1695055220735, :index 3}
-{:type :invoke, :f :add, :value 1, :op-index 3, :process 0, :time 1695055221548, :index 4}
+{:type :invoke, :f :add, :value 1, :op-index 1, :process client-BC3F122B8331, :time 1695072035773, :index 0}
+{:type :invoke, :f :add, :value 1, :op-index 2, :process client-858FB80C8C49, :time 1695072036881, :index 1}
+{:type :invoke, :f :add, :value 1, :op-index 3, :process client-A6F2789A26BE, :time 1695072036881, :index 2}

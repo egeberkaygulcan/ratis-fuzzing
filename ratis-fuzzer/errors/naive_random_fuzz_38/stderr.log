@@ -1,0 +1,51 @@
+log4j:WARN No appenders could be found for logger (io.netty.util.internal.logging.InternalLoggerFactory).
+log4j:WARN Please initialize the log4j system properly.
+log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
+java.lang.AssertionError: Unexpected exit.
+	at org.apache.ratis.util.ExitUtils.assertNotTerminated(ExitUtils.java:109)
+	at org.apache.ratis.server.impl.MiniRaftCluster.shutdown(MiniRaftCluster.java:922)
+	at org.apache.ratis.server.impl.MiniRaftCluster$Factory$Get.runWithNewCluster(MiniRaftCluster.java:144)
+	at org.apache.ratis.server.impl.MiniRaftCluster$Factory$Get.runWithNewCluster(MiniRaftCluster.java:118)
+	at org.apache.ratis.examples.common.ExperimentCluster.controlledExperiment(ExperimentCluster.java:69)
+	at org.apache.ratis.examples.common.ClusterWrapper.run(ClusterWrapper.java:16)
+	at org.apache.ratis.examples.counter.server.CounterServer.main(CounterServer.java:118)
+Caused by: org.apache.ratis.util.ExitUtils$ExitException: Failed to start Grpc server
+	at org.apache.ratis.util.ExitUtils.terminate(ExitUtils.java:141)
+	at org.apache.ratis.util.ExitUtils.terminate(ExitUtils.java:151)
+	at org.apache.ratis.grpc.server.GrpcService.startImpl(GrpcService.java:300)
+	at org.apache.ratis.util.LifeCycle.startAndTransition(LifeCycle.java:270)
+	at org.apache.ratis.server.RaftServerRpcWithProxy.start(RaftServerRpcWithProxy.java:72)
+	at org.apache.ratis.server.impl.RaftServerProxy.startImpl(RaftServerProxy.java:401)
+	at org.apache.ratis.util.LifeCycle.startAndTransition(LifeCycle.java:270)
+	at org.apache.ratis.server.impl.RaftServerProxy.start(RaftServerProxy.java:394)
+	at org.apache.ratis.server.impl.MiniRaftCluster.startServers(MiniRaftCluster.java:518)
+	at org.apache.ratis.server.impl.MiniRaftCluster.start(MiniRaftCluster.java:355)
+	at org.apache.ratis.server.impl.MiniRaftCluster$Factory$Get.runWithNewCluster(MiniRaftCluster.java:136)
+	... 4 more
+Caused by: java.io.IOException: Failed to bind to address 0.0.0.0/0.0.0.0:60064
+	at org.apache.ratis.thirdparty.io.grpc.netty.NettyServer.start(NettyServer.java:328)
+	at org.apache.ratis.thirdparty.io.grpc.internal.ServerImpl.start(ServerImpl.java:184)
+	at org.apache.ratis.thirdparty.io.grpc.internal.ServerImpl.start(ServerImpl.java:93)
+	at org.apache.ratis.grpc.server.GrpcService.startImpl(GrpcService.java:298)
+	... 12 more
+Caused by: java.net.BindException: Address already in use
+	at java.base/sun.nio.ch.Net.bind0(Native Method)
+	at java.base/sun.nio.ch.Net.bind(Net.java:556)
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.netBind(ServerSocketChannelImpl.java:344)
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:301)
+	at org.apache.ratis.thirdparty.io.netty.channel.socket.nio.NioServerSocketChannel.doBind(NioServerSocketChannel.java:141)
+	at org.apache.ratis.thirdparty.io.netty.channel.AbstractChannel$AbstractUnsafe.bind(AbstractChannel.java:562)
+	at org.apache.ratis.thirdparty.io.netty.channel.DefaultChannelPipeline$HeadContext.bind(DefaultChannelPipeline.java:1334)
+	at org.apache.ratis.thirdparty.io.netty.channel.AbstractChannelHandlerContext.invokeBind(AbstractChannelHandlerContext.java:600)
+	at org.apache.ratis.thirdparty.io.netty.channel.AbstractChannelHandlerContext.bind(AbstractChannelHandlerContext.java:579)
+	at org.apache.ratis.thirdparty.io.netty.channel.DefaultChannelPipeline.bind(DefaultChannelPipeline.java:973)
+	at org.apache.ratis.thirdparty.io.netty.channel.AbstractChannel.bind(AbstractChannel.java:260)
+	at org.apache.ratis.thirdparty.io.netty.bootstrap.AbstractBootstrap$2.run(AbstractBootstrap.java:356)
+	at org.apache.ratis.thirdparty.io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java:174)
+	at org.apache.ratis.thirdparty.io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:167)
+	at org.apache.ratis.thirdparty.io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470)
+	at org.apache.ratis.thirdparty.io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:569)
+	at org.apache.ratis.thirdparty.io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997)
+	at org.apache.ratis.thirdparty.io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at org.apache.ratis.thirdparty.io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:1623)

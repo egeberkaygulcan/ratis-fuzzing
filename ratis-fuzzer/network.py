@@ -173,6 +173,7 @@ class Network:
     def shutdown(self):
         self.server.shutdown()
         self.server_thread.join()
+        self.server.server_close()
         logging.info('Network shutdown.')
     
     def reset(self, new_port):
@@ -416,7 +417,7 @@ class Network:
     
     def send_shutdown(self):
         if self.cluster_error:
-            return
+            return True
         logging.debug(f'Sending shutdown to cluster.')
         try:
             self.lock.acquire()
@@ -424,8 +425,9 @@ class Network:
             # addr = self.replicas[replica]["addr"]
             msg = Message(0, 1, "shutdown", '0')
             requests.post("http://"+self.cluster_address+"/message", json=json.dumps(msg.__dict__))
-        except:
+        except Exception as e:
             logging.error('Error on send_shutdown')
+            logging.error(e)
             return False
         finally:
             if self.lock.locked():

@@ -22,8 +22,11 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 import org.apache.ratis.protocol.RaftPeer;
 
+import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -110,11 +113,11 @@ public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
         ExecutorService executor = Executors.newFixedThreadPool(clientRequests);
         executors.add(executor);
         for(int i = 0; i < clientRequests; i++) {
-          String elleVal = "{:type :invoke, :f :add, :value 1, :op-index " + pendingCount.getAndIncrement() + ", :process 0, :time " + Instant.now().toEpochMilli() + ", :index " + elleIndex.getAndIncrement() + "}\n";
-          elleList.add(elleVal);
           final Future<RaftClientReply> f = CompletableFuture.supplyAsync(() -> {
             try {
               final RaftClient client = cluster.createClient();
+              String elleVal = "{:type :invoke, :f :add, :value 1, :op-index " + pendingCount.getAndIncrement() + ", :process " + client.getId().toString() + ", :time " + Instant.now().toEpochMilli() + ", :index " + elleIndex.getAndIncrement() + "}\n";
+              elleList.add(elleVal);
               return client.io().send(CounterCommand.INCREMENT.getMessage());
             } catch (IOException e) {
               System.err.println("Failed write request");
@@ -126,7 +129,7 @@ public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
               return;
             }
             final String count = r.getMessage().getContent().toStringUtf8();
-            String elleVal_ = "{:type :ok, :f :add, :value 1, :op-index " + count + ", :process 0, :time " + Instant.now().toEpochMilli() + ", :index " + elleIndex.getAndIncrement() + "}\n";
+            String elleVal_ = "{:type :ok, :f :add, :value 1, :op-index " + count + ", :process " + r.getClientId().toString() + ", :time " + Instant.now().toEpochMilli() + ", :index " + elleIndex.getAndIncrement() + "}\n";
             elleList.add(elleVal_);
           });
         //   final Future<RaftClientReply> f = executor.submit(
@@ -193,7 +196,7 @@ public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
         e.shutdownNow();
     }
     // TODO - Remove filepath
-    String elleFile = "/Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/dump/elle.edn";
+    String elleFile = "dump/elle.edn";
     try {
       FileWriter fileWriter = new FileWriter(elleFile); 
       PrintWriter printWriter = new PrintWriter(fileWriter);
@@ -204,15 +207,58 @@ public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
     } catch (Exception e) {
       e.printStackTrace();
     }
-    // boolean b = runAndGetResults(elleFile);
-    // if(!b) {
-    //   throw new Exception("Not linearizable!");
+    boolean b = runProcess("java -jar ../../elle-cli/target/elle-cli-0.1.7-standalone.jar --model counter " + elleFile);
+    cluster.shutdown();
+    if(!b) {
+      throw new Exception("Not linearizable!");
+    }
+    // RaftPeerId lastLeader = getLongestLogPeer(cluster);
+    // if (lastLeader != null) {
+    //   RaftLog leaderLog = cluster.getDivision(lastLeader).getRaftLog();
+    //   for(RaftServer.Division server : cluster.iterateDivisions()) {
+    //     if (!server.getId().equals(lastLeader)) {
+    //       RaftLog followerLog = server.getRaftLog();
+    //       long followerIndex = followerLog.getNextIndex() - 1;
+    //       for (long i = 0; i < followerIndex; i++) {
+    //         assert leaderLog.get(i).getIndex() == followerLog.get(i).getIndex();
+    //       }
+    //     }
+    //   }
     // }
+    // throw new Exception("Tests");
     cluster.shutdown();
   }
 
-  private boolean runAndGetResults(String elleFile) {
-    return true;
+  private RaftPeerId getLongestLogPeer(MiniRaftCluster cluster) {
+    RaftPeerId max = null;
+    long maxIndex = -1;
+    for(RaftServer.Division server : cluster.iterateDivisions()) {
+      RaftLog peerLog = server.getRaftLog();
+      long lastIndex = peerLog.getNextIndex() - 1;
+      if (lastIndex > maxIndex) {
+        maxIndex = lastIndex;
+        max = server.getId();
+      }
+    }
+    return max;
+  }
+
+  private static boolean getResult(InputStream ins) throws Exception {
+    String output = "";
+    String line = null;
+    BufferedReader in = new BufferedReader(
+        new InputStreamReader(ins));
+    while ((line = in.readLine()) != null) {
+        output = output + line;
+    }
+    System.out.println(output);
+    return output.contains("true");
+  }
+
+  private static boolean runProcess(String command) throws Exception {
+    Process pro = Runtime.getRuntime().exec(command);
+    pro.waitFor();
+    return getResult(pro.getInputStream());
   }
 
 //   public void testRestartFollower() throws Exception {
