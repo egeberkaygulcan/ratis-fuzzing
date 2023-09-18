@@ -1,7 +1,9 @@
 package org.apache.ratis.server.fuzzer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -49,8 +51,10 @@ public class FuzzerClient extends Thread{
     private AtomicInteger clientRequests;
     private CopyOnWriteArrayList<String> crashList;
     private CopyOnWriteArrayList<String> restartList;
+    private HashSet<String> crashedServers;
     private boolean shutdownFlag;
     private boolean electionFlag;
+    public boolean controlled;
 
     public FuzzerClient() {
         this.client = new FuzzerCaller(fuzzerAddress + ":" + Integer.toString(fuzzerPort));
@@ -61,8 +65,10 @@ public class FuzzerClient extends Thread{
         this.clientRequests = new AtomicInteger(0);
         this.crashList = new CopyOnWriteArrayList<>();
         this.restartList = new CopyOnWriteArrayList<>();
+        this.crashedServers = new HashSet<String>();
         this.shutdownFlag = false;
         this.electionFlag = false;
+        this.controlled = true;
     }
 
     private static class SingletonClient {
@@ -237,6 +243,18 @@ public class FuzzerClient extends Thread{
         return this.shutdownFlag;
     }
 
+    public void addToCrashed(String server) {
+        this.crashedServers.add(server);
+    }
+
+    public void removeFromCrashed(String server) {
+        this.crashedServers.remove(server);
+    }
+
+    public boolean isCrashed(String server) {
+        return this.crashedServers.contains(server);
+    }
+
     public void setServerClientPort(int port) {
         this.serverClientPort = port;
     }
@@ -247,6 +265,6 @@ public class FuzzerClient extends Thread{
     }
 
     public boolean isControlledExecution() {
-        return true;
+        return controlled;
     }
 }

@@ -34,6 +34,8 @@ public class AppendEntriesReplyMessage extends Message {
     public void invoke() {
         if (fuzzerClient.shouldShutdown())
             return;
+        if (fuzzerClient.isCrashed(invokeServerId))
+            return;
         LOG.info("Invoking append entries reply on server: " + invokeServerId);
         responseHandler.onNext_(proto);
     }

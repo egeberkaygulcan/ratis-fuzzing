@@ -19,7 +19,7 @@ class RatisCluster:
         self.nodes = config.nodes
         self.config = config
         self.network = network
-        self.timeout = 15
+        self.timeout = 30
         self.ports = cycle([7080, 7081, 7082, 7083, 7084, 7085])
         self.current_port = next(self.ports)
         self.thread = None
@@ -29,11 +29,13 @@ class RatisCluster:
         self.start_time = 0
         self.run_id = -1
         self.error_flag = False
+        self.error_log = None
 
-        logging.info('RatisCluster created.')
+        logging.debug('RatisCluster created.')
     
     def reset(self):
         self.error_flag = False
+        self.error_log = None
         self.client_request_counter = 0
         self.run_id = -1
         self.thread.join()
@@ -50,7 +52,7 @@ class RatisCluster:
         logging.info('Cluster shutdown.')
 
     def start(self, run_id):
-        logging.info('RatisCluster starting.')
+        logging.debug('RatisCluster starting.')
         self.network.run()
         self.start_process()
 
@@ -64,12 +66,15 @@ class RatisCluster:
                 self.error_flag = True
                 logging.error(e.stderr)
                 logging.error(e.stdout)
+                self.error_log = (e.stderr, e.stdout)
+                self.network.cluster_error = True
                 # TODO - Record error
             except subprocess.TimeoutExpired as e:
                 logging.error('TimeoutExpired.')
                 self.error_flag = True
                 logging.error(e.stderr)
                 logging.error(e.stdout)
+                self.network.cluster_error = True
                 # TODO - Handle timeout
             finally:
                 kill_cmd = "pkill -f 'java -cp'"
@@ -79,7 +84,7 @@ class RatisCluster:
         cmd = f'java -ea -cp {self.config.jar_path} org.apache.ratis.examples.counter.server.CounterServer {self.config.nodes} {self.current_port}'
         self.thread = threading.Thread(target=run, args=(cmd, self.timeout))
         self.thread.start()
-        logging.info('Cluster started.')
+        logging.debug('Cluster started.')
 
     # def get_pid(self):
     #     connections = psutil.net_connections()

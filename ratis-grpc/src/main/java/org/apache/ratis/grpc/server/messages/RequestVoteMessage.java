@@ -40,6 +40,8 @@ public class RequestVoteMessage extends Message{
     public void invoke() {
         if (fuzzerClient.shouldShutdown())
             return;
+        if (fuzzerClient.isCrashed(invokeServerId))
+            return;
         // TODO - Test
         // if (!fuzzerClient.getElection())
         //     return;

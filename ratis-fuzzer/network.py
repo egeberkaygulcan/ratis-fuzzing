@@ -156,9 +156,11 @@ class Network:
         self.request_ctr = 1
         self.event_trace = []
         self.leader_id = -1
+        self.cluster_error = False
 
         self.server = Server(addr, router)
         self.server_thread = Thread(target=self.server.serve_forever)
+        
 
     def run(self):
         if not self.started:
@@ -182,6 +184,7 @@ class Network:
         self.request_ctr = 1
         self.event_trace = []
         self.paused = True
+        self.cluster_error = False
         self.cluster_address = f'127.0.0.1:{new_port}'
         self.lock.release()
     
@@ -217,7 +220,7 @@ class Network:
         if self.paused:
             return Response.json(HTTPStatus.NOT_FOUND, json.dumps({"message": "Ok"}))
         replica = json.loads(request.content)
-        logging.info(f'Replica {replica["id"]} received.')
+        logging.debug(f'Replica {replica["id"]} received.')
         if "id" in replica:
             try:
                 self.lock.acquire()
@@ -384,6 +387,8 @@ class Network:
             self.lock.release()
     
     def schedule_replica(self, replica):
+        if self.cluster_error:
+            return
         addr = ""
         messages_to_deliver = []
         addr_list = []
@@ -410,7 +415,9 @@ class Network:
                 continue
     
     def send_shutdown(self):
-        logging.info(f'Sending shutdown to cluster.')
+        if self.cluster_error:
+            return
+        logging.debug(f'Sending shutdown to cluster.')
         try:
             self.lock.acquire()
             # addr = self.replicas[list(self.replicas.keys())[0]]['addr']
@@ -419,10 +426,16 @@ class Network:
             requests.post("http://"+self.cluster_address+"/message", json=json.dumps(msg.__dict__))
         except:
             logging.error('Error on send_shutdown')
+            return False
         finally:
-            self.lock.release()
+            if self.lock.locked():
+                self.lock.release()
+            return True
+        return False
     
     def send_crash(self, replica):
+        if self.cluster_error:
+            return
         logging.debug(f'Sending crash to {replica}')
         try:
             # addr = self.replicas[replica]["addr"]
@@ -432,6 +445,8 @@ class Network:
             traceback.print_exc()
 
     def send_client_request(self):
+        if self.cluster_error:
+            return
         logging.debug(f'Sending client request to {self.cluster_address}')
         try:
             self.lock.acquire()
@@ -444,6 +459,8 @@ class Network:
             self.lock.release()
     
     def send_restart(self, replica):
+        if self.cluster_error:
+            return
         logging.debug(f'Sending restart to {replica}')
         try:
             # addr = self.replicas[replica]["addr"]

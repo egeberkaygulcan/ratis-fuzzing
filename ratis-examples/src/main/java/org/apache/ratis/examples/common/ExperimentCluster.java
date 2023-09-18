@@ -7,23 +7,34 @@ import org.apache.ratis.examples.counter.CounterCommand;
 import org.apache.ratis.examples.counter.server.CounterStateMachine;
 import org.apache.ratis.protocol.RaftClientReply;
 import org.apache.ratis.protocol.RaftPeerId;
+import org.apache.ratis.protocol.exceptions.AlreadyClosedException;
 import org.apache.ratis.server.raftlog.RaftLog;
 import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.server.RaftServerConfigKeys;
 import org.apache.ratis.server.fuzzer.FuzzerClient;
 import org.apache.ratis.statemachine.StateMachine;
 import org.apache.ratis.util.Slf4jUtils;
+import org.apache.ratis.util.JavaUtils;
 import org.apache.ratis.util.SizeInBytes;
 import org.apache.ratis.util.TimeDuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
+import org.apache.ratis.protocol.RaftPeer;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
     implements MiniRaftCluster.Factory.Get<CLUSTER> {
@@ -60,21 +71,24 @@ public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
     FuzzerClient fuzzerClient = FuzzerClient.getInstance();
     fuzzerClient.registerCluster("1");
 
+    AtomicInteger pendingCount = new AtomicInteger(1);
+    AtomicInteger elleIndex = new AtomicInteger(0);
+
     ArrayList<String> crashList;
     ArrayList<String> restartList;
 
-    final ArrayList<Future<RaftClientReply>> futures = new ArrayList<>();
+    ArrayList<Future<RaftClientReply>> futures = new ArrayList<>();
+    ArrayList<ExecutorService> executors = new ArrayList<>();
+    CopyOnWriteArrayList<String> elleList = new CopyOnWriteArrayList<>();
     int clientRequests = 0;
-    
     while(!fuzzerClient.shouldShutdown()) {
-      // MiniRaftCluster.waitForLeader(cluster);
-      // final RaftPeerId leaderId = cluster.getLeader().getId();
       /* ---------- CRASH SERVER ---------- */ 
       crashList = fuzzerClient.getCrash();
       if (crashList.size() > 0) {
         for (String id: crashList) {
           RaftPeerId peerId = RaftPeerId.getRaftPeerId(id);
           cluster.crashServer(peerId);
+          fuzzerClient.addToCrashed(peerId.toString());
         }
       }
 
@@ -85,6 +99,7 @@ public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
         for (String id: restartList) {
           RaftPeerId peerId = RaftPeerId.getRaftPeerId(id);
           cluster.restartAfterCrash(peerId, false);
+          fuzzerClient.removeFromCrashed(peerId.toString());
         }
       }
       
@@ -93,39 +108,111 @@ public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
       clientRequests = fuzzerClient.getClientRequests();
       if (clientRequests > 0) {
         ExecutorService executor = Executors.newFixedThreadPool(clientRequests);
+        executors.add(executor);
         for(int i = 0; i < clientRequests; i++) {
-          final Future<RaftClientReply> f = executor.submit(
-            () -> {
+          String elleVal = "{:type :invoke, :f :add, :value 1, :op-index " + pendingCount.getAndIncrement() + ", :process 0, :time " + Instant.now().toEpochMilli() + ", :index " + elleIndex.getAndIncrement() + "}\n";
+          elleList.add(elleVal);
+          final Future<RaftClientReply> f = CompletableFuture.supplyAsync(() -> {
+            try {
               final RaftClient client = cluster.createClient();
               return client.io().send(CounterCommand.INCREMENT.getMessage());
-            });
-        futures.add(f);
+            } catch (IOException e) {
+              System.err.println("Failed write request");
+              return RaftClientReply.newBuilder().setSuccess(false).build();
+            }
+          }, executor).whenCompleteAsync((r, ex) -> {
+            if (ex != null || !r.isSuccess()) {
+              System.err.println("Failed " + r);
+              return;
+            }
+            final String count = r.getMessage().getContent().toStringUtf8();
+            String elleVal_ = "{:type :ok, :f :add, :value 1, :op-index " + count + ", :process 0, :time " + Instant.now().toEpochMilli() + ", :index " + elleIndex.getAndIncrement() + "}\n";
+            elleList.add(elleVal_);
+          });
+        //   final Future<RaftClientReply> f = executor.submit(
+        //     () -> {
+        //       final RaftClient client = cluster.createClient();
+        //       return client.io().send(CounterCommand.INCREMENT.getMessage());
+        //     });
+        // futures.add(f);
         }
       }
 
       
       /* ---------- RECEIVE CLIENT REQUESTS ---------- */ 
-      for (int i = 0; i < futures.size(); i++) {
-        Future<RaftClientReply> f = futures.get(i);
-        if (f.isDone()) {
-          futures.remove(i);
-          final RaftClientReply reply = f.get();
-          if (reply.isSuccess()) {
-            long timestamp = System.currentTimeMillis();
-            final String count = reply.getMessage().getContent().toStringUtf8();
-            System.out.println("Counter is incremented to " + count);
-          } else {
-            System.err.println("Failed " + reply);
-          }
-        } else if (f.isCancelled()) {
-          futures.remove(i);
+      //wait for the futures
+      for (Future<RaftClientReply> f : futures) {
+        final RaftClientReply reply = f.get();
+        
+        if (reply.isSuccess()) {
+          final String count = reply.getMessage().getContent().toStringUtf8();
+          String elleVal = "{:type :ok, :f :add, :value 1, :op-index " + count + ", :process 0, :time " + Instant.now().toEpochMilli() + ", :index " + elleIndex.getAndIncrement() + "}\n";
+          elleList.add(elleVal);
+          System.out.println("Counter is incremented to " + count);
+        } else {
+          System.err.println("Failed " + reply);
         }
       }
-      // TODO - Linearizability check
+      // for (int i = 0; i < futures.size(); i++) {
+      //   Future<RaftClientReply> f = futures.get(i);
+      //   if (f.isDone()) {
+      //     futures.remove(i);
+      //     final RaftClientReply reply = f.get();
+      //     if (reply.isSuccess()) {
+      //       String counterVal = reply.getMessage().getContent().toStringUtf8();
+      //       String elleVal = "{:type :ok, :f :add, :value 1, :op-index " + counterVal + ", :process 0, :time " + Instant.now().toEpochMilli() + ", :index " + elleIndex.getAndIncrement() + "}\n";
+      //       elleList.add(elleVal);
+      //       final String count = reply.getMessage().getContent().toStringUtf8();
+      //       System.out.println("Counter is incremented to " + count);
+
+      //       // Follower log check
+            
+      //     } else {
+      //       System.err.println("Failed " + reply);
+      //     }
+      //   } else if (f.isCancelled()) {
+      //     futures.remove(i);
+      //   }
+      // }
+      
 
       fuzzerClient.getAndExecuteMessages();
+      // for (Future<RaftClientReply> f : futures) {
+      //   f.get();
+      // }
       TimeUnit.NANOSECONDS.sleep(100);
     }
+    fuzzerClient.controlled = false;
+    
+    for (Future<RaftClientReply> f : futures){
+      f.cancel(true);
+    }
+
+    for (ExecutorService e : executors) {
+      if (!e.isShutdown())
+        e.shutdownNow();
+    }
+    // TODO - Remove filepath
+    String elleFile = "/Users/berkay/Documents/Research/ratis-fuzzing/ratis-fuzzer/dump/elle.edn";
+    try {
+      FileWriter fileWriter = new FileWriter(elleFile); 
+      PrintWriter printWriter = new PrintWriter(fileWriter);
+      for (String line : elleList)
+        printWriter.print(line);
+      printWriter.close();
+      fileWriter.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    // boolean b = runAndGetResults(elleFile);
+    // if(!b) {
+    //   throw new Exception("Not linearizable!");
+    // }
+    cluster.shutdown();
+  }
+
+  private boolean runAndGetResults(String elleFile) {
+    return true;
   }
 
 //   public void testRestartFollower() throws Exception {
@@ -153,10 +240,7 @@ public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
 //     final long leaderLastIndex = cluster.getLeader().getRaftLog().getLastEntryTermIndex().getIndex();
 //     // make sure the restarted follower can catchup
 //     final RaftServer.Division followerState = cluster.getDivision(followerId);
-//     JavaUtils.attemptRepeatedly(() -> {
-//       assert followerState.getInfo().getLastAppliedIndex() >= leaderLastIndex;
-//       return null;
-//     }, 10, ONE_SECOND, "follower catchup", LOG);
+
 
 //     // make sure the restarted peer's log segments is correct
 //     final RaftServer.Division follower = cluster.restartServer(followerId, false);
@@ -302,14 +386,17 @@ public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
 //     return entries;
 //   }
 
-//   static void assertSameLog(RaftLog expected, RaftLog computed) throws Exception {
-//     Assert.assertEquals(expected.getLastEntryTermIndex(), computed.getLastEntryTermIndex());
-//     final long lastIndex = expected.getNextIndex() - 1;
-//     Assert.assertEquals(expected.getLastEntryTermIndex().getIndex(), lastIndex);
-//     for(long i = 0; i < lastIndex; i++) {
-//       Assert.assertEquals(expected.get(i), computed.get(i));
-//     }
-//   }
+// TODO - Convert
+  static void assertSameLog(RaftLog expected, RaftLog computed) throws Exception {
+    assert expected.getLastEntryTermIndex().compareTo(computed.getLastEntryTermIndex()) == 0;
+    final long lastIndex = computed.getNextIndex() - 1;
+    assert expected.getLastEntryTermIndex().getIndex() == lastIndex;
+    for(long i = 0; i < lastIndex; i++) {
+      System.out.println(expected.get(i).getIndex());
+      System.out.println(computed.get(i).getIndex());
+      assert expected.get(i).equals(computed.get(i));
+    }
+  }
 
 //   public void testRestartCommitIndex() throws Exception {
 //     runWithNewCluster(NUM_SERVERS, this::runTestRestartCommitIndex);

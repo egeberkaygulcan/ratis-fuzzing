@@ -372,6 +372,11 @@ class Fuzzer:
         else:
             new_config.jar_path = config['jar_path']
 
+        if 'error_path' not in config:
+            new_config.error_path = './errors'
+        else:
+            new_config.error_path = config['error_path']
+
         new_config.snapshots_path = "/tmp/ratis"
         if "snapshots_path" in config:
             new_config.snapshots_path = config["snapshots_path"]
@@ -474,7 +479,7 @@ class Fuzzer:
                 elif ch["type"] == "ClientRequest":
                     client_requests.append(ch["step"])
 
-        logging.info("Starting cluster")
+        logging.debug("Starting cluster")
         self.cluster.start(iteration)
         while self.network.check_replicas():
             if self.cluster.error_flag:
@@ -508,7 +513,7 @@ class Fuzzer:
                 while len(mailboxes) < 1:
                     if self.cluster.error_flag:
                         break
-                    if wait_count >= 100 and i > 0:
+                    if wait_count >= 50 and i > 0:
                         break
                     time.sleep(1e-3)
                     wait_count += 1
@@ -543,12 +548,25 @@ class Fuzzer:
             try:
                 logging.debug("Shutting down cluster")
                 self.network.send_shutdown()
-                if os.path.exists(self.config.snapshots_path):
-                    shutil.rmtree(self.config.snapshots_path)
-            except:
-                pass
+            except Exception as e:
+                logging.error('Cannot send shutdown!')
+                logging.error(e)
 
         event_trace = self.network.get_event_trace()
+
+        if self.cluster.error_log is not None:
+            stderr, stdout = self.cluster.error_log
+            path = os.path.join(self.config.error_path, f'{self.config.exp_name}_{iteration}')
+            os.makedirs(path, exist_ok=True)
+            with open(os.path.join(path, 'stderr.log'), 'w+') as f:
+                f.writelines(stderr)
+            with open(os.path.join(path, 'stdout.log'), 'w+') as f:
+                f.writelines(stdout)
+            with open(os.path.join(path, 'trace.log'), 'w+') as f:
+                for trace in event_trace:
+                    f.write(f'{str(trace)}\n')
+
+
 
         self.cluster.reset()
 
