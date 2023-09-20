@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 
 public class TimeoutEvent extends Event {
 
-    public static final Logger LOG = LoggerFactory.getLogger(StateChangeEvent.class);
+    public static final Logger LOG = LoggerFactory.getLogger(TimeoutEvent.class);
 
     public TimeoutEvent(String serverId) {
         this.type = "Timeout";

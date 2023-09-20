@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 
 public class SnapshotUpdateEvent extends Event {
 
-    public static final Logger LOG = LoggerFactory.getLogger(StateChangeEvent.class);
+    public static final Logger LOG = LoggerFactory.getLogger(SnapshotUpdateEvent.class);
     private int index;
 
     public SnapshotUpdateEvent(int index, String serverId) {

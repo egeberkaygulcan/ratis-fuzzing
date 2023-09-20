@@ -7,22 +7,19 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-public class ClientRequestEvent extends Event {
+public class ShutdownReadyEvent extends Event {
 
-    public static final Logger LOG = LoggerFactory.getLogger(ClientRequestEvent.class);
+    public static final Logger LOG = LoggerFactory.getLogger(ShutdownReadyEvent.class);
 
-    public ClientRequestEvent(String serverId) {
-        this.type = "ClientRequest";
-        this.serverId = serverId;
-        LOG.info("New ClientRequest event on server " + this.serverId);
+    public ShutdownReadyEvent() {
+        this.type = "ShutdownReady";
+        LOG.info("Shutdown ready.");
     }
 
     @Override
     public String toJsonString() {
         JsonObject json = new JsonObject();
         json.addProperty("type", type);
-        json.addProperty("server_id", serverId);
-        json.addProperty("leader", serverId);
 
         Gson gson = GsonHelper.gson;
         return gson.toJson(json);

@@ -13,7 +13,7 @@ import com.google.gson.JsonObject;
 
 public class TermUpdateEvent extends Event {
 
-    public static final Logger LOG = LoggerFactory.getLogger(StateChangeEvent.class);
+    public static final Logger LOG = LoggerFactory.getLogger(TermUpdateEvent.class);
     private int term;
 
     public TermUpdateEvent(String serverId, int term) {

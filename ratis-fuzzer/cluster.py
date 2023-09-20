@@ -38,8 +38,6 @@ class RatisCluster:
         self.error_log = None
         self.client_request_counter = 0
         self.run_id = -1
-        if self.thread is not None:
-            self.thread.join()
         self.thread = None
         self.current_port = next(self.ports)
         self.network.reset(self.current_port)
@@ -48,8 +46,6 @@ class RatisCluster:
     
     def shutdown(self):
         self.network.shutdown()
-        if self.thread is not None:
-            self.thread.join()
         if os.path.exists('./data'):
             shutil.rmtree('./data')
         logging.info('Cluster shutdown.')
@@ -88,6 +84,10 @@ class RatisCluster:
         self.thread = threading.Thread(target=run, args=(cmd, self.timeout))
         self.thread.start()
         logging.debug('Cluster started.')
+
+    def end_process(self):
+        if self.thread is not None:
+            self.thread.join()
 
     # def get_pid(self):
     #     connections = psutil.net_connections()

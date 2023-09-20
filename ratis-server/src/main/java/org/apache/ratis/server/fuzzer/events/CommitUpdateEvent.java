@@ -13,7 +13,7 @@ import com.google.gson.JsonObject;
 
 public class CommitUpdateEvent extends Event {
 
-    public static final Logger LOG = LoggerFactory.getLogger(StateChangeEvent.class);
+    public static final Logger LOG = LoggerFactory.getLogger(CommitUpdateEvent.class);
     private int commitIndex;
 
     public CommitUpdateEvent(String serverId, int commitIndex) {

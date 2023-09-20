@@ -10,13 +10,7 @@ public class ClusterWrapper
         numServers = numNodes;
     }
 
-    public void run() {
-        // ExperimentCluster.NUM_SERVERS = numServers;
-        try {
-            this.controlledExperiment();
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+    public void run() throws Exception{
+        this.controlledExperiment();
     }
 }

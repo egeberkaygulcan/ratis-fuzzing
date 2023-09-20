@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -121,8 +122,14 @@ public final class CounterServer implements Closeable {
       System.exit(0);
     } catch(Throwable e) {
       e.printStackTrace();
+      try {
+        TimeUnit.MILLISECONDS.sleep(10);
+      } catch (InterruptedException e1) {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
       System.exit(1);
-    }
+    } 
   }
 
   private static void startServer(int peerIndex, TimeDuration simulatedSlowness) throws IOException {

@@ -156,6 +156,7 @@ class Network:
         self.request_ctr = 1
         self.event_trace = []
         self.leader_id = -1
+        self.cluster_shutdown_ready = False
         self.cluster_error = False
 
         self.server = Server(addr, router)
@@ -178,6 +179,7 @@ class Network:
     
     def reset(self, new_port):
         self.lock.acquire()
+        self.cluster_shutdown_ready = False
         self.client_request_counter = 0
         self.mailboxes = {}
         self.replicas = {}
@@ -315,23 +317,25 @@ class Network:
             return Response.json(HTTPStatus.NOT_FOUND, json.dumps({"message": "Ok"}))
         logging.debug("Received event: {}".format(request.content))
         event = json.loads(request.content)
-        if "server_id" in event:
-            try:
-                params = self._map_event_params(event)
-                e = {"name": event["type"], "params": params}
-                if params != None:
-                    e["params"]["replica"] = event["server_id"]
-                    self.lock.acquire()
-                    self.event_trace.append(e)
-            finally:
-                if self.lock.locked():
-                    self.lock.release()
+        try:
+            params = self._map_event_params(event)
+            e = {"name": event["type"], "params": params}
+            if params != None:
+                e["params"]["replica"] = event["server_id"]
+                self.lock.acquire()
+                self.event_trace.append(e)
+        finally:
+            if self.lock.locked():
+                self.lock.release()
 
         return Response.json(HTTPStatus.OK, json.dumps({"message": "Ok"}))
     
     
     def _map_event_params(self, event):
-        if event["type"] == "ClientRequest":
+        if event["type"] == "ShutdownReady":
+            self.cluster_shutdown_ready = True
+            return None
+        elif event["type"] == "ClientRequest":
             self.client_request_counter += 1
             return {
                 "leader": int(event["leader"]),
@@ -417,7 +421,7 @@ class Network:
     
     def send_shutdown(self):
         if self.cluster_error:
-            return True
+            return
         logging.debug(f'Sending shutdown to cluster.')
         try:
             self.lock.acquire()
@@ -425,15 +429,11 @@ class Network:
             # addr = self.replicas[replica]["addr"]
             msg = Message(0, 1, "shutdown", '0')
             requests.post("http://"+self.cluster_address+"/message", json=json.dumps(msg.__dict__))
-        except Exception as e:
-            logging.error('Error on send_shutdown')
-            logging.error(e)
-            return False
+        except Exception:
+            pass
         finally:
             if self.lock.locked():
                 self.lock.release()
-            return True
-        return False
     
     def send_crash(self, replica):
         if self.cluster_error:

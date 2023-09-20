@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 
 public class BecomeLeaderEvent extends Event {
 
-    public static final Logger LOG = LoggerFactory.getLogger(StateChangeEvent.class);
+    public static final Logger LOG = LoggerFactory.getLogger(BecomeLeaderEvent.class);
     private int term;
 
     public BecomeLeaderEvent(int term, String serverId) {

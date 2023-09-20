@@ -18,6 +18,7 @@ import org.apache.ratis.server.fuzzer.comm.NettyRouter;
 import org.apache.ratis.server.fuzzer.comm.NettyServer;
 import org.apache.ratis.server.fuzzer.comm.Route;
 import org.apache.ratis.server.fuzzer.events.Event;
+import org.apache.ratis.server.fuzzer.events.ShutdownReadyEvent;
 import org.apache.ratis.server.fuzzer.messages.Message;
 
 import com.google.gson.Gson;
@@ -166,12 +167,24 @@ public class FuzzerClient extends Thread{
     }
 
     public void sendEvent(Event e) {
+        if (this.shutdownFlag)
+            return;
         try {
             this.clientLock.lock();
             client.sendEvent(e.toJsonString());
-        } catch (Exception ex) {
-            // ex.printStackTrace();
-        } finally {
+        } catch (Exception ignored) {} 
+        finally {
+            this.clientLock.unlock();
+        }
+    }
+
+    public void sendShutdownReadyEvent() {
+        ShutdownReadyEvent e = new ShutdownReadyEvent();
+        try {
+            this.clientLock.lock();
+            client.sendEvent(e.toJsonString());
+        } catch (Exception ignored) {} 
+        finally {
             this.clientLock.unlock();
         }
     }

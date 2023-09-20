@@ -200,23 +200,23 @@ class TraceGuider:
             self.traces.append(trace_str)
             trace_to_send = event_trace
             trace_to_send.append({"reset": True})
-        logging.debug("Sending trace to TLC: {}".format(trace_to_send))
-        try:
-            r = requests.post("http://"+self.tlc_addr+"/execute", json=trace_to_send)
-            if r.ok:
-                response = r.json()
-                logging.debug("Received response from TLC: {}".format(response))               
-                new_states = 0
-                for i in range(len(response["states"])):
-                    tlc_state = {"state": response["states"][i], "key" : response["keys"][i]}
-                    if tlc_state["key"] not in self.states:
-                        self.states[tlc_state["key"]] = tlc_state
-                        new_states += 1
+            logging.debug("Sending trace to TLC: {}".format(trace_to_send))
+            try:
+                r = requests.post("http://"+self.tlc_addr+"/execute", json=trace_to_send)
+                if r.ok:
+                    response = r.json()
+                    logging.debug("Received response from TLC: {}".format(response))               
+                    new_states = 0
+                    for i in range(len(response["states"])):
+                        tlc_state = {"state": response["states"][i], "key" : response["keys"][i]}
+                        if tlc_state["key"] not in self.states:
+                            self.states[tlc_state["key"]] = tlc_state
+                            new_states += 1
+                    return ret
+            except Exception as e:
+                logging.error("Error received from TLC: {}".format(e))
+            finally:
                 return ret
-        except Exception as e:
-            logging.error("Error received from TLC: {}".format(e))
-        finally:
-            return ret
         return ret
                 
     
@@ -411,6 +411,7 @@ class Fuzzer:
         logging.info("Seeding for iteration {}".format(iter))
         self.trace_queue = []
         for i in range(self.config.seed_population):
+            logging.info(f'##### Starting seed iteration {i} #####')
             ret = self.run_iteration("seed_{}_{}".format(iter, i))
             if ret is not None:
                 (trace, _) = ret
@@ -426,10 +427,11 @@ class Fuzzer:
             #     return True
             if i != 0 and i % self.config.save_every == 0:
                 self.save(iter_count)
-            logging.info(f'##### Starting fuzzer iteration {iter_count} #####')
+            
             if i % self.config.seed_frequency == 0 and not naive_random:
                 self.seed(iter_count)
 
+            logging.info(f'##### Starting fuzzer iteration {iter_count} #####')
             to_mimic = None
             if len(self.trace_queue) > 0:
                 to_mimic = self.trace_queue.pop(0)
@@ -574,17 +576,25 @@ class Fuzzer:
         finally:
             try:
                 logging.debug("Shutting down cluster")
-                ret = True
-                if not self.cluster.error_flag:
-                    ret = self.network.send_shutdown()
-                if ret is False:
-                    return None
-            except Exception as e:
-                logging.error('Cannot send shutdown!')
-                logging.error(e)
-                return None
+                self.network.send_shutdown()
+            except Exception:
+                logging.error('Error on shutdown!')
 
         event_trace = self.network.get_event_trace()
+
+        logging.info('Starting shutdown wait.')
+        end_process_timeout = time.time() + 5
+        while True:
+            if self.network.cluster_shutdown_ready or time.time() > end_process_timeout:
+                if time.time() < end_process_timeout:
+                    logging.info('Shutdown now.')
+                else:
+                    logging.info('Shutdown wait timed out.')
+                break
+            time.sleep(1e-3)
+
+        self.cluster.end_process()
+        logging.info(f'Event trace len: {len(event_trace)}')
 
         if self.cluster.error_log is not None:
             stderr, stdout = self.cluster.error_log
@@ -597,9 +607,6 @@ class Fuzzer:
             with open(os.path.join(path, 'trace.log'), 'w+') as f:
                 for trace in event_trace:
                     f.write(f'{str(trace)}\n')
-            return None
-
-
 
         self.cluster.reset()
         return (trace, event_trace)
