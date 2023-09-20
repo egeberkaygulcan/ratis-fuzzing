@@ -183,7 +183,7 @@ public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
       // for (Future<RaftClientReply> f : futures) {
       //   f.get();
       // }
-      TimeUnit.NANOSECONDS.sleep(100);
+      TimeUnit.MILLISECONDS.sleep(1);
     }
     fuzzerClient.controlled = false;
     

@@ -161,7 +161,7 @@ class TLCGuider:
             else:
                 logging.info("Received error response from TLC, code: {}, text: {}".format(r.status_code, r.content))
         except Exception as e:
-            logging.info("Error received from TLC: {}".format(e))
+            logging.error("Error received from TLC: {}".format(e))
         finally:
             return 0
 
@@ -229,7 +229,7 @@ class TraceGuider:
         
     def load_states(self, dir_):
         with open(dir_, 'rb') as f:
-            self.traces, self.traces = pickle.load(f)
+            self.traces, self.states = pickle.load(f)
 
     def reset(self):
         self.traces = []
@@ -268,7 +268,7 @@ class Fuzzer:
         }
     
     def save(self, iters):
-        path = os.path.join(self.config.save_dir, str(iters))
+        path = self.config.save_dir
         os.makedirs(path, exist_ok=True)
         self.guider.save_states(os.path.join(path, f'{self.config.exp_name}_states.pkl'))
         with open(os.path.join(path, f'{self.config.exp_name}_traces.pkl'), 'wb') as f:
@@ -276,19 +276,26 @@ class Fuzzer:
         
         with open(os.path.join(path, f'{self.config.exp_name}_stats.pkl'), 'wb') as f:
             pickle.dump(self.stats, f)
+        
+        with open(os.path.join(path, f'{self.config.exp_name}_iters.pkl'), 'wb') as f:
+            pickle.dump(iters, f)
 
     def load(self):
-        dirs = os.listdir(self.config.save_dir)
-        dirs = [int(dir_) for dir_ in dirs]
-        self.prev_iters = max(dirs)
-        path = os.path.join(self.config.save_dir, str(self.prev_iters))
-
-        self.guider.load_states(os.path.join(path, f'{self.config.exp_name}_states.pkl'))
-        with open(os.path.join(path, f'{self.config.exp_name}_traces.pkl'), 'rb') as f:
-            self.trace_queue = pickle.load(f)
-        
-        with open(os.path.join(path, f'{self.config.exp_name}_stats.pkl'), 'rb') as f:
-            self.stats = pickle.load(f)
+        # dirs = os.listdir(self.config.save_dir)
+        # dirs = [int(dir_) for dir_ in dirs]
+        # self.prev_iters = max(dirs)
+        path = self.config.save_dir
+        if os.path.exists(os.path.join(path, f'{self.config.exp_name}_states.pkl')):
+            self.guider.load_states(os.path.join(path, f'{self.config.exp_name}_states.pkl'))
+        if os.path.exists(os.path.join(path, f'{self.config.exp_name}_traces.pkl')):
+            with open(os.path.join(path, f'{self.config.exp_name}_traces.pkl'), 'rb') as f:
+                self.trace_queue = pickle.load(f)
+        if os.path.exists(os.path.join(path, f'{self.config.exp_name}_stats.pkl')):
+            with open(os.path.join(path, f'{self.config.exp_name}_stats.pkl'), 'rb') as f:
+                self.stats = pickle.load(f)
+        if os.path.exists(os.path.join(path, f'{self.config.exp_name}_iters.pkl')):
+            with open(os.path.join(path, f'{self.config.exp_name}_iters.pkl'), 'rb') as f:
+                self.prev_iters = pickle.load(f)
 
     def _validate_config(self, config):
         new_config = SimpleNamespace()
@@ -394,7 +401,7 @@ class Fuzzer:
         os.makedirs(save_dir, exist_ok=True)
         
         if 'save_every' not in config:
-            new_config.save_every = 100
+            new_config.save_every = 10
         else:
             new_config.save_every = config['save_every']
 
@@ -404,8 +411,10 @@ class Fuzzer:
         logging.info("Seeding for iteration {}".format(iter))
         self.trace_queue = []
         for i in range(self.config.seed_population):
-            (trace, _) = self.run_iteration("seed_{}_{}".format(iter, i))
-            self.trace_queue.append(trace)
+            ret = self.run_iteration("seed_{}_{}".format(iter, i))
+            if ret is not None:
+                (trace, _) = ret
+                self.trace_queue.append(trace)
 
     def run(self):
         logging.info("Starting fuzzer loop")
@@ -413,8 +422,8 @@ class Fuzzer:
         start = time.time_ns()
         for i in range(self.config.iterations):
             iter_count = i + self.prev_iters
-            if iter_count >= self.config.iterations:
-                return True
+            # if iter_count >= self.config.iterations:
+            #     return True
             if i != 0 and i % self.config.save_every == 0:
                 self.save(iter_count)
             logging.info(f'##### Starting fuzzer iteration {iter_count} #####')
@@ -434,9 +443,11 @@ class Fuzzer:
                     (trace, event_trace) = traces
                 else:
                     self.cluster.shutdown()
+                    self.save(iter_count)
                     return False
             except Exception as ex:
                 logging.error(f"Error running iteration {iter_count}: {ex}")
+                self.save(iter_count)
                 self.cluster.shutdown()
                 return False
             else:
@@ -538,11 +549,13 @@ class Fuzzer:
 
                 node_id = schedule[i]
                 if str(node_id) in mailboxes:
-                    self.network.schedule_replica(str(node_id))
-                else:
-                    if len(mailboxes) > 0:
-                        self.network.schedule_replica(str(random.choice(mailboxes)))
-                trace.append({"type": "Schedule", "node": node_id, "step": i})
+                    if node_id not in crashed:
+                        self.network.schedule_replica(str(node_id))
+                        trace.append({"type": "Schedule", "node": node_id, "step": i})
+                # else:
+                #     if len(mailboxes) > 0:
+                #         self.network.schedule_replica(str(random.choice(mailboxes)))
+                
 
                 if i in client_requests:
                     try:

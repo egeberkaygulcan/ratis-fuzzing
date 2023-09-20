@@ -29,8 +29,8 @@ if __name__ == '__main__':
         fuzzer = Fuzzer(args, load, row.to_dict())
         ret = fuzzer.run()
         load = True
-        while ret is False:
-            logging.error("Restarting run!")
-            fuzzer = Fuzzer(args, load, row.to_dict())
-            ret = fuzzer.run()
+        # while ret is False:
+        #     logging.error("Restarting run!")
+        #     fuzzer = Fuzzer(args, load, row.to_dict())
+        #     ret = fuzzer.run()
         

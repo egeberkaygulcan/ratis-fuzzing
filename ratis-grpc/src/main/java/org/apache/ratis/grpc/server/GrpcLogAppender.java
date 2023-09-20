@@ -274,6 +274,8 @@ public class GrpcLogAppender extends LogAppenderBase {
   }
 
   public void appendLog_(AppendEntriesRequestProto pending, AppendEntriesRequest request, boolean heartbeat) throws IOException {
+    if (this.getServer().getStateMachine().getLifeCycleState().isClosingOrClosed()) 
+      return;
     try (AutoCloseableLock writeLock = lock.writeLock(caller, LOG::trace)) {
       pendingRequests.put(request);
       increaseNextIndex(pending);
