@@ -191,6 +191,8 @@ class TraceGuider:
         trace_str = ''
         ret = 0
         for step in trace:
+            if type(step) is not dict:
+                return 0
             if step['type'] == 'ClientRequest':
                 trace_str = trace_str + 'ClientRequest_'
             else:
@@ -582,19 +584,13 @@ class Fuzzer:
 
         event_trace = self.network.get_event_trace()
 
-        logging.info('Starting shutdown wait.')
         end_process_timeout = time.time() + 5
         while True:
             if self.network.cluster_shutdown_ready or time.time() > end_process_timeout:
-                if time.time() < end_process_timeout:
-                    logging.info('Shutdown now.')
-                else:
-                    logging.info('Shutdown wait timed out.')
                 break
             time.sleep(1e-3)
 
         self.cluster.end_process()
-        logging.info(f'Event trace len: {len(event_trace)}')
 
         if self.cluster.error_log is not None:
             stderr, stdout = self.cluster.error_log
