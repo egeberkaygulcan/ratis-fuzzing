@@ -162,8 +162,6 @@ class TLCGuider:
                 logging.info("Received error response from TLC, code: {}, text: {}".format(r.status_code, r.content))
         except Exception as e:
             logging.error("Error received from TLC: {}".format(e))
-        finally:
-            return 0
 
         return 0
     
@@ -456,6 +454,7 @@ class Fuzzer:
                 return False
             else:
                 new_states = self.guider.check_new_state(trace, event_trace, str(iter_count), record=False)
+                logging.info(new_states)
                 logging.info(f'New states: {new_states}')
                 logging.info(f'Total states: {self.guider.coverage()}')
                 if new_states > 0 and not naive_random:
