@@ -1,0 +1,11 @@
+exp_name,guider,iterations,seed_population,mutations_per_trace,crash_quota,test_harness,horizon
+naive_random,state,10000,10,5,2,3,100
+naive_random,state,10000,10,5,2,3,100
+naive_random,state,10000,10,5,2,3,100
+naive_random,state,10000,10,5,2,3,100
+naive_random,state,10000,10,5,2,3,100
+naive_random,state,10000,10,5,2,3,100
+naive_random,state,10000,10,5,2,3,100
+naive_random,state,10000,10,5,2,3,100
+naive_random,state,10000,10,5,2,3,100
+naive_random,state,10000,10,5,2,3,100

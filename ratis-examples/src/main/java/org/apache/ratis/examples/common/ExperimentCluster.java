@@ -78,7 +78,7 @@ public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
       AtomicInteger pendingCount = new AtomicInteger(1);
       AtomicInteger elleIndex = new AtomicInteger(0);
 
-      HashSet<Integer> lines = new HashSet<>();
+      // HashSet<Integer> lines = new HashSet<>();
 
       ArrayList<String> crashList;
       ArrayList<String> restartList;
@@ -88,13 +88,13 @@ public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
       CopyOnWriteArrayList<String> elleList = new CopyOnWriteArrayList<>();
       int clientRequests = 0;
       while(!fuzzerClient.shouldShutdown()) {
-        Map<Thread,StackTraceElement[]> threadMap = Thread.getAllStackTraces();
-        for (Thread t : threadMap.keySet()) {
-          StackTraceElement[] elements = t.getStackTrace();
-          for (StackTraceElement e : elements) {
-            lines.add(Integer.valueOf(e.getLineNumber()));
-          }
-        }
+        // Map<Thread,StackTraceElement[]> threadMap = Thread.getAllStackTraces();
+        // for (Thread t : threadMap.keySet()) {
+        //   StackTraceElement[] elements = t.getStackTrace();
+        //   for (StackTraceElement e : elements) {
+        //     lines.add(Integer.valueOf(e.getLineNumber()));
+        //   }
+        // }
 
         /* ---------- CRASH SERVER ---------- */ 
         crashList = fuzzerClient.getCrash();
@@ -197,19 +197,19 @@ public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
         TimeUnit.MILLISECONDS.sleep(1);
       }
 
-      String linesFile = "dump/lines.txt";
-      try {
-        File file = new File(linesFile);
-        file.getParentFile().mkdirs();
-        file.createNewFile();
-        FileWriter fileWriter = new FileWriter(file); 
-        PrintWriter printWriter = new PrintWriter(fileWriter);
-        printWriter.println(lines.size());
-        printWriter.close();
-        fileWriter.close();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+      // String linesFile = "dump/lines.txt";
+      // try {
+      //   File file = new File(linesFile);
+      //   file.getParentFile().mkdirs();
+      //   file.createNewFile();
+      //   FileWriter fileWriter = new FileWriter(file); 
+      //   PrintWriter printWriter = new PrintWriter(fileWriter);
+      //   printWriter.println(lines.size());
+      //   printWriter.close();
+      //   fileWriter.close();
+      // } catch (Exception e) {
+      //   e.printStackTrace();
+      // }
 
       // fuzzerClient.controlled = false;
 
