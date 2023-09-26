@@ -143,12 +143,6 @@ public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
               String elleVal_ = "{:type :ok, :f :add, :value 1, :op-index " + count + ", :process " + r.getClientId().toString() + ", :time " + Instant.now().toEpochMilli() + ", :index " + elleIndex.getAndIncrement() + "}\n";
               elleList.add(elleVal_);
             });
-          //   final Future<RaftClientReply> f = executor.submit(
-          //     () -> {
-          //       final RaftClient client = cluster.createClient();
-          //       return client.io().send(CounterCommand.INCREMENT.getMessage());
-          //     });
-          // futures.add(f);
           }
         }
 
@@ -167,51 +161,12 @@ public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
             System.err.println("Failed " + reply);
           }
         }
-        // for (int i = 0; i < futures.size(); i++) {
-        //   Future<RaftClientReply> f = futures.get(i);
-        //   if (f.isDone()) {
-        //     futures.remove(i);
-        //     final RaftClientReply reply = f.get();
-        //     if (reply.isSuccess()) {
-        //       String counterVal = reply.getMessage().getContent().toStringUtf8();
-        //       String elleVal = "{:type :ok, :f :add, :value 1, :op-index " + counterVal + ", :process 0, :time " + Instant.now().toEpochMilli() + ", :index " + elleIndex.getAndIncrement() + "}\n";
-        //       elleList.add(elleVal);
-        //       final String count = reply.getMessage().getContent().toStringUtf8();
-        //       System.out.println("Counter is incremented to " + count);
-
-        //       // Follower log check
-              
-        //     } else {
-        //       System.err.println("Failed " + reply);
-        //     }
-        //   } else if (f.isCancelled()) {
-        //     futures.remove(i);
-        //   }
-        // }
         
 
         fuzzerClient.getAndExecuteMessages();
-        // for (Future<RaftClientReply> f : futures) {
-        //   f.get();
-        // }
         TimeUnit.MILLISECONDS.sleep(1);
       }
 
-      // String linesFile = "dump/lines.txt";
-      // try {
-      //   File file = new File(linesFile);
-      //   file.getParentFile().mkdirs();
-      //   file.createNewFile();
-      //   FileWriter fileWriter = new FileWriter(file); 
-      //   PrintWriter printWriter = new PrintWriter(fileWriter);
-      //   printWriter.println(lines.size());
-      //   printWriter.close();
-      //   fileWriter.close();
-      // } catch (Exception e) {
-      //   e.printStackTrace();
-      // }
-
-      // fuzzerClient.controlled = false;
 
       String elleFile = "dump/elle.edn";
       try {
@@ -241,20 +196,6 @@ public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
         if (!e.isShutdown())
           e.shutdownNow();
       }
-      // RaftPeerId lastLeader = getLongestLogPeer(cluster);
-      // if (lastLeader != null) {
-      //   RaftLog leaderLog = cluster.getDivision(lastLeader).getRaftLog();
-      //   for(RaftServer.Division server : cluster.iterateDivisions()) {
-      //     if (!server.getId().equals(lastLeader)) {
-      //       RaftLog followerLog = server.getRaftLog();
-      //       long followerIndex = followerLog.getNextIndex() - 1;
-      //       for (long i = 0; i < followerIndex; i++) {
-      //         assert leaderLog.get(i).getIndex() == followerLog.get(i).getIndex();
-      //       }
-      //     }
-      //   }
-      // }
-      // throw new Exception("Tests");
     } catch (AlreadyClosedException ignored){}
     finally {
       cluster.shutdown();

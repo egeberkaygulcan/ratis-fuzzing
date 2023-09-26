@@ -1,4 +1,5 @@
 import os
+import ast
 import time
 import json
 import random
@@ -407,6 +408,23 @@ class Fuzzer:
 
         return new_config
 
+    def run_controlled(self):
+        file = self.args.control
+        # schedule = [1 for i in range(self.config.horizon)]
+        # for ch in mimic:
+        #     if ch["type"] == "Crash":
+        #         crash_points[ch["step"]] = ch["node"]
+        #     elif ch["type"] == "Start":
+        #         start_points[ch["step"]] = ch["node"]
+        #     elif ch["type"] == "Schedule":
+        #         schedule.append(ch["node"])
+        #     elif ch["type"] == "ClientRequest":
+        #         client_requests.append(ch["step"])
+        logging.info(file)
+        with open(file, 'rb') as f:
+            trace = pickle.load(f)
+        self.run_iteration(0, trace, controlled=True)
+
     def seed(self, iter):
         logging.info("Seeding for iteration {}".format(iter))
         self.trace_queue = []
@@ -421,6 +439,7 @@ class Fuzzer:
         logging.info("Starting fuzzer loop")
         naive_random = self.config.exp_name == 'naive_random'
         start = time.time_ns()
+        nonrandom_sc = 0
         for i in range(self.config.iterations):
             iter_count = i + self.prev_iters
             # if iter_count >= self.config.iterations:
@@ -469,13 +488,14 @@ class Fuzzer:
                             continue
                 self.stats["coverage"].append(self.guider.coverage())
         self.stats["runtime"] = time.time_ns() - start
+        logging.info(self.stats)
         self.save(self.config.iterations)
         self.cluster.shutdown()
         return True
 
         
 
-    def run_iteration(self, iteration, mimic=None):
+    def run_iteration(self, iteration, mimic=None, controlled=False):
         logging.debug('***************** STARTING ITERATION *******************')
         trace = []
         crashed = set()
@@ -522,7 +542,7 @@ class Fuzzer:
                     break
                 if i in start_points and start_points[i] in crashed:
                     node_id = start_points[i]
-                    logging.debug(f"Starting crashed node {node_id}")
+                    logging.info(f"Starting crashed node {node_id}")
                     self.network.send_restart(str(node_id))
                     trace.append({"type": "Start", "node": node_id, "step": i})
                     self.network.add_event({"name": "Add", "params": {"i": node_id}})
@@ -530,7 +550,7 @@ class Fuzzer:
                 
                 if i in crash_points:
                     node_id = crash_points[i]
-                    logging.debug(f"Crashing node {node_id}")
+                    logging.info(f"Crashing node {node_id}")
                     if node_id not in crashed:
                         self.network.send_crash(str(node_id))
                     crashed.add(node_id)
@@ -541,7 +561,7 @@ class Fuzzer:
                 while len(mailboxes) < 1:
                     if self.cluster.error_flag:
                         break
-                    if wait_count >= 50 and i > 0:
+                    if wait_count >= 300 and i > 0:
                         break
                     time.sleep(1e-3)
                     wait_count += 1
@@ -562,7 +582,7 @@ class Fuzzer:
 
                 if i in client_requests:
                     try:
-                        logging.debug(f"Executing client request {i}")                        
+                        logging.info(f"Executing client request {i}")                        
                         self.network.send_client_request()
                         trace.append({"type": "ClientRequest", "step": i})
                         self.network.add_event({"name": 'ClientRequest', "params": {"leader": self.network.leader_id, "request": self.cluster.client_request_counter-1}})
@@ -576,7 +596,7 @@ class Fuzzer:
                 logging.error('Cannot print exception')
         finally:
             try:
-                logging.debug("Shutting down cluster")
+                logging.info("Shutting down cluster")
                 self.network.send_shutdown()
             except Exception:
                 logging.error('Error on shutdown!')
@@ -591,7 +611,7 @@ class Fuzzer:
 
         self.cluster.end_process()
 
-        if self.cluster.error_log is not None:
+        if self.cluster.error_log is not None and not controlled:
             stderr, stdout = self.cluster.error_log
             path = os.path.join(self.config.error_path, f'{self.config.exp_name}_{iteration}')
             os.makedirs(path, exist_ok=True)
@@ -599,9 +619,13 @@ class Fuzzer:
                 f.writelines(stderr)
             with open(os.path.join(path, 'stdout.log'), 'w+') as f:
                 f.writelines(stdout)
-            with open(os.path.join(path, 'trace.log'), 'w+') as f:
-                for trace in event_trace:
-                    f.write(f'{str(trace)}\n')
+            with open(os.path.join(path, 'event_trace.log'), 'w+') as f:
+                for trace_ in event_trace:
+                    f.write(f'{str(trace_)}\n')
+            with open(os.path.join(path, 'trace.pkl'), 'wb') as f:
+                pickle.dump(trace, f)
 
         self.cluster.reset()
+        if controlled:
+            self.cluster.shutdown()
         return (trace, event_trace)

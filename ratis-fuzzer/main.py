@@ -11,6 +11,7 @@ def parse_args():
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-c', '--config', type=str, default='random_state_config.csv')
     parser.add_argument('-l', '--load', action='store_true')
+    parser.add_argument('-ct', '--control', type=str)
 
     return parser.parse_args()
 
@@ -22,11 +23,13 @@ if __name__ == '__main__':
         logging.basicConfig(level=logging.INFO)
     
     experiment_config = read_csv(args.config, index_col=False)
-
     
     load = args.load
     for index, row in experiment_config.iterrows():
         fuzzer = Fuzzer(args, load, row.to_dict())
+        if args.control is not None:
+            fuzzer.run_controlled()
+            break
         ret = fuzzer.run()
         load = True
         # while ret is False:
