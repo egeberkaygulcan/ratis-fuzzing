@@ -12,6 +12,7 @@ def parse_args():
     parser.add_argument('-c', '--config', type=str, default='random_state_config.csv')
     parser.add_argument('-l', '--load', action='store_true')
     parser.add_argument('-ct', '--control', type=str)
+    parser.add_argument('-rms', '--random_mutation_scaleup', action='store_true')
 
     return parser.parse_args()
 

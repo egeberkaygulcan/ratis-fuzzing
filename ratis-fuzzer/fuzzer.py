@@ -477,7 +477,11 @@ class Fuzzer:
                 logging.info(f'New states: {new_states}')
                 logging.info(f'Total states: {self.guider.coverage()}')
                 if new_states > 0 and not naive_random:
-                    for j in range(new_states * self.config.mutations_per_trace):
+                    if self.args.random_mutation_scaleup:
+                        scale = random.randint(1,self.config.mutations_per_trace)
+                    else:
+                        scale = self.config.mutations_per_trace
+                    for j in range(new_states * scale):
                         try:
                             mutated_trace = self.mutator.mutate(trace)
                             if mutated_trace is not None:
@@ -629,3 +633,4 @@ class Fuzzer:
         if controlled:
             self.cluster.shutdown()
         return (trace, event_trace)
+    
