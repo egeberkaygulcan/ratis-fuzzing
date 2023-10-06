@@ -76,7 +76,7 @@ class RatisCluster:
                 self.network.cluster_error = True
                 # TODO - Handle timeout
             finally:
-                kill_cmd = "pkill -f 'java -cp'"
+                kill_cmd = 'pkill -f "java -ea -cp"'
                 subprocess.run(kill_cmd, shell=True)
             return
 

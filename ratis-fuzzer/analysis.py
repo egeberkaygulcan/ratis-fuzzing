@@ -1,18 +1,21 @@
 import os
 import pickle
 import argparse
+import matplotlib.pyplot as plt
 
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--plot', action='store_true')
     parser.add_argument('-s', '--states', type=str, nargs='+')
     parser.add_argument('-st', '--stats', type=str, nargs='+')
+    parser.add_argument('-rd', '--root_dir', type=str, default='experiments_berkay/saved')
 
     return parser.parse_args()
 
-def load_pickles(files):
+def load_stats(root_dir, files):
     pickles = []
     for file in files:
+        file = os.path.join(root_dir, f'{file}_stats.pkl')
         filename = os.path.basename(file)
         with open(file, 'rb') as f:
             data = pickle.load(f)
@@ -22,12 +25,14 @@ def load_pickles(files):
 if __name__ == '__main__':
     args = parse_args()
 
-    stats = load_pickles(args.stats)
-    states = load_pickles(args.states)
+    stats = load_stats(args.root_dir, args.stats)
+    # states = load_pickles(os.path.join(args.root_dir, f'{args.states}_states.pkl'))
 
-    for state in states[0][0].values():
-        print(state)
-        print('---------------')
-        
-    print(stats)
+    coverage = [(stat['coverage'], name) for stat, name in stats]
+    for cov, name in coverage:
+        plt.plot(range(len(cov)), cov)
+    plt.legend(['random', 'state', 'trace'])
+    plt.savefig('ratis_cov.eps')
+
+
     
