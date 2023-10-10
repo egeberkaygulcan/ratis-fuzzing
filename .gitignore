@@ -25,4 +25,6 @@ ratis-fuzzer/errors_
 ratis-fuzzer/data
 ratis-fuzzer/saved
 ratis-fuzzer/dump
+ratis-fuzzer/output
+ratis-fuzzer/plots
 ratis-fuzzer/experiments_berkay

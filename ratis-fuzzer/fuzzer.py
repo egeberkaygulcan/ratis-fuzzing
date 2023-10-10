@@ -12,6 +12,7 @@ import traceback
 from network import Network
 from cluster import RatisCluster
 from types import SimpleNamespace
+from hashlib import sha256
 
 # Aggreement for consensus violations
 # Recovery
@@ -53,9 +54,9 @@ class SwapMutator:
         second_value = ()
         for e in trace:
             if e["type"] == "Schedule" and e["step"] == first:
-                first_value = {"type": "Schedule", "node": e["node"], "step": e["step"]}
+                first_value = {"type": "Schedule", "node": e["node"], "step": e["step"], "max_messages": e["max_messages"]}
             elif e["type"] == "Schedule" and e["step"] == second:
-                second_value = {"type": "Schedule", "node": e["node"], "step": e["step"]}
+                second_value = {"type": "Schedule", "node": e["node"], "step": e["step"], "max_messages": e["max_messages"]}
         
         for e in trace:
             if e["type"] != "Schedule":
@@ -135,7 +136,7 @@ class CombinedMutator:
             new_trace = m.mutate(new_trace)
         
         return new_trace
-
+    
 ########## GUIDER CLASSES ###########
 
 class TLCGuider:
@@ -180,49 +181,51 @@ class TLCGuider:
     def reset(self):
         self.states = {}
 
-class TraceGuider:
+def create_event_graph(event_trace):
+    cur_event = {}
+    nodes = {}
+
+    for e in event_trace:
+        try:
+            if 'reset' in e.keys():
+                continue
+            node = e["params"]["node"]
+            node_ = {"name": e["name"], "params": e["params"], "node": node}
+            if node in cur_event:
+                node_["prev"] = cur_event[node]["id"]
+            id = sha256(json.dumps(node_, sort_keys=True).encode('utf-8')).hexdigest()
+            node_["id"] = id
+
+            cur_event[node] = node_
+            nodes[id] = node_
+        except:
+            logging.error(f'Event cannot be added to the trace: {e}')
+        finally:
+            continue
+    
+    return nodes
+
+class TraceGuider(TLCGuider):
     def __init__(self, tlc_addr) -> None:
-        self.traces = []
-        self.tlc_addr = tlc_addr
-        self.states = {}
+        super(TraceGuider, self).__init__(tlc_addr)
+        self.traces = {}
+
+    def check_new_state(self, trace, event_trace, name, record=False) -> int:
+        super().check_new_state(trace, event_trace, name, record)
+
+        new = 0
+        event_graph = create_event_graph(event_trace)
+        event_graph_id = sha256(json.dumps(event_graph, sort_keys=True).encode('utf-8')).hexdigest()
+
+        if event_graph_id not in self.traces:
+            self.traces[event_graph_id] = True
+            new = 1
+        
+        return new
     
-    def check_new_state(self, trace, event_trace, name, record = False) -> int:
-        trace_str = ''
-        ret = 0
-        for step in trace:
-            if type(step) is not dict:
-                return 0
-            if step['type'] == 'ClientRequest':
-                trace_str = trace_str + 'ClientRequest_'
-            else:
-                trace_str = trace_str + f'{step["type"]}_{step["node"]}_'
-        if trace_str not in self.traces:
-            ret = 1
-            self.traces.append(trace_str)
-            trace_to_send = event_trace
-            trace_to_send.append({"reset": True})
-            logging.debug("Sending trace to TLC: {}".format(trace_to_send))
-            try:
-                r = requests.post("http://"+self.tlc_addr+"/execute", json=trace_to_send)
-                if r.ok:
-                    response = r.json()
-                    logging.debug("Received response from TLC: {}".format(response))               
-                    new_states = 0
-                    for i in range(len(response["states"])):
-                        tlc_state = {"state": response["states"][i], "key" : response["keys"][i]}
-                        if tlc_state["key"] not in self.states:
-                            self.states[tlc_state["key"]] = tlc_state
-                            new_states += 1
-                    return ret
-            except Exception as e:
-                logging.error("Error received from TLC: {}".format(e))
-            finally:
-                return ret
-        return ret
-                
-    
-    def coverage(self):
-        return len(self.states.keys())
+    def reset(self):
+        self.traces = {}
+        return super().reset()
 
     def save_states(self, dir_):
         with open(dir_, 'wb') as f:
@@ -232,9 +235,8 @@ class TraceGuider:
         with open(dir_, 'rb') as f:
             self.traces, self.states = pickle.load(f)
 
-    def reset(self):
-        self.traces = []
-        self.states = {}
+
+
 
 
 ########## FUZZER CLASS ###########
@@ -251,7 +253,8 @@ class Fuzzer:
         self.stats = {
             "coverage" : [0],
             "random_traces": 0,
-            "mutated_traces": 0
+            "mutated_traces": 0,
+            "bug_iterations" : []
         }
         self.prev_iters = 0
 
@@ -265,7 +268,8 @@ class Fuzzer:
         self.stats = {
             "coverage" : [0],
             "random_traces": 0,
-            "mutated_traces": 0
+            "mutated_traces": 0,
+            "bug_iterations" : []
         }
     
     def save(self, iters):
@@ -342,7 +346,7 @@ class Fuzzer:
             new_config.mutations_per_trace = config["mutations_per_trace"]
         
         if "seed_population" not in config:
-            new_config.seed_population = 10
+            new_config.seed_population = 50
         else:
             new_config.seed_population = config["seed_population"]
 
@@ -385,15 +389,18 @@ class Fuzzer:
             new_config.jar_path = config['jar_path']
 
         if 'error_path' not in config:
-            new_config.error_path = './errors'
+            new_config.error_path = './output/errors'
         else:
             new_config.error_path = config['error_path']
 
         new_config.snapshots_path = "/tmp/ratis"
         if "snapshots_path" in config:
             new_config.snapshots_path = config["snapshots_path"]
+        
+        if "max_message_to_schedule" not in config:
+            new_config.max_messages_to_schedule = 5
             
-        save_dir = './saved'
+        save_dir = './output/saved'
         if "save_dir" in config:
             new_config.save_dir = config["save_dir"]
         else:
@@ -429,11 +436,39 @@ class Fuzzer:
         logging.info("Seeding for iteration {}".format(iter))
         self.trace_queue = []
         for i in range(self.config.seed_population):
-            logging.info(f'##### Starting seed iteration {i} #####')
-            ret = self.run_iteration("seed_{}_{}".format(iter, i))
-            if ret is not None:
-                (trace, _) = ret
-                self.trace_queue.append(trace)
+            crash_points = {}
+            start_points = {}
+            schedule = []
+            node_ids = list(range(1, self.config.nodes+1))
+            for c in random.sample(range(0, self.config.horizon, 2), self.config.crash_quota):
+                node_id = random.choice(node_ids)
+                crash_points[c] = node_id
+                s = random.choice(range(c, self.config.horizon))
+                start_points[s] = node_id
+
+            client_requests = random.sample(range(self.config.horizon), self.config.test_harness)
+            for choice in random.choices(node_ids, k=self.config.horizon):
+                max_messages = random.randint(0, self.config.max_messages_to_schedule)
+                schedule.append((choice, max_messages))
+
+            crashed = set()
+            trace = []
+            for j in range(self.config.horizon):
+                if j in start_points and start_points[j] in crashed:
+                    node_id = start_points[j]
+                    trace.append({"type": "Start", "node": node_id, "step": j})
+                    crashed.remove(node_id)
+                if j in crash_points:
+                    node_id = crash_points[j]
+                    trace.append({"type": "Crash", "node": node_id, "step": j})
+                    crashed.add(node_id)
+                if j in client_requests:
+                    trace.append({"type": "ClientRequest", "step": j})
+
+                trace.append({"type": "Schedule", "node": schedule[j][0], "step": j, "max_messages": schedule[j][1]})
+
+            self.trace_queue.append([e for e in trace])
+        logging.info("Finished seeding")
 
     def run(self):
         logging.info("Starting fuzzer loop")
@@ -473,7 +508,6 @@ class Fuzzer:
                 return False
             else:
                 new_states = self.guider.check_new_state(trace, event_trace, str(iter_count), record=False)
-                logging.info(new_states)
                 logging.info(f'New states: {new_states}')
                 logging.info(f'Total states: {self.guider.coverage()}')
                 if new_states > 0 and not naive_random:
@@ -518,16 +552,17 @@ class Fuzzer:
 
             client_requests = random.sample(range(self.config.horizon), self.config.test_harness)
             for choice in random.choices(node_ids, k=self.config.horizon):
-                schedule.append(choice)
+                max_messages = random.randint(0, self.config.max_messages_to_schedule)
+                schedule.append((choice, max_messages))
         else:
-            schedule = [1 for i in range(self.config.horizon)]
+            schedule = [(1, random.randint(0, self.config.max_messages_to_schedule)) for i in range(self.config.horizon)]
             for ch in mimic:
                 if ch["type"] == "Crash":
                     crash_points[ch["step"]] = ch["node"]
                 elif ch["type"] == "Start":
                     start_points[ch["step"]] = ch["node"]
                 elif ch["type"] == "Schedule":
-                    schedule.append(ch["node"])
+                    schedule[ch["step"]] = (ch["node"], ch["max_messages"])
                 elif ch["type"] == "ClientRequest":
                     client_requests.append(ch["step"])
 
@@ -549,7 +584,7 @@ class Fuzzer:
                     logging.info(f"Starting crashed node {node_id}")
                     self.network.send_restart(str(node_id))
                     trace.append({"type": "Start", "node": node_id, "step": i})
-                    self.network.add_event({"name": "Add", "params": {"i": node_id}})
+                    self.network.add_event({"name": "Add", "params": {"i": node_id, "node": node_id}})
                     crashed.remove(node_id)
                 
                 if i in crash_points:
@@ -559,7 +594,7 @@ class Fuzzer:
                         self.network.send_crash(str(node_id))
                     crashed.add(node_id)
                     trace.append({"type": "Crash", "node": node_id, "step": i})
-                    self.network.add_event({"name": "Remove", "params": {"i": node_id}})
+                    self.network.add_event({"name": "Remove", "params": {"i": node_id, "node": node_id}})
                 
                 mailboxes = self.network.check_mailboxes()
                 while len(mailboxes) < 1:
@@ -575,13 +610,10 @@ class Fuzzer:
                     break
 
                 node_id = schedule[i]
-                if str(node_id) in mailboxes:
-                    if node_id not in crashed:
-                        self.network.schedule_replica(str(node_id))
-                        trace.append({"type": "Schedule", "node": node_id, "step": i})
-                # else:
-                #     if len(mailboxes) > 0:
-                #         self.network.schedule_replica(str(random.choice(mailboxes)))
+                if str(schedule[i][0]) in mailboxes:
+                    if schedule[i][0] not in crashed:
+                        self.network.schedule_replica(str(schedule[i][0]), schedule[i][1])
+                        trace.append({"type": "Schedule", "node": schedule[i][0], "step": i, "max_messages": schedule[i][1]})
                 
 
                 if i in client_requests:
@@ -589,7 +621,7 @@ class Fuzzer:
                         logging.info(f"Executing client request {i}")                        
                         self.network.send_client_request()
                         trace.append({"type": "ClientRequest", "step": i})
-                        self.network.add_event({"name": 'ClientRequest', "params": {"leader": self.network.leader_id, "request": self.cluster.client_request_counter-1}})
+                        self.network.add_event({"name": 'ClientRequest', "params": {"leader": self.network.leader_id, "request": self.cluster.client_request_counter-1, "node": node_id}})
                     except:
                         pass
         except Exception as e:
@@ -616,6 +648,7 @@ class Fuzzer:
         self.cluster.end_process()
 
         if self.cluster.error_log is not None and not controlled:
+            self.stats['bug_iterations'].append(iteration)
             stderr, stdout = self.cluster.error_log
             path = os.path.join(self.config.error_path, f'{self.config.exp_name}_{iteration}')
             os.makedirs(path, exist_ok=True)

@@ -8,7 +8,7 @@ def parse_args():
     parser.add_argument('-p', '--plot', action='store_true')
     parser.add_argument('-s', '--states', type=str, nargs='+')
     parser.add_argument('-st', '--stats', type=str, nargs='+')
-    parser.add_argument('-rd', '--root_dir', type=str, default='experiments_berkay/saved')
+    parser.add_argument('-rd', '--root_dir', type=str, default='experiments_berkay')
 
     return parser.parse_args()
 
@@ -32,7 +32,9 @@ if __name__ == '__main__':
     for cov, name in coverage:
         plt.plot(range(len(cov)), cov)
     plt.legend(['random', 'state', 'trace'])
-    plt.savefig('ratis_cov.eps')
+    plt.xlabel("Iterations")
+    plt.ylabel("# of distinct states")
+    plt.savefig('ratis_cov.png', dpi=300)
 
 
     

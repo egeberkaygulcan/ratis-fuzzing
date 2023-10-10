@@ -234,7 +234,6 @@ class Network:
         return Response.json(HTTPStatus.OK, json.dumps({"message": "Ok"}))
 
     def _get_message_event_params(self, msg):
-        msg.msg = json.loads(base64.b64decode(msg.msg).decode('utf-8'))
         if msg.type == "append_entries_request":
             return {
                 "type": "MsgApp",
@@ -308,7 +307,10 @@ class Network:
                 self.mailboxes[to].append(msg)
             finally:
                 self.lock.release()
-            self.add_event({"name": "SendMessage", "params": self._get_message_event_params(msg)})
+            msg.msg = json.loads(base64.b64decode(msg.msg).decode('utf-8'))
+            params = self._get_message_event_params(msg)
+            params["node"] = params["from"]
+            self.add_event({"name": "SendMessage", "params": params})
 
         return Response.json(HTTPStatus.OK, json.dumps({"message": "Ok"}))
     
@@ -390,34 +392,32 @@ class Network:
             self.event_trace.append(e)
         finally:
             self.lock.release()
-    
-    def schedule_replica(self, replica):
-        if self.cluster_error:
-            return
-        addr = ""
+
+    def schedule_replica(self, replica, max_messages):
         messages_to_deliver = []
-        addr_list = []
-        logging.debug(f'Scheduling replica {replica}')
         try:
             self.lock.acquire()
-            for m in self.mailboxes[replica]:
-                messages_to_deliver.append(m)
-                
-                # else:
-                #     addr = self.replicas[replica]["addr"]
-                # addr_list.append(addr)
-            self.mailboxes[str(replica)] = []
+            if replica in self.mailboxes and len(self.mailboxes[replica]) > 0:
+                for (i,m) in enumerate(self.mailboxes[replica]):
+                    if i < max_messages:
+                        messages_to_deliver.append(m)
+                if len(self.mailboxes[replica]) > max_messages:
+                    self.mailboxes[str(replica)] = self.mailboxes[str(replica)][max_messages:]
+                else:
+                    self.mailboxes[str(replica)] = []
         finally:
             self.lock.release()
-        for i, next_msg in enumerate(messages_to_deliver):
+
+        for next_msg in messages_to_deliver:
+            msg_s = json.dumps(next_msg.__dict__)
+            logging.debug("Sending message: {}".format(msg_s))
+            params = self._get_message_event_params(next_msg)
+            params["node"] = params["to"]
+            self.add_event({"name": "DeliverMessage", "params": params})
             try:
                 requests.post("http://"+self.cluster_address+"/message", json=json.dumps(next_msg.__dict__))
             except:
                 pass
-                # logging.error(f'COULD NOT SEND MESSAGE')
-                # store {replica} , {next_msg}
-            finally:
-                continue
     
     def send_shutdown(self):
         if self.cluster_error:
