@@ -16,11 +16,17 @@ def load_stats(root_dir, files):
     pickles = []
     for file in files:
         file = os.path.join(root_dir, f'{file}_stats.pkl')
-        filename = os.path.basename(file)
         with open(file, 'rb') as f:
             data = pickle.load(f)
-        pickles.append((data, filename))
+        pickles.append(data)
     return pickles
+
+def report_bugs(stats, labels):
+    bugs = [stat['bug_iterations'] for stat in stats]
+    for i, bug in enumerate(bugs):
+        print(f'# of bugs {labels[i]}: {len(bug)}')
+        print(bug)
+        print('----------')
 
 if __name__ == '__main__':
     args = parse_args()
@@ -28,13 +34,16 @@ if __name__ == '__main__':
     stats = load_stats(args.root_dir, args.stats)
     # states = load_pickles(os.path.join(args.root_dir, f'{args.states}_states.pkl'))
 
-    coverage = [(stat['coverage'], name) for stat, name in stats]
-    for cov, name in coverage:
+    coverage = [stat['coverage'] for stat in stats]
+    for cov in coverage:
         plt.plot(range(len(cov)), cov)
     plt.legend(['random', 'state', 'trace'])
     plt.xlabel("Iterations")
     plt.ylabel("# of distinct states")
-    plt.savefig('ratis_cov.png', dpi=300)
+    plt.savefig('plots/ratis_cov_.png', dpi=300)
+
+    report_bugs(stats, ['random', 'state', 'trace'])
+
 
 
     
