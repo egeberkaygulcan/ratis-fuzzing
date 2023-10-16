@@ -8,7 +8,7 @@ def parse_args():
     parser.add_argument('-p', '--plot', action='store_true')
     parser.add_argument('-s', '--states', type=str, nargs='+')
     parser.add_argument('-st', '--stats', type=str, nargs='+')
-    parser.add_argument('-rd', '--root_dir', type=str, default='experiments_berkay')
+    parser.add_argument('-rd', '--root_dir', type=str, default='experiments_berkay/output/saved')
 
     return parser.parse_args()
 

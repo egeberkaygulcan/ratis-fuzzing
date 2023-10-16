@@ -42,20 +42,21 @@ class SwapMutator:
     def __init__(self) -> None:
         pass
 
-    def mutate(self, trace: list[dict]) -> list[dict]:
+    def mutate(self, trace: list[dict], num_crashes: int, nodes: int) -> list[dict]:
+        # TODO - min 10
         new_trace = []
-        max_step = 0
+        schedule_steps = []
         for e in trace:
-            if e["type"] == "Schedule" and e["step"] > max_step:
-                max_step = e["step"]
+            if e["type"] == "Schedule":
+                schedule_steps.append(e["step"])
         
-        [first, second] = random.sample(range(max_step), 2)
-        first_value = ()
-        second_value = ()
+        [first, second] = random.sample(schedule_steps, 2)
+        first_value = {"type": "Schedule", "node": 1, "step": 101, "max_messages": 5}
+        second_value = {"type": "Schedule", "node": 1, "step": 102, "max_messages": 5}
         for e in trace:
-            if e["type"] == "Schedule" and e["step"] == first:
+            if e["step"] == first:
                 first_value = {"type": "Schedule", "node": e["node"], "step": e["step"], "max_messages": e["max_messages"]}
-            elif e["type"] == "Schedule" and e["step"] == second:
+            elif e["step"] == second:
                 second_value = {"type": "Schedule", "node": e["node"], "step": e["step"], "max_messages": e["max_messages"]}
         
         for e in trace:
@@ -74,52 +75,131 @@ class SwapCrashStepsMutator:
     def __init__(self) -> None:
         pass
 
-    def mutate(self, trace: list[dict]) -> list[dict]:
+    def mutate(self, trace: list[dict], num_crashes: int, nodes: int) -> list[dict]:
         new_trace = []
 
-        crash_steps = set()
-        for e in trace:
-            if e["type"] == "Crash":
-                crash_steps.add(e["step"])
-        
-        [first, second] = random.sample(list(crash_steps), 2)
-        for e in trace:
-            if e["type"] != "Crash":
-                new_trace.append(e)
+        if num_crashes > 1:
+            crash_steps = set()
+            for e in trace:
+                if e["type"] == "Crash":
+                    crash_steps.add(e["step"])
             
-            if e["step"] == first:
-                new_trace.append({"type": "Crash", "node": e["node"], "step": second})
-            elif e["step"] == second:
-                new_trace.append({"type": "Crash", "node": e["node"], "step": first})
-            else:
-                new_trace.append(e)
-            
+            [first, second] = random.sample(list(crash_steps), 2)
+            for e in trace:
+                if e["type"] != "Crash":
+                    new_trace.append(e)
+                
+                if e["step"] == first:
+                    new_trace.append({"type": "Crash", "node": e["node"], "step": second})
+                elif e["step"] == second:
+                    new_trace.append({"type": "Crash", "node": e["node"], "step": first})
+                else:
+                    new_trace.append(e)
+        else:
+            try:
+                crash_event = None
+                restart_event = None
+                schedule_events = []
+                for e in trace:
+                    if e["type"] == "Crash":
+                        crash_event = e
+                    elif e["type"] == "Start":
+                        restart_event = e
+                    elif e["type"] == "Schedule":
+                        schedule_events.append(e["step"])
+                
+                new_steps = random.sample(schedule_events, 2)
+                new_steps = sorted(new_steps)
+
+                first = None
+                second = None
+                for e in trace:
+                    if e["step"] == new_steps[0]:
+                        first = e
+                    elif e["step"] == new_steps[1]:
+                        second = e
+                
+                if first is None or second is None:
+                    return trace
+                else:
+                    crash_step = crash_event["step"]
+                    restart_step = restart_event["step"]
+
+                    crash_event["step"] = first["step"]
+                    restart_event["step"] = second["step"]
+                    first["step"] = crash_step
+                    second["step"] = restart_step
+                
+                for e in trace:
+                    if e["step"] == crash_event["step"]:
+                        new_trace.append(crash_event)
+                    elif e["step"] == restart_event["step"]:
+                        new_trace.append(restart_event)
+                    elif e["step"] == first["step"]:
+                        new_trace.append(first)
+                    elif e["step"] == second["step"]:
+                        new_trace.append(second)
+                    else:
+                        new_trace.append(e)
+            except Exception as ex:
+                traceback.print_exc()
+            finally:
+                return trace
         return new_trace
     
 class SwapCrashNodesMutator:
     def __init__(self) -> None:
         pass
 
-    def mutate(self, trace: list[dict]) -> list[dict]:
+    def mutate(self, trace: list[dict], num_crashes: int, nodes: int) -> list[dict]:
         new_trace = []
 
-        crash_steps = {}
-        for e in trace:
-            if e["type"] == "Crash":
-                crash_steps[e["step"]] = e["node"]
-        
-        [first, second] = random.sample(list(crash_steps.keys()), 2)
-        for e in trace:
-            if e["type"] != "Crash":
-                new_trace.append(e)
+        if num_crashes > 1:
+            crash_steps = {}
+            for e in trace:
+                if e["type"] == "Crash":
+                    crash_steps[e["step"]] = e["node"]
             
-            if e["step"] == first:
-                new_trace.append({"type": "Crash", "node":crash_steps[second], "step": e["step"]})
-            elif e["step"] == second:
-                new_trace.append({"type": "Crash", "node":crash_steps[first], "step": e["step"]})
-            else:
-                new_trace.append(e)
+            [first, second] = random.sample(list(crash_steps.keys()), 2)
+            for e in trace:
+                if e["type"] != "Crash":
+                    new_trace.append(e)
+                
+                if e["step"] == first:
+                    new_trace.append({"type": "Crash", "node":crash_steps[second], "step": e["step"]})
+                elif e["step"] == second:
+                    new_trace.append({"type": "Crash", "node":crash_steps[first], "step": e["step"]})
+                else:
+                    new_trace.append(e)
+        else:
+            try:
+                crash_event = None
+                restart_event = None
+                for e in trace:
+                    try:
+                        if e["type"] == "Crash":
+                            crash_event = e
+                        elif e["type"] == "Start":
+                            restart_event = e
+                    except:
+                        traceback.print_exc()
+                
+                new_nodes = [node for node in range(1,nodes+1) if node != crash_event["node"]]
+                n = random.choice(new_nodes)
+                crash_event["node"] = n
+                restart_event["node"] = n
 
+                for e in trace:
+                    if e["step"] == crash_event["step"]:
+                        new_trace.append(crash_event)
+                    elif e["step"] == restart_event["step"]:
+                        new_trace.append(restart_event)
+                    else:
+                        new_trace.append(e)
+            except Exception as ex:
+                traceback.print_exc()
+            finally:
+                return trace
         return new_trace
 
 
@@ -127,13 +207,13 @@ class CombinedMutator:
     def __init__(self, mutators) -> None:
         self.mutators = mutators
     
-    def mutate(self, trace: list[dict]) -> list[dict]:
+    def mutate(self, trace: list[dict], num_crashes: int, nodes: int) -> list[dict]:
         new_trace = []
         for e in trace:
             new_trace.append(e)
         
         for m in self.mutators:
-            new_trace = m.mutate(new_trace)
+            new_trace = m.mutate(new_trace, num_crashes, nodes)
         
         return new_trace
     
@@ -517,7 +597,7 @@ class Fuzzer:
                         scale = self.config.mutations_per_trace
                     for j in range(new_states * scale):
                         try:
-                            mutated_trace = self.mutator.mutate(trace)
+                            mutated_trace = self.mutator.mutate(trace, self.config.crash_quota, self.config.nodes)
                             if mutated_trace is not None:
                                 self.trace_queue.append(mutated_trace)
                         except:
