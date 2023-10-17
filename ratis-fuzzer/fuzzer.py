@@ -183,7 +183,8 @@ class SwapCrashNodesMutator:
                             restart_event = e
                     except:
                         traceback.print_exc()
-                
+                if crash_event is None or restart_event is None:
+                    return trace
                 new_nodes = [node for node in range(1,nodes+1) if node != crash_event["node"]]
                 n = random.choice(new_nodes)
                 crash_event["node"] = n
@@ -552,7 +553,7 @@ class Fuzzer:
 
     def run(self):
         logging.info("Starting fuzzer loop")
-        naive_random = (self.config.exp_name == 'naive_random') or (self.config.exp_name == 'random')
+        naive_random = (self.config.exp_name == 'random2') or (self.config.exp_name == 'random') or (self.config.exp_name == 'random3')
         start = time.time_ns()
         nonrandom_sc = 0
         for i in range(self.config.iterations):
@@ -583,6 +584,7 @@ class Fuzzer:
                     return False
             except Exception as ex:
                 logging.error(f"Error running iteration {iter_count}: {ex}")
+                traceback.print_exc()
                 self.save(iter_count)
                 self.cluster.shutdown()
                 return False
@@ -642,7 +644,8 @@ class Fuzzer:
                 elif ch["type"] == "Start":
                     start_points[ch["step"]] = ch["node"]
                 elif ch["type"] == "Schedule":
-                    schedule[ch["step"]] = (ch["node"], ch["max_messages"])
+                    if len(ch) < ch["step"]:
+                        schedule[ch["step"]] = (ch["node"], ch["max_messages"])
                 elif ch["type"] == "ClientRequest":
                     client_requests.append(ch["step"])
 
@@ -656,6 +659,8 @@ class Fuzzer:
         wait_count = 0
         try:
             for i in range(self.config.horizon):
+                if i > len(schedule):
+                    break
                 logging.debug("Taking step {}".format(i))
                 if self.cluster.error_flag:
                     break

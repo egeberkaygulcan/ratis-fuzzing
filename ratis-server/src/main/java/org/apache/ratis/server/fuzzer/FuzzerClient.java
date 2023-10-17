@@ -34,9 +34,10 @@ import io.netty.handler.logging.LoggingHandler;
 public class FuzzerClient extends Thread{
 
     private final String fuzzerAddress = "127.0.0.1";
-    private final int fuzzerPort = 7074;
+    private int fuzzerPort;
     private final String serverClientAddress = "127.0.0.1";
     private int serverClientPort;
+    public static int portOffset;
 
     private FuzzerCaller client;
     private ReentrantLock clientLock;
@@ -56,6 +57,7 @@ public class FuzzerClient extends Thread{
     public boolean controlled;
 
     public FuzzerClient() {
+        this.fuzzerPort = 7074;
         this.client = new FuzzerCaller(fuzzerAddress + ":" + Integer.toString(fuzzerPort));
         this.clientLock = new ReentrantLock(true);
         this.messageHandler = new MessageHandler();
@@ -268,6 +270,11 @@ public class FuzzerClient extends Thread{
 
     public void setServerClientPort(int port) {
         this.serverClientPort = port;
+    }
+
+    public void setFuzzerPort(int port) {
+        this.fuzzerPort = port;
+        this.client.updateFuzzerAddress(fuzzerAddress + ":" + Integer.toString(fuzzerPort));
     }
     
     public void clearMessageQueue() {

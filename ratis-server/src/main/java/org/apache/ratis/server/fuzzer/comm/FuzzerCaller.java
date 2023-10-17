@@ -19,6 +19,10 @@ public class FuzzerCaller {
         this.fuzzerAddress = fuzzerAddress;
     }
 
+    public void updateFuzzerAddress(String address) {
+        this.fuzzerAddress = address;
+    }
+
 
     public void sendMessage(String message) throws IOException {
         sendRequest("http://"+fuzzerAddress+"/message", message);

@@ -94,6 +94,9 @@ public final class CounterServer implements Closeable {
       // int fuzzerPort = Integer.parseInt(args[0]);
       int numNodes = Integer.parseInt(args[0]);
       int port = Integer.parseInt(args[1]);
+      // int fuzzerPort = Integer.parseInt(args[2]);
+      // int portOffset = Integer.parseInt(args[3]);
+      // FuzzerClient.portOffset = portOffset;
 
       System.setProperty("exp.build.data", "./data");
       //get peerIndex from the arguments
@@ -110,8 +113,9 @@ public final class CounterServer implements Closeable {
       // startServer(peerIndex, simulatedSlowness);
       FuzzerClient fuzzerClient = FuzzerClient.getInstance();
       fuzzerClient.setServerClientPort(port);
+      // fuzzerClient.setFuzzerPort(fuzzerPort);
       fuzzerClient.initServer();
-      // fuzzerClient.setServerClientPort(fuzzerPort);
+
       ClusterWrapper cluster = new ClusterWrapper(numNodes);
       long start = System.currentTimeMillis();
       cluster.run();
