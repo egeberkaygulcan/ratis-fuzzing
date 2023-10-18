@@ -553,7 +553,7 @@ class Fuzzer:
 
     def run(self):
         logging.info("Starting fuzzer loop")
-        naive_random = (self.config.exp_name == 'random2') or (self.config.exp_name == 'random') or (self.config.exp_name == 'random3')
+        naive_random = random in self.config.exp_name
         start = time.time_ns()
         nonrandom_sc = 0
         for i in range(self.config.iterations):
