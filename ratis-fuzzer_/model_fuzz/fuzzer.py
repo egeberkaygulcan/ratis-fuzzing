@@ -127,7 +127,7 @@ class Fuzzer:
 
                 trace.append({"type": "Schedule", "node": schedule[j][0], "node2": schedule[j][1], "step": j, "max_messages": schedule[j][2]})
 
-            self.sch_queue.append([e for e in trace])
+            self.sch_queue.append(([e for e in trace], 0))
         logging.info("Finished seeding")
     
     def generate_ports(self, i):
@@ -173,7 +173,7 @@ class Fuzzer:
                 for j in range(self.config.num_workers):
                     to_mimic = None
                     if len(self.sch_queue) > 0:
-                        to_mimic = self.sch_queue.pop(0)
+                        to_mimic = self.sch_queue.pop(0)[0]
                     if to_mimic is None:
                         self.stats["random_traces"] += 1
                     else:
@@ -202,13 +202,14 @@ class Fuzzer:
                             try:
                                 mutated_sch = self.mutator.mutate(trace, self.config)
                                 if mutated_sch is not None:
-                                    self.sch_queue.append(mutated_sch)
+                                    self.sch_queue.append((mutated_sch, new_states))
                             except Exception as e:
                                 logging.error(f"Error mutating {iters+k}")
                                 traceback.print_exc()
                             finally:
-                                self.sch_queue.append(trace)
+                                pass
                     k += 1
+                self.sch_queue.sort(key=lambda x: x[1])
 
             self.stats["runtime"] = time.time() - start
             logging.info(self.stats)

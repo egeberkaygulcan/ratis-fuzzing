@@ -31,7 +31,7 @@ class MaxMessagesMutator:
                 if e["type"] == "Schedule":
                     schedule_steps.append(e["step"])
             if len(schedule_steps) < 5:
-                return trace
+                return None
         
             event_steps = random.sample(schedule_steps, 5)
 
@@ -44,7 +44,7 @@ class MaxMessagesMutator:
             
             return new_trace
         except Exception as e:
-            return trace
+            return None
     
 class SwapMutator:
     def __init__(self) -> None:
@@ -61,7 +61,7 @@ class SwapMutator:
                     if e["type"] == "Schedule":
                         schedule_steps.append(e["step"])
                 if len(schedule_steps) < 2:
-                    return trace
+                    return None
                 [first, second] = random.sample(schedule_steps, 2)
                 first_value = {"type": "Schedule", "node": 1, "node2": 2, "step": 101, "max_messages": 5}
                 second_value = {"type": "Schedule", "node": 1, "node2": 2, "step": 102, "max_messages": 5}
@@ -84,7 +84,8 @@ class SwapMutator:
             
             return new_trace
         except Exception as e:
-            return trace
+            traceback.print_exc()
+            return None
     
 class SwapCrashStepsMutator:
     def __init__(self) -> None:
@@ -124,7 +125,7 @@ class SwapCrashStepsMutator:
                         schedule_events.append(e["step"])
                 
                 if restart_event is None or crash_event is None:
-                    return trace
+                    return None
                 
                 new_steps = random.sample(schedule_events, 2)
                 new_steps = sorted(new_steps)
@@ -138,7 +139,7 @@ class SwapCrashStepsMutator:
                         second = e
                 
                 if first is None or second is None:
-                    return trace
+                    return None
                 else:
                     crash_step = crash_event["step"]
                     restart_step = restart_event["step"]
@@ -161,8 +162,7 @@ class SwapCrashStepsMutator:
                         new_trace.append(e)
             except Exception as ex:
                 traceback.print_exc()
-            finally:
-                return trace
+                return None
         return new_trace
     
 class SwapCrashNodesMutator:
@@ -202,7 +202,7 @@ class SwapCrashNodesMutator:
                     except:
                         traceback.print_exc()
                 if crash_event is None or restart_event is None:
-                    return trace
+                    return None
                 new_nodes = [node for node in range(1,config.nodes+1) if node != crash_event["node"]]
                 n = random.choice(new_nodes)
                 crash_event["node"] = n
@@ -216,9 +216,8 @@ class SwapCrashNodesMutator:
                     else:
                         new_trace.append(e)
             except Exception as ex:
-               traceback.print_exc()
-            finally:
-                return trace
+                traceback.print_exc()
+                return None
         return new_trace
 
 
@@ -227,11 +226,15 @@ class CombinedMutator:
         self.mutators = mutators
     
     def mutate(self, trace: list[dict], config) -> list[dict]:
+        if trace is None:
+            return None
         new_trace = []
         for e in trace:
             new_trace.append(e)
         
         for m in self.mutators:
             new_trace = m.mutate(new_trace, config)
+            if new_trace is None:
+                return None
         
         return new_trace

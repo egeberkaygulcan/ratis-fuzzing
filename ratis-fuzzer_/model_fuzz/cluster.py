@@ -155,7 +155,7 @@ class RatisCluster:
                     trace.append({"type": "Crash", "node": node_id, "step": i})
                     self.network.add_event({"name": "Remove", "params": {"i": node_id, "node": node_id}})
                 
-                await asyncio.sleep(1e-3)
+                await asyncio.sleep(1e-2)
                 if schedule[i][0] not in crashed:
                     self.network.schedule_replica(schedule[i][0], schedule[i][1], schedule[i][2])
                     trace.append({"type": "Schedule", "node": schedule[i][0], "node2": schedule[i][1], "step": i, "max_messages": schedule[i][2]})
