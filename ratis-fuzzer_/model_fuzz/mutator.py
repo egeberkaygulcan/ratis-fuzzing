@@ -25,28 +25,31 @@ class SwapMutator:
     def mutate(self, trace: list[dict], num_crashes: int, nodes: int) -> list[dict]:
         # TODO - min 10
         new_trace = []
-        schedule_steps = []
-        for e in trace:
-            if e["type"] == "Schedule":
-                schedule_steps.append(e["step"])
-        [first, second] = random.sample(schedule_steps, 2)
-        first_value = {"type": "Schedule", "node": 1, "node2": 2, "step": 101, "max_messages": 5}
-        second_value = {"type": "Schedule", "node": 1, "node2": 2, "step": 102, "max_messages": 5}
-        for e in trace:
-            if e['type'] == 'Schedule' and e["step"] == first:
-                first_value = {"type": "Schedule", "node": e["node"], "node2": e["node2"], "step": e["step"], "max_messages": e["max_messages"]}
-            elif e['type'] == 'Schedule' and e["step"] == second:
-                second_value = {"type": "Schedule", "node": e["node"], "node2": e["node2"], "step": e["step"], "max_messages": e["max_messages"]}
-        
-        for e in trace:
-            if e["type"] != "Schedule":
-                new_trace.append(e)
-            if e['type'] == 'Schedule' and e["step"] == first:
-                new_trace.append(second_value)
-            elif e['type'] == 'Schedule' and e["step"] == second:
-                new_trace.append(first_value)
-            else:
-                new_trace.append(e)
+        for _ in range(10):
+            new_trace = []
+            schedule_steps = []
+            for e in trace:
+                if e["type"] == "Schedule":
+                    schedule_steps.append(e["step"])
+            [first, second] = random.sample(schedule_steps, 2)
+            first_value = {"type": "Schedule", "node": 1, "node2": 2, "step": 101, "max_messages": 5}
+            second_value = {"type": "Schedule", "node": 1, "node2": 2, "step": 102, "max_messages": 5}
+            for e in trace:
+                if e['type'] == 'Schedule' and e["step"] == first:
+                    first_value = {"type": "Schedule", "node": e["node"], "node2": e["node2"], "step": e["step"], "max_messages": e["max_messages"]}
+                elif e['type'] == 'Schedule' and e["step"] == second:
+                    second_value = {"type": "Schedule", "node": e["node"], "node2": e["node2"], "step": e["step"], "max_messages": e["max_messages"]}
+            
+            for e in trace:
+                if e["type"] != "Schedule":
+                    new_trace.append(e)
+                if e['type'] == 'Schedule' and e["step"] == first:
+                    new_trace.append(second_value)
+                elif e['type'] == 'Schedule' and e["step"] == second:
+                    new_trace.append(first_value)
+                else:
+                    new_trace.append(e)
+            trace = new_trace
         
         return new_trace
     
