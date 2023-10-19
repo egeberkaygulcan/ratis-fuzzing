@@ -15,7 +15,7 @@ class RatisClient:
         self.error_flag = False
         self.error_log = None
 
-        self.log4j_config = '-Dlog4j.configuration=file:/Users/berkay/Documents/Research/ratis-fuzzing/ratis-examples/src/main/resources/log4j.properties' # TODO - Relative path
+        self.log4j_config = '-Dlog4j.configuration=file:../ratis-examples/src/main/resources/log4j.properties'
         self.cmd = 'java {} -cp {} org.apache.ratis.examples.counter.client.CounterClient {} {} {} {}'.format(
             self.log4j_config,
             self.config.jar_path,
