@@ -19,12 +19,18 @@ class RatisCluster:
     def __init__(self, config, ports, run_id, base_peer_port, group_id) -> None:
         self.config = config
         self.fuzzer_port = ports[0]
-        self.network = Network(self.config, ("127.0.0.1", self.fuzzer_port))
         self.server_client_ports = ports[1:]
         self.run_id = run_id
         self.base_peer_port = base_peer_port
         self.group_id = group_id
+        self.network_error = False
 
+        try:
+            self.network = Network(self.config, ("127.0.0.1", self.fuzzer_port))
+        except:
+            self.network_error = True
+        finally:
+            pass
         self.timeout = 60
         self.client_request_counter = 1
         self.error_flag = False
@@ -78,6 +84,8 @@ class RatisCluster:
             client.shutdown()
     
     async def run_iteration(self, iteration, mimic=None):
+        if self.network_error:
+            return None, None, None
         # TODO - Update
         logging.info(f'Starting iteration {iteration}')
         trace = []
@@ -107,10 +115,12 @@ class RatisCluster:
                     crash_points[ch["step"]] = ch["node"]
                 elif ch["type"] == "Start":
                     start_points[ch["step"]] = ch["node"]
-                elif ch["type"] == "Schedule":
-                    schedule[ch["step"]] = (ch["node"], ch["node2"], ch["max_messages"])
                 elif ch["type"] == "ClientRequest":
                     client_requests.append(ch["step"])
+                elif ch["type"] == "Schedule":
+                    if ch['step'] > len(schedule):
+                        continue
+                    schedule[ch["step"]] = (ch["node"], ch["node2"], ch["max_messages"])
 
         logging.debug("Starting cluster")
         self.start()
@@ -139,33 +149,16 @@ class RatisCluster:
                     node_id = crash_points[i]
                     logging.debug(f"Crashing node {node_id}")
                     if node_id not in crashed:
-                        self.network.send_crash(node_id)
+                        # self.network.send_crash(node_id)
                         self.servers[node_id].shutdown()
                     crashed.add(node_id)
                     trace.append({"type": "Crash", "node": node_id, "step": i})
                     self.network.add_event({"name": "Remove", "params": {"i": node_id, "node": node_id}})
                 
-                key = f'{schedule[i][0]}_{schedule[i][1]}'
-                mailboxes = self.network.check_mailboxes()
-                skip_timeout = time.time() + 0.05
-                skipped = False
-                while key not in mailboxes:
-                    if time.time() > skip_timeout:
-                        skipped = True
-                        break
-                    if self.check_error_flag():
-                        break
-                    await asyncio.sleep(1e-3)
-                    mailboxes = self.network.check_mailboxes()
-                if skipped:
-                    logging.debug('Skipped iteration.')
-                if self.check_error_flag():
-                    break
-
-                if key in mailboxes:
-                    if schedule[i][0] not in crashed:
-                        self.network.schedule_replica(schedule[i][0], schedule[i][1], schedule[i][2])
-                        trace.append({"type": "Schedule", "node": schedule[i][0], "node2": schedule[i][1], "step": i, "max_messages": schedule[i][2]})
+                await asyncio.sleep(1e-3)
+                if schedule[i][0] not in crashed:
+                    self.network.schedule_replica(schedule[i][0], schedule[i][1], schedule[i][2])
+                    trace.append({"type": "Schedule", "node": schedule[i][0], "node2": schedule[i][1], "step": i, "max_messages": schedule[i][2]})
                 
 
                 if i in client_requests:
@@ -181,9 +174,10 @@ class RatisCluster:
                         self.client_request_counter += 1
                         self.clients.append(client)
                         trace.append({"type": "ClientRequest", "step": i})
-                        self.network.add_event({"name": 'ClientRequest', "params": {"leader": self.network.leader_id, "request": self.cluster.client_request_counter-1, "node": node_id}})
-                    except:
-                        pass
+                        self.network.add_event({"name": 'ClientRequest', "params": {"leader": self.network.leader_id, "request": self.client_request_counter-1, "node": 1}})
+                    except Exception as e:
+                        logging.error('Client error')
+                        traceback.print_exc()
         except Exception as e:
             logging.error(f'run_iteration exception: {e}')
             try:
@@ -199,7 +193,7 @@ class RatisCluster:
 
         event_trace = self.network.get_event_trace()
 
-        end_process_timeout = time.time() + 5
+        end_process_timeout = time.time() + 5e-3
         while True:
             if self.network.cluster_shutdown_ready or time.time() > end_process_timeout:
                 break
@@ -207,7 +201,7 @@ class RatisCluster:
 
         self.end_process()
 
-        err, err_log = RatisCluster.run_elle(self.elle_cmd, self.elle_file)
+        err, err_log = await self.run_elle(self.elle_cmd, self.elle_file)
         if err:
             if err_log is not None:
                 _, stdout = err_log
@@ -219,24 +213,26 @@ class RatisCluster:
         self.shutdown()
         return (trace, event_trace, self.error_flag)
 
-    @classmethod
-    def run_elle(cls, elle_cmd, elle_file):
-        with cls.lock:
-            err = False
-            err_log = None
-            try:
-                result = subprocess.run(elle_cmd, shell=True, capture_output=True, text=True, check=True)
-                if 'true' not in result.stdout:
-                    logging.error('Elle check error.')
-                    err = True
-                    with open(elle_file, 'r') as f:
-                        elle_log = f.readlines()
-                    err_log = (f'Elle linearizability fail.\n\n{elle_log}', result.stdout)
-            except Exception as e:
-                traceback.print_exc()
-                return True, None
-            finally:
-                return err, err_log
+    
+    async def run_elle(self, elle_cmd, elle_file):
+        err = False
+        err_log = None
+        try:
+            proc = await asyncio.create_subprocess_shell(elle_cmd,
+                                                                stdout=asyncio.subprocess.PIPE,
+                                                                stderr=asyncio.subprocess.PIPE)# subprocess.run(elle_cmd, shell=True, capture_output=True, text=True, check=True)
+            stdout, stderr = await proc.communicate()
+            if 'true' not in stdout.decode():
+                logging.error('Elle check error.')
+                err = True
+                with open(elle_file, 'r') as f:
+                    elle_log = f.readlines()
+                err_log = (f'Elle linearizability fail.\n\n{elle_log}', stdout.decode())
+        except Exception as e:
+            traceback.print_exc()
+            return True, None
+        finally:
+            return err, err_log
     
     def check_error_flag(self):
         for server in self.servers.values():

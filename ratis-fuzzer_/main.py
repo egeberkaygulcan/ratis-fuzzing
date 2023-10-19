@@ -1,13 +1,14 @@
 import asyncio
 import logging
 import argparse
+import traceback
 
 from pandas import read_csv
 from types import SimpleNamespace
 
 from model_fuzz.fuzzer import Fuzzer
 from model_fuzz.guider import TLCGuider, TraceGuider
-from model_fuzz.mutator import SwapMutator, SwapCrashStepsMutator, SwapCrashNodesMutator, CombinedMutator, DefaultMutator
+from model_fuzz.mutator import SwapMutator, SwapCrashStepsMutator, SwapCrashNodesMutator, CombinedMutator, MaxMessagesMutator, DefaultMutator
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -140,7 +141,7 @@ def validate_config(config):
 
         return new_config
 
-if __name__ == '__main__':
+def main():
     args = parse_args()
     if not args.verbose:
         logging.disable()
@@ -162,3 +163,9 @@ if __name__ == '__main__':
             pass
         finally:
             load = True
+
+if __name__ == '__main__':
+    try:
+        main() # random 447
+    except Exception as e:
+        traceback.print_exc()

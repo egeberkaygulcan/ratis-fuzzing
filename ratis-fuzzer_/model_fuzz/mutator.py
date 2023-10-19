@@ -18,49 +18,82 @@ class RandomMutator():
     def mutate(self, trace):
         return None
     
-class SwapMutator:
+class MaxMessagesMutator:
     def __init__(self) -> None:
         pass
 
-    def mutate(self, trace: list[dict], num_crashes: int, nodes: int) -> list[dict]:
+    def mutate(self, trace: list[dict], config) -> list[dict]:
         # TODO - min 10
-        new_trace = []
-        for _ in range(10):
+        try:
             new_trace = []
             schedule_steps = []
             for e in trace:
                 if e["type"] == "Schedule":
                     schedule_steps.append(e["step"])
-            [first, second] = random.sample(schedule_steps, 2)
-            first_value = {"type": "Schedule", "node": 1, "node2": 2, "step": 101, "max_messages": 5}
-            second_value = {"type": "Schedule", "node": 1, "node2": 2, "step": 102, "max_messages": 5}
+            if len(schedule_steps) < 5:
+                return trace
+        
+            event_steps = random.sample(schedule_steps, 5)
+
             for e in trace:
-                if e['type'] == 'Schedule' and e["step"] == first:
-                    first_value = {"type": "Schedule", "node": e["node"], "node2": e["node2"], "step": e["step"], "max_messages": e["max_messages"]}
-                elif e['type'] == 'Schedule' and e["step"] == second:
-                    second_value = {"type": "Schedule", "node": e["node"], "node2": e["node2"], "step": e["step"], "max_messages": e["max_messages"]}
-            
-            for e in trace:
-                if e["type"] != "Schedule":
+                if e['type'] == 'Schedule' and e['step'] in event_steps:
+                    e['max_messages'] = random.randint(0, config.max_messages_to_schedule)
                     new_trace.append(e)
-                if e['type'] == 'Schedule' and e["step"] == first:
-                    new_trace.append(second_value)
-                elif e['type'] == 'Schedule' and e["step"] == second:
-                    new_trace.append(first_value)
                 else:
                     new_trace.append(e)
-            trace = new_trace
-        
-        return new_trace
+            
+            return new_trace
+        except Exception as e:
+            return trace
+    
+class SwapMutator:
+    def __init__(self) -> None:
+        pass
+
+    def mutate(self, trace: list[dict], config) -> list[dict]:
+        # TODO - min 10
+        try:
+            new_trace = []
+            for _ in range(10):
+                new_trace = []
+                schedule_steps = []
+                for e in trace:
+                    if e["type"] == "Schedule":
+                        schedule_steps.append(e["step"])
+                if len(schedule_steps) < 2:
+                    return trace
+                [first, second] = random.sample(schedule_steps, 2)
+                first_value = {"type": "Schedule", "node": 1, "node2": 2, "step": 101, "max_messages": 5}
+                second_value = {"type": "Schedule", "node": 1, "node2": 2, "step": 102, "max_messages": 5}
+                for e in trace:
+                    if e['type'] == 'Schedule' and e["step"] == first:
+                        first_value = {"type": "Schedule", "node": e["node"], "node2": e["node2"], "step": e["step"], "max_messages": e["max_messages"]}
+                    elif e['type'] == 'Schedule' and e["step"] == second:
+                        second_value = {"type": "Schedule", "node": e["node"], "node2": e["node2"], "step": e["step"], "max_messages": e["max_messages"]}
+                
+                for e in trace:
+                    if e["type"] != "Schedule":
+                        new_trace.append(e)
+                    if e['type'] == 'Schedule' and e["step"] == first:
+                        new_trace.append(second_value)
+                    elif e['type'] == 'Schedule' and e["step"] == second:
+                        new_trace.append(first_value)
+                    else:
+                        new_trace.append(e)
+                trace = new_trace
+            
+            return new_trace
+        except Exception as e:
+            return trace
     
 class SwapCrashStepsMutator:
     def __init__(self) -> None:
         pass
 
-    def mutate(self, trace: list[dict], num_crashes: int, nodes: int) -> list[dict]:
+    def mutate(self, trace: list[dict], config) -> list[dict]:
         new_trace = []
 
-        if num_crashes > 1:
+        if config.crash_quota > 1:
             crash_steps = set()
             for e in trace:
                 if e["type"] == "Crash":
@@ -89,6 +122,9 @@ class SwapCrashStepsMutator:
                         restart_event = e
                     elif e["type"] == "Schedule":
                         schedule_events.append(e["step"])
+                
+                if restart_event is None or crash_event is None:
+                    return trace
                 
                 new_steps = random.sample(schedule_events, 2)
                 new_steps = sorted(new_steps)
@@ -124,7 +160,7 @@ class SwapCrashStepsMutator:
                     else:
                         new_trace.append(e)
             except Exception as ex:
-                pass
+                traceback.print_exc()
             finally:
                 return trace
         return new_trace
@@ -133,10 +169,10 @@ class SwapCrashNodesMutator:
     def __init__(self) -> None:
         pass
 
-    def mutate(self, trace: list[dict], num_crashes: int, nodes: int) -> list[dict]:
+    def mutate(self, trace: list[dict], config) -> list[dict]:
         new_trace = []
 
-        if num_crashes > 1:
+        if config.crash_quota > 1:
             crash_steps = {}
             for e in trace:
                 if e["type"] == "Crash":
@@ -164,10 +200,10 @@ class SwapCrashNodesMutator:
                         elif e["type"] == "Start":
                             restart_event = e
                     except:
-                        pass
+                        traceback.print_exc()
                 if crash_event is None or restart_event is None:
                     return trace
-                new_nodes = [node for node in range(1,nodes+1) if node != crash_event["node"]]
+                new_nodes = [node for node in range(1,config.nodes+1) if node != crash_event["node"]]
                 n = random.choice(new_nodes)
                 crash_event["node"] = n
                 restart_event["node"] = n
@@ -180,7 +216,7 @@ class SwapCrashNodesMutator:
                     else:
                         new_trace.append(e)
             except Exception as ex:
-               pass
+               traceback.print_exc()
             finally:
                 return trace
         return new_trace
@@ -190,12 +226,12 @@ class CombinedMutator:
     def __init__(self, mutators) -> None:
         self.mutators = mutators
     
-    def mutate(self, trace: list[dict], num_crashes: int, nodes: int) -> list[dict]:
+    def mutate(self, trace: list[dict], config) -> list[dict]:
         new_trace = []
         for e in trace:
             new_trace.append(e)
         
         for m in self.mutators:
-            new_trace = m.mutate(new_trace, num_crashes, nodes)
+            new_trace = m.mutate(new_trace, config)
         
         return new_trace

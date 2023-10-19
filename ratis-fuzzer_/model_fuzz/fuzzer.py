@@ -153,62 +153,67 @@ class Fuzzer:
         return coros
 
     async def run(self):
-        logging.info("Starting fuzzer loop")
-        random_ =  'random' in self.config.exp_name
-        start = time.time()
-        iters = 0
-        for i in range(0, self.config.iterations, self.config.num_workers):
-            iters = i + self.prev_iters
-            # if iter_count >= self.config.iterations:
-            #     return True
-            if iters != 0 and i % self.config.save_every == 0:
-                self.save(iters)
-            
-            if i % self.config.seed_frequency == 0 and not random_:
-                self.seed()
+        try:
+            logging.info("Starting fuzzer loop")
+            random_ =  'random' in self.config.exp_name
+            start = time.time()
+            iters = 0
+            for i in range(0, self.config.iterations, self.config.num_workers):
+                iters = i + self.prev_iters
+                # if iter_count >= self.config.iterations:
+                #     return True
+                if iters != 0 and i % self.config.save_every == 0:
+                    self.save(iters)
+                
+                if i % self.config.seed_frequency == 0 and not random_:
+                    self.seed()
 
-            logging.info(f'##### Starting fuzzer iterations {iters}-{iters+self.config.num_workers-1} #####')
-            mimics = []
-            for j in range(self.config.num_workers):
-                to_mimic = None
-                if len(self.sch_queue) > 0:
-                    to_mimic = self.sch_queue.pop(0)
-                if to_mimic is None:
-                    self.stats["random_traces"] += 1
-                else:
-                    self.stats["mutated_traces"] += 1
-                mimics.append(to_mimic)
-            # TODO - Worker run
-            # results = loop.run_until_complete(asyncio.wait(self.generate_coros(range(iters, iters+self.config.num_workers, 1), mimics),
-            #                                             return_when=asyncio.ALL_COMPLETED))
-            run_ids = [iters+j for j in range(self.config.num_workers)]
-            results = await asyncio.gather(*self.generate_coros(range(iters, iters+self.config.num_workers, 1), mimics, run_ids))
-            k = 0
-            for trace, event_trace, is_buggy in results:
-                if trace is None:
-                    continue
-                if is_buggy:
-                    self.stats['bug_iterations'].append(iters+k)
+                logging.info(f'##### Starting fuzzer iterations {iters}-{iters+self.config.num_workers-1} #####')
+                mimics = []
+                for j in range(self.config.num_workers):
+                    to_mimic = None
+                    if len(self.sch_queue) > 0:
+                        to_mimic = self.sch_queue.pop(0)
+                    if to_mimic is None:
+                        self.stats["random_traces"] += 1
+                    else:
+                        self.stats["mutated_traces"] += 1
+                    mimics.append(to_mimic)
+                # TODO - Worker run
+                # results = loop.run_until_complete(asyncio.wait(self.generate_coros(range(iters, iters+self.config.num_workers, 1), mimics),
+                #                                             return_when=asyncio.ALL_COMPLETED))
+                run_ids = [iters+j for j in range(self.config.num_workers)]
+                results = await asyncio.gather(*self.generate_coros(range(iters, iters+self.config.num_workers, 1), mimics, run_ids))
+                k = 0
+                await asyncio.sleep(1)
+                for trace, event_trace, is_buggy in results:
+                    if trace is None:
+                        continue
+                    if is_buggy:
+                        self.stats['bug_iterations'].append(iters+k)
 
-                new_states = self.guider.check_new_state(trace, event_trace, str(iters+k), record=False)
-                logging.info(f'New states: {new_states}')
-                logging.info(f'Total states: {self.guider.coverage()}')
-                self.stats["coverage"].append(self.guider.coverage())
+                    new_states = self.guider.check_new_state(trace, event_trace, str(iters+k), record=False)
+                    logging.info(f'New states: {new_states}')
+                    logging.info(f'Total states: {self.guider.coverage()}')
+                    self.stats["coverage"].append(self.guider.coverage())
 
-                if new_states > 0 and not random_:
-                    for j in range(new_states * self.config.mutations_per_trace):
-                        try:
-                            mutated_sch = self.mutator.mutate(trace, self.config.crash_quota, self.config.nodes)
-                            if mutated_sch is not None:
-                                self.sch_queue.append(mutated_sch)
-                        except Exception as e:
-                            logging.error(f"Error mutating {iters+k}")
-                            traceback.print_exc()
-                        finally:
-                            self.sch_queue.append(trace)
-                k += 1
-        self.stats["runtime"] = time.time() - start
-        logging.info(self.stats)
-        self.save(self.config.iterations)
+                    if new_states > 0 and not random_:
+                        for j in range(new_states * self.config.mutations_per_trace):
+                            try:
+                                mutated_sch = self.mutator.mutate(trace, self.config)
+                                if mutated_sch is not None:
+                                    self.sch_queue.append(mutated_sch)
+                            except Exception as e:
+                                logging.error(f"Error mutating {iters+k}")
+                                traceback.print_exc()
+                            finally:
+                                self.sch_queue.append(trace)
+                    k += 1
+
+            self.stats["runtime"] = time.time() - start
+            logging.info(self.stats)
+            self.save(self.config.iterations + self.prev_iters)
+        except Exception as e:
+            traceback.print_exc()
 
         return True
