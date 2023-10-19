@@ -38,10 +38,6 @@ public class MessageHandler{
                 fuzzerClient.startShutdown();
             } else if (m.type.equals("crash")) {
                 fuzzerClient.addCrash(m.to);
-            } else if (m.type.equals("restart")) {
-                fuzzerClient.addRestart(m.to);
-            } else if (m.type.equals("client_request")){
-                fuzzerClient.addClientRequest();
             } else {
                 lock.lock();
                 messages.add(m);

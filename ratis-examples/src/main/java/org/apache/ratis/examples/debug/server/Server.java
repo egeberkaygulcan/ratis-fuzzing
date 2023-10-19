@@ -40,13 +40,13 @@ public final class Server {
       System.exit(1);
     }
 
-    //find current peer object based on application parameter
-    final RaftPeer currentPeer = Constants.PEERS.stream()
-        .filter(raftPeer -> raftPeer.getAddress().equals(args[0]))
-        .findFirst().orElseThrow(() -> new IllegalArgumentException("Peer not found: " + args[0]));
+    // //find current peer object based on application parameter
+    // final RaftPeer currentPeer = Constants.PEERS.stream()
+    //     .filter(raftPeer -> raftPeer.getAddress().equals(args[0]))
+    //     .findFirst().orElseThrow(() -> new IllegalArgumentException("Peer not found: " + args[0]));
 
-    final File storageDir = new File(Constants.PATH, currentPeer.getId().toString());
-    final CounterServer counterServer = new CounterServer(currentPeer, storageDir, TimeDuration.ZERO);
-    counterServer.start();
+    // final File storageDir = new File(Constants.PATH, currentPeer.getId().toString());
+    // final CounterServer counterServer = new CounterServer(currentPeer, storageDir, TimeDuration.ZERO);
+    // counterServer.start();
   }
 }

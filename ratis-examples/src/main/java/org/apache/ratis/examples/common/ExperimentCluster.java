@@ -66,173 +66,173 @@ public abstract class ExperimentCluster<CLUSTER extends MiniRaftCluster>
     RaftServerConfigKeys.Read.setTimeout(prop, TimeDuration.ONE_SECOND);
   }
 
-  public void controlledExperiment() throws Exception {
-    runWithNewCluster(NUM_SERVERS, this::runControlledExperiment);
-  }
+//   public void controlledExperiment() throws Exception {
+//     runWithNewCluster(NUM_SERVERS, this::runControlledExperiment);
+//   }
 
-  void runControlledExperiment(MiniRaftCluster cluster) throws Exception {
-    try {
-      fuzzerClient.registerCluster("1");
+//   void runControlledExperiment(MiniRaftCluster cluster) throws Exception {
+//     try {
+//       fuzzerClient.registerCluster("1");
 
-      // raftServer.getLifeCycleState() != LifeCycle.State.CLOSED
-      AtomicInteger pendingCount = new AtomicInteger(1);
-      AtomicInteger elleIndex = new AtomicInteger(0);
+//       // raftServer.getLifeCycleState() != LifeCycle.State.CLOSED
+//       AtomicInteger pendingCount = new AtomicInteger(1);
+//       AtomicInteger elleIndex = new AtomicInteger(0);
 
-      // HashSet<Integer> lines = new HashSet<>();
+//       // HashSet<Integer> lines = new HashSet<>();
 
-      ArrayList<String> crashList;
-      ArrayList<String> restartList;
+//       ArrayList<String> crashList;
+//       ArrayList<String> restartList;
 
-      ArrayList<Future<RaftClientReply>> futures = new ArrayList<>();
-      ArrayList<ExecutorService> executors = new ArrayList<>();
-      CopyOnWriteArrayList<String> elleList = new CopyOnWriteArrayList<>();
-      int clientRequests = 0;
-      while(!fuzzerClient.shouldShutdown()) {
-        // Map<Thread,StackTraceElement[]> threadMap = Thread.getAllStackTraces();
-        // for (Thread t : threadMap.keySet()) {
-        //   StackTraceElement[] elements = t.getStackTrace();
-        //   for (StackTraceElement e : elements) {
-        //     lines.add(Integer.valueOf(e.getLineNumber()));
-        //   }
-        // }
+//       ArrayList<Future<RaftClientReply>> futures = new ArrayList<>();
+//       ArrayList<ExecutorService> executors = new ArrayList<>();
+//       CopyOnWriteArrayList<String> elleList = new CopyOnWriteArrayList<>();
+//       int clientRequests = 0;
+//       while(!fuzzerClient.shouldShutdown()) {
+//         // Map<Thread,StackTraceElement[]> threadMap = Thread.getAllStackTraces();
+//         // for (Thread t : threadMap.keySet()) {
+//         //   StackTraceElement[] elements = t.getStackTrace();
+//         //   for (StackTraceElement e : elements) {
+//         //     lines.add(Integer.valueOf(e.getLineNumber()));
+//         //   }
+//         // }
 
-        /* ---------- CRASH SERVER ---------- */ 
-        crashList = fuzzerClient.getCrash();
-        if (crashList.size() > 0) {
-          for (String id: crashList) {
-            RaftPeerId peerId = RaftPeerId.getRaftPeerId(id);
-            cluster.crashServer(peerId);
-            fuzzerClient.addToCrashed(peerId.toString());
-          }
-        }
+//         /* ---------- CRASH SERVER ---------- */ 
+//         crashList = fuzzerClient.getCrash();
+//         if (crashList.size() > 0) {
+//           for (String id: crashList) {
+//             RaftPeerId peerId = RaftPeerId.getRaftPeerId(id);
+//             cluster.crashServer(peerId);
+//             fuzzerClient.addToCrashed(peerId.toString());
+//           }
+//         }
 
 
-        /* ---------- RESTART SERVER ---------- */ 
-        restartList = fuzzerClient.getRestart();
-        if (restartList.size() > 0) {
-          for (String id: restartList) {
-            RaftPeerId peerId = RaftPeerId.getRaftPeerId(id);
-            cluster.restartAfterCrash(peerId, false);
-            fuzzerClient.removeFromCrashed(peerId.toString());
-          }
-        }
+//         /* ---------- RESTART SERVER ---------- */ 
+//         restartList = fuzzerClient.getRestart();
+//         if (restartList.size() > 0) {
+//           for (String id: restartList) {
+//             RaftPeerId peerId = RaftPeerId.getRaftPeerId(id);
+//             cluster.restartAfterCrash(peerId, false);
+//             fuzzerClient.removeFromCrashed(peerId.toString());
+//           }
+//         }
         
 
-        /* ---------- SEND CLIENT REQUESTS ---------- */ 
-        clientRequests = fuzzerClient.getClientRequests();
-        if (clientRequests > 0) {
-          ExecutorService executor = Executors.newFixedThreadPool(clientRequests);
-          executors.add(executor);
-          for(int i = 0; i < clientRequests; i++) {
-            final Future<RaftClientReply> f = CompletableFuture.supplyAsync(() -> {
-              try {
-                final RaftClient client = cluster.createClient();
-                String elleVal = "{:type :invoke, :f :add, :value 1, :op-index " + pendingCount.getAndIncrement() + ", :process " + client.getId().toString() + ", :time " + Instant.now().toEpochMilli() + ", :index " + elleIndex.getAndIncrement() + "}\n";
-                elleList.add(elleVal);
-                return client.io().send(CounterCommand.INCREMENT.getMessage());
-              } catch (IOException e) {
-                System.err.println("Failed write request");
-                return RaftClientReply.newBuilder().setSuccess(false).build();
-              }
-            }, executor).whenCompleteAsync((r, ex) -> {
-              if (ex != null || !r.isSuccess()) {
-                System.err.println("Failed " + r);
-                return;
-              }
-              final String count = r.getMessage().getContent().toStringUtf8();
-              String elleVal_ = "{:type :ok, :f :add, :value 1, :op-index " + count + ", :process " + r.getClientId().toString() + ", :time " + Instant.now().toEpochMilli() + ", :index " + elleIndex.getAndIncrement() + "}\n";
-              elleList.add(elleVal_);
-            });
-          }
-        }
+//         /* ---------- SEND CLIENT REQUESTS ---------- */ 
+//         clientRequests = fuzzerClient.getClientRequests();
+//         if (clientRequests > 0) {
+//           ExecutorService executor = Executors.newFixedThreadPool(clientRequests);
+//           executors.add(executor);
+//           for(int i = 0; i < clientRequests; i++) {
+//             final Future<RaftClientReply> f = CompletableFuture.supplyAsync(() -> {
+//               try {
+//                 final RaftClient client = cluster.createClient();
+//                 String elleVal = "{:type :invoke, :f :add, :value 1, :op-index " + pendingCount.getAndIncrement() + ", :process " + client.getId().toString() + ", :time " + Instant.now().toEpochMilli() + ", :index " + elleIndex.getAndIncrement() + "}\n";
+//                 elleList.add(elleVal);
+//                 return client.io().send(CounterCommand.INCREMENT.getMessage());
+//               } catch (IOException e) {
+//                 System.err.println("Failed write request");
+//                 return RaftClientReply.newBuilder().setSuccess(false).build();
+//               }
+//             }, executor).whenCompleteAsync((r, ex) -> {
+//               if (ex != null || !r.isSuccess()) {
+//                 System.err.println("Failed " + r);
+//                 return;
+//               }
+//               final String count = r.getMessage().getContent().toStringUtf8();
+//               String elleVal_ = "{:type :ok, :f :add, :value 1, :op-index " + count + ", :process " + r.getClientId().toString() + ", :time " + Instant.now().toEpochMilli() + ", :index " + elleIndex.getAndIncrement() + "}\n";
+//               elleList.add(elleVal_);
+//             });
+//           }
+//         }
 
         
-        /* ---------- RECEIVE CLIENT REQUESTS ---------- */ 
-        //wait for the futures
-        for (Future<RaftClientReply> f : futures) {
-          final RaftClientReply reply = f.get();
+//         /* ---------- RECEIVE CLIENT REQUESTS ---------- */ 
+//         //wait for the futures
+//         for (Future<RaftClientReply> f : futures) {
+//           final RaftClientReply reply = f.get();
           
-          if (reply.isSuccess()) {
-            final String count = reply.getMessage().getContent().toStringUtf8();
-            String elleVal = "{:type :ok, :f :add, :value 1, :op-index " + count + ", :process 0, :time " + Instant.now().toEpochMilli() + ", :index " + elleIndex.getAndIncrement() + "}\n";
-            elleList.add(elleVal);
-            System.out.println("Counter is incremented to " + count);
-          } else {
-            System.err.println("Failed " + reply);
-          }
-        }
+//           if (reply.isSuccess()) {
+//             final String count = reply.getMessage().getContent().toStringUtf8();
+//             String elleVal = "{:type :ok, :f :add, :value 1, :op-index " + count + ", :process 0, :time " + Instant.now().toEpochMilli() + ", :index " + elleIndex.getAndIncrement() + "}\n";
+//             elleList.add(elleVal);
+//             System.out.println("Counter is incremented to " + count);
+//           } else {
+//             System.err.println("Failed " + reply);
+//           }
+//         }
         
 
-        fuzzerClient.getAndExecuteMessages();
-        TimeUnit.MILLISECONDS.sleep(1);
-      }
+//         fuzzerClient.getAndExecuteMessages();
+//         TimeUnit.MILLISECONDS.sleep(1);
+//       }
 
 
-      String elleFile = "dump/elle.edn";
-      try {
-        File file = new File(elleFile);
-        file.getParentFile().mkdirs();
-        file.createNewFile();
-        FileWriter fileWriter = new FileWriter(file); 
-        PrintWriter printWriter = new PrintWriter(fileWriter);
-        for (String line : elleList)
-          printWriter.print(line);
-        printWriter.close();
-        fileWriter.close();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-      boolean b = runProcess("java -jar ../../elle-cli/target/elle-cli-0.1.7-standalone.jar --model counter " + elleFile);
-      if(!b) {
-        throw new Exception("Not linearizable!");
-      }
-      fuzzerClient.sendShutdownReadyEvent();
+//       String elleFile = "dump/elle.edn";
+//       try {
+//         File file = new File(elleFile);
+//         file.getParentFile().mkdirs();
+//         file.createNewFile();
+//         FileWriter fileWriter = new FileWriter(file); 
+//         PrintWriter printWriter = new PrintWriter(fileWriter);
+//         for (String line : elleList)
+//           printWriter.print(line);
+//         printWriter.close();
+//         fileWriter.close();
+//       } catch (Exception e) {
+//         e.printStackTrace();
+//       }
+//       boolean b = runProcess("java -jar ../../elle-cli/target/elle-cli-0.1.7-standalone.jar --model counter " + elleFile);
+//       if(!b) {
+//         throw new Exception("Not linearizable!");
+//       }
+//       fuzzerClient.sendShutdownReadyEvent();
       
-      for (Future<RaftClientReply> f : futures){
-        f.cancel(true);
-      }
+//       for (Future<RaftClientReply> f : futures){
+//         f.cancel(true);
+//       }
 
-      for (ExecutorService e : executors) {
-        if (!e.isShutdown())
-          e.shutdownNow();
-      }
-    } catch (AlreadyClosedException ignored){}
-    finally {
-      cluster.shutdown();
-    }
-  }
+//       for (ExecutorService e : executors) {
+//         if (!e.isShutdown())
+//           e.shutdownNow();
+//       }
+//     } catch (AlreadyClosedException ignored){}
+//     finally {
+//       cluster.shutdown();
+//     }
+//   }
 
-  private RaftPeerId getLongestLogPeer(MiniRaftCluster cluster) {
-    RaftPeerId max = null;
-    long maxIndex = -1;
-    for(RaftServer.Division server : cluster.iterateDivisions()) {
-      RaftLog peerLog = server.getRaftLog();
-      long lastIndex = peerLog.getNextIndex() - 1;
-      if (lastIndex > maxIndex) {
-        maxIndex = lastIndex;
-        max = server.getId();
-      }
-    }
-    return max;
-  }
+//   private RaftPeerId getLongestLogPeer(MiniRaftCluster cluster) {
+//     RaftPeerId max = null;
+//     long maxIndex = -1;
+//     for(RaftServer.Division server : cluster.iterateDivisions()) {
+//       RaftLog peerLog = server.getRaftLog();
+//       long lastIndex = peerLog.getNextIndex() - 1;
+//       if (lastIndex > maxIndex) {
+//         maxIndex = lastIndex;
+//         max = server.getId();
+//       }
+//     }
+//     return max;
+//   }
 
-  private static boolean getResult(InputStream ins) throws Exception {
-    String output = "";
-    String line = null;
-    BufferedReader in = new BufferedReader(
-        new InputStreamReader(ins));
-    while ((line = in.readLine()) != null) {
-        output = output + line;
-    }
-    System.out.println(output);
-    return output.contains("true");
-  }
+//   private static boolean getResult(InputStream ins) throws Exception {
+//     String output = "";
+//     String line = null;
+//     BufferedReader in = new BufferedReader(
+//         new InputStreamReader(ins));
+//     while ((line = in.readLine()) != null) {
+//         output = output + line;
+//     }
+//     System.out.println(output);
+//     return output.contains("true");
+//   }
 
-  private static boolean runProcess(String command) throws Exception {
-    Process pro = Runtime.getRuntime().exec(command);
-    pro.waitFor();
-    return getResult(pro.getInputStream());
-  }
+//   private static boolean runProcess(String command) throws Exception {
+//     Process pro = Runtime.getRuntime().exec(command);
+//     pro.waitFor();
+//     return getResult(pro.getInputStream());
+//   }
 
 //   public void testRestartFollower() throws Exception {
 //     runWithNewCluster(NUM_SERVERS, this::runTestRestartFollower);

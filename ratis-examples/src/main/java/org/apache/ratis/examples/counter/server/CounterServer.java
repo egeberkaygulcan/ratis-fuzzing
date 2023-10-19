@@ -17,22 +17,38 @@
  */
 package org.apache.ratis.examples.counter.server;
 
+import org.apache.ratis.client.RaftClient;
 import org.apache.ratis.conf.RaftProperties;
 import org.apache.ratis.examples.common.ClusterWrapper;
 import org.apache.ratis.examples.common.Constants;
+import org.apache.ratis.examples.counter.CounterCommand;
 import org.apache.ratis.grpc.GrpcConfigKeys;
+import org.apache.ratis.protocol.RaftClientReply;
+import org.apache.ratis.protocol.RaftGroup;
+import org.apache.ratis.protocol.RaftGroupId;
 import org.apache.ratis.protocol.RaftPeer;
+import org.apache.ratis.protocol.RaftPeerId;
 import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.server.RaftServerConfigKeys;
 import org.apache.ratis.server.fuzzer.FuzzerClient;
 import org.apache.ratis.util.NetUtils;
+import org.apache.ratis.util.SizeInBytes;
 import org.apache.ratis.util.TimeDuration;
 
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -49,12 +65,13 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public final class CounterServer implements Closeable {
   private final RaftServer server;
 
-  public CounterServer(RaftPeer peer, File storageDir, TimeDuration simulatedSlowness) throws IOException {
+  public CounterServer(RaftPeer peer, File storageDir, RaftGroup RAFT_GROUP) throws IOException {
     //create a property object
     final RaftProperties properties = new RaftProperties();
 
     //set the storage directory (different for each peer) in the RaftProperty object
     RaftServerConfigKeys.setStorageDir(properties, Collections.singletonList(storageDir));
+    RaftServerConfigKeys.Snapshot.setAutoTriggerEnabled(properties, true);
 
     //set the read policy to Linearizable Read.
     //the Default policy will route read-only requests to leader and directly query leader statemachine.
@@ -62,18 +79,18 @@ public final class CounterServer implements Closeable {
     //and uses ReadIndex to guarantee strong consistency.
     RaftServerConfigKeys.Read.setOption(properties, RaftServerConfigKeys.Read.Option.LINEARIZABLE);
     //set the linearizable read timeout
-    RaftServerConfigKeys.Read.setTimeout(properties, TimeDuration.ONE_MINUTE);
+    RaftServerConfigKeys.Read.setTimeout(properties, TimeDuration.ONE_SECOND);
 
     //set the port (different for each peer) in RaftProperty object
     final int port = NetUtils.createSocketAddr(peer.getAddress()).getPort();
     GrpcConfigKeys.Server.setPort(properties, port);
 
     //create the counter state machine which holds the counter value
-    final CounterStateMachine counterStateMachine = new CounterStateMachine(simulatedSlowness);
+    final CounterStateMachine counterStateMachine = new CounterStateMachine();
 
     //build the Raft server
     this.server = RaftServer.newBuilder()
-        .setGroup(Constants.RAFT_GROUP)
+        .setGroup(RAFT_GROUP)
         .setProperties(properties)
         .setServerId(peer.getId())
         .setStateMachine(counterStateMachine)
@@ -92,35 +109,30 @@ public final class CounterServer implements Closeable {
   public static void main(String[] args) {
     try {
       // int fuzzerPort = Integer.parseInt(args[0]);
-      int numNodes = Integer.parseInt(args[0]);
-      int port = Integer.parseInt(args[1]);
-      // int fuzzerPort = Integer.parseInt(args[2]);
-      // int portOffset = Integer.parseInt(args[3]);
-      // FuzzerClient.portOffset = portOffset;
+      int run_id = Integer.parseInt(args[0]);
+      int fuzzerPort = Integer.parseInt(args[1]);
+      int serverClientPort = Integer.parseInt(args[2]);
+      final int peerIndex = Integer.parseInt(args[3]);
+
+      String[] addresses = args[4].split(",");
+      final List<RaftPeer> peers = new ArrayList<>(addresses.length);
+      final int priority = 0;
+      for (int i = 0; i < addresses.length; i++) {
+        peers.add(RaftPeer.newBuilder().setId(Integer.toString(i+1)).setAddress(addresses[i]).setPriority(priority).build());
+      }
+
+      final List<RaftPeer> PEERS = Collections.unmodifiableList(peers);
+      final UUID GROUP_ID = UUID.fromString(args[5]); // "02511d47-d67c-49a3-9011-abb3109a44c1"
+      final RaftGroup RAFT_GROUP = RaftGroup.valueOf(RaftGroupId.valueOf(GROUP_ID), PEERS);
+
+      int restart = Integer.parseInt(args[6]);
 
       System.setProperty("exp.build.data", "./data");
-      //get peerIndex from the arguments
-      // if (args.length != 1) {
-      //   throw new IllegalArgumentException("Invalid argument number: expected to be 1 but actual is " + args.length);
-      // }
-      // final int peerIndex = Integer.parseInt(args[0]);
-      // if (peerIndex < 0 || peerIndex > 2) {
-      //   throw new IllegalArgumentException("The server index must be 0, 1 or 2: peerIndex=" + peerIndex);
-      // }
-      // TimeDuration simulatedSlowness = Optional.ofNullable(Constants.SIMULATED_SLOWNESS)
-      //             .map(slownessList -> slownessList.get(peerIndex))
-      //             .orElse(TimeDuration.ZERO);
-      // startServer(peerIndex, simulatedSlowness);
       FuzzerClient fuzzerClient = FuzzerClient.getInstance();
-      fuzzerClient.setServerClientPort(port);
-      // fuzzerClient.setFuzzerPort(fuzzerPort);
+      fuzzerClient.setServerClientPort(serverClientPort);
+      fuzzerClient.setFuzzerPort(fuzzerPort);
       fuzzerClient.initServer();
-
-      ClusterWrapper cluster = new ClusterWrapper(numNodes);
-      long start = System.currentTimeMillis();
-      cluster.run();
-      long timeElapsed = System.currentTimeMillis() - start;
-      System.out.println("Total runtime: " + timeElapsed);
+      startServer(run_id, peerIndex, PEERS, RAFT_GROUP, restart);
       System.exit(0);
     } catch(Throwable e) {
       e.printStackTrace();
@@ -134,17 +146,33 @@ public final class CounterServer implements Closeable {
     } 
   }
 
-  private static void startServer(int peerIndex, TimeDuration simulatedSlowness) throws IOException {
+  private static void startServer(int runId, int peerIndex, List<RaftPeer> PEERS, RaftGroup RAFT_GROUP, int restart) throws Exception {
     //get peer and define storage dir
-    final RaftPeer currentPeer = Constants.PEERS.get(peerIndex);
-    final File storageDir = new File("/Users/berkay/Documents/Research/ratis-fuzzing/ratis-examples/src/main/java/org/apache/ratis/examples/counter/server/tmp/" + currentPeer.getId());
-
+    final RaftPeer currentPeer = PEERS.get(peerIndex-1);
+    final File storageDir = new File("./data/" + runId + "/" + currentPeer.getId());
+    final FuzzerClient fuzzerClient = FuzzerClient.getInstance();
     //start a counter server
-    try(CounterServer counterServer = new CounterServer(currentPeer, storageDir, simulatedSlowness)) {
+    try(CounterServer counterServer = new CounterServer(currentPeer, storageDir, RAFT_GROUP)) {
       counterServer.start();
 
-      //exit when any input entered
-      new Scanner(System.in, UTF_8.name()).nextLine();
+      if (restart != 1)
+        fuzzerClient.registerServer(Integer.toString(peerIndex));
+      boolean crashFlag;
+      while(!fuzzerClient.shouldShutdown()) {
+        crashFlag = fuzzerClient.getCrash();
+        if (crashFlag) {
+          counterServer.close();
+          fuzzerClient.close();
+          fuzzerClient.join();
+          break;
+        }
+
+        fuzzerClient.getAndExecuteMessages();
+        TimeUnit.MILLISECONDS.sleep(1);
+      }
     }
+
+    if (!fuzzerClient.getCrash())
+      fuzzerClient.sendShutdownReadyEvent();
   }
 }

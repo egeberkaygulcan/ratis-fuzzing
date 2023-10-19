@@ -51,7 +51,7 @@ public final class Constants {
 
   static {
     final Properties properties = new Properties();
-    final String conf = "ratis-examples/src/main/resources/conf.properties";
+    final String conf = "../ratis-examples/src/main/resources/conf.properties";
     try(InputStream inputStream = new FileInputStream(conf);
         Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         BufferedReader bufferedReader = new BufferedReader(reader)) {

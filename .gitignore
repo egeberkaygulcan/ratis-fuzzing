@@ -28,4 +28,8 @@ ratis-fuzzer/dump
 ratis-fuzzer/output
 ratis-fuzzer/plots
 ratis-fuzzer/experiments_berkay
-ratis-fuzzer_
+ratis-fuzzer_/output
+ratis-fuzzer_/plots
+ratis-fuzzer_/experiments_berkay
+ratis-fuzzer_/dump
+ratis-fuzzer_/data

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -39,6 +40,9 @@ public class FuzzerClient extends Thread{
     private int serverClientPort;
     public static int portOffset;
 
+    private EventLoopGroup bossGroup;
+    private EventLoopGroup workerGroup;
+
     private FuzzerCaller client;
     private ReentrantLock clientLock;
     private NettyServer server;
@@ -48,10 +52,7 @@ public class FuzzerClient extends Thread{
     private ConcurrentHashMap<String, Message> messageMap;
     AtomicInteger msgIdCounter;
 
-    private AtomicInteger clientRequests;
-    private CopyOnWriteArrayList<String> crashList;
-    private CopyOnWriteArrayList<String> restartList;
-    private HashSet<String> crashedServers;
+    private boolean crashFlag;
     private boolean shutdownFlag;
     private boolean electionFlag;
     public boolean controlled;
@@ -63,13 +64,12 @@ public class FuzzerClient extends Thread{
         this.messageHandler = new MessageHandler();
         this.messageMap = new ConcurrentHashMap<String, Message>();
         this.msgIdCounter = new AtomicInteger(0);
-        this.clientRequests = new AtomicInteger(0);
-        this.crashList = new CopyOnWriteArrayList<>();
-        this.restartList = new CopyOnWriteArrayList<>();
-        this.crashedServers = new HashSet<String>();
         this.shutdownFlag = false;
         this.electionFlag = false;
         this.controlled = true;
+
+        this.bossGroup = new NioEventLoopGroup();
+        this.workerGroup = new NioEventLoopGroup();
     }
 
     private static class SingletonClient {
@@ -99,12 +99,15 @@ public class FuzzerClient extends Thread{
         SingletonClient.INSTANCE.start();
     }
 
+    public void close() throws InterruptedException {
+        this.serverChannel.close();
+        this.workerGroup.close();
+        this.bossGroup.close();
+        TimeUnit.MILLISECONDS.sleep(500);
+    }
+
     @Override
     public void run() {
-        System.out.println("RUNNING FUZZERCLIENT");
-        EventLoopGroup bossGroup = new NioEventLoopGroup();
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
-
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
@@ -132,7 +135,7 @@ public class FuzzerClient extends Thread{
         }
     }
 
-    public void registerCluster(String id) {
+    public void registerServer(String id) {
         JsonObject json = new JsonObject();
         json.addProperty("id", id);
         json.addProperty("ready", true);
@@ -209,16 +212,6 @@ public class FuzzerClient extends Thread{
         }
     }
 
-    public void addClientRequest() {
-        this.clientRequests.incrementAndGet();
-    }
-
-    public int getClientRequests() {
-        int ret = this.clientRequests.get();
-        this.clientRequests.set(0);
-        return ret;
-    }
-
     public void startShutdown() {
         this.shutdownFlag = true;
     }
@@ -232,41 +225,17 @@ public class FuzzerClient extends Thread{
     }
 
     public void addCrash(String id) {
-        this.crashList.add(id);
+        this.crashFlag = true;
     }
 
-    public ArrayList<String> getCrash() {
-        ArrayList<String> ret = new ArrayList<>(this.crashList);
-        this.crashList.clear();
-        return ret;
-    }
-
-    public void addRestart(String id) {
-        this.restartList.add(id);
-        // this.restartFlag = true;
-    }
-
-    public ArrayList<String> getRestart() {
-        ArrayList<String> ret = new ArrayList<>(this.restartList);
-        this.restartList.clear();
-        return ret;
+    public boolean getCrash() {
+        return this.crashFlag;
     }
 
     public boolean shouldShutdown() {
         return this.shutdownFlag;
     }
 
-    public void addToCrashed(String server) {
-        this.crashedServers.add(server);
-    }
-
-    public void removeFromCrashed(String server) {
-        this.crashedServers.remove(server);
-    }
-
-    public boolean isCrashed(String server) {
-        return this.crashedServers.contains(server);
-    }
 
     public void setServerClientPort(int port) {
         this.serverClientPort = port;
@@ -274,7 +243,7 @@ public class FuzzerClient extends Thread{
 
     public void setFuzzerPort(int port) {
         this.fuzzerPort = port;
-        this.client.updateFuzzerAddress(fuzzerAddress + ":" + Integer.toString(fuzzerPort));
+        this.client.updateFuzzerAddress(this.fuzzerAddress + ":" + Integer.toString(fuzzerPort));
     }
     
     public void clearMessageQueue() {
