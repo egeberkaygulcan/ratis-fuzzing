@@ -207,7 +207,6 @@ class Fuzzer:
                         finally:
                             self.sch_queue.append(trace)
                 k += 1
-            asyncio.sleep(10)
         self.stats["runtime"] = time.time() - start
         logging.info(self.stats)
         self.save(self.config.iterations)
