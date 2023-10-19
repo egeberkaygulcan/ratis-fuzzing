@@ -108,7 +108,11 @@ class RatisCluster:
                 elif ch["type"] == "Start":
                     start_points[ch["step"]] = ch["node"]
                 elif ch["type"] == "Schedule":
-                    schedule[ch["step"]] = (ch["node"], ch["node2"], ch["max_messages"])
+                    try:
+                        schedule[ch["step"]] = (ch["node"], ch["node2"], ch["max_messages"])
+                    except:
+                        self.shutdown()
+                        return None, None, None
                 elif ch["type"] == "ClientRequest":
                     client_requests.append(ch["step"])
 
@@ -164,7 +168,11 @@ class RatisCluster:
 
                 if key in mailboxes:
                     if schedule[i][0] not in crashed:
-                        self.network.schedule_replica(schedule[i][0], schedule[i][1], schedule[i][2])
+                        try:
+                            self.network.schedule_replica(schedule[i][0], schedule[i][1], schedule[i][2])
+                        except:
+                            self.shutdown()
+                            return None, None, None
                         trace.append({"type": "Schedule", "node": schedule[i][0], "node2": schedule[i][1], "step": i, "max_messages": schedule[i][2]})
                 
 

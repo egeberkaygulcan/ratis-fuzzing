@@ -156,5 +156,9 @@ if __name__ == '__main__':
         # if args.control is not None:
         #     fuzzer.run_controlled()
         #     break
-        asyncio.run(fuzzer.run())
-        load = True
+        try:
+            asyncio.run(fuzzer.run())
+        except:
+            pass
+        finally:
+            load = True

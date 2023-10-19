@@ -159,7 +159,7 @@ class PeerConfiguration {
         num++;
       }
     }
-    return num > size() / 2;
+    return num > (size() / 3 + 1);
   }
 
   int getMajorityCount() {

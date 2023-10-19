@@ -185,6 +185,8 @@ class Fuzzer:
             results = await asyncio.gather(*self.generate_coros(range(iters, iters+self.config.num_workers, 1), mimics, run_ids))
             k = 0
             for trace, event_trace, is_buggy in results:
+                if trace is None:
+                    continue
                 if is_buggy:
                     self.stats['bug_iterations'].append(iters+k)
 
