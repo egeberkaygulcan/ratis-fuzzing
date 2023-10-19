@@ -101,8 +101,8 @@ public class FuzzerClient extends Thread{
 
     public void close() throws InterruptedException {
         this.serverChannel.close();
-        this.workerGroup.close();
-        this.bossGroup.close();
+        // this.workerGroup.close();
+        // this.bossGroup.close();
         TimeUnit.MILLISECONDS.sleep(500);
     }
 
