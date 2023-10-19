@@ -43,10 +43,9 @@ class RatisServer:
                 logging.debug(result.stdout)
             except subprocess.CalledProcessError as e:
                 if len(e.stderr) > 0:
-                    if 'Address already in use' not in e.stderr:
-                        logging.error(f'CalledProcessError {run_id}.')
-                        self.error_flag = True
-                        self.error_log = (e.stderr, e.stdout)
+                    logging.error(f'CalledProcessError {run_id}.')
+                    self.error_flag = True
+                    self.error_log = (e.stderr, e.stdout)
             except subprocess.TimeoutExpired as e:
                 pass
                 # logging.error('TimeoutExpired.')

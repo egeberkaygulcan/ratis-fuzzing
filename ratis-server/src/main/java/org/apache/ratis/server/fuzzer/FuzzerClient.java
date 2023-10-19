@@ -101,16 +101,15 @@ public class FuzzerClient extends Thread{
 
     public void close() throws InterruptedException {
         this.serverChannel.close();
-        // this.workerGroup.close();
-        // this.bossGroup.close();
-        TimeUnit.MILLISECONDS.sleep(500);
+        this.workerGroup.shutdownGracefully();
+        this.bossGroup.shutdownGracefully();
     }
 
     @Override
     public void run() {
         try {
             ServerBootstrap b = new ServerBootstrap();
-            b.group(bossGroup, workerGroup)
+            b.group(this.bossGroup, this.workerGroup)
                 .channel(NioServerSocketChannel.class)
                 .handler(new LoggingHandler(LogLevel.INFO))
                 .childHandler(new ChannelInitializer<SocketChannel>() {

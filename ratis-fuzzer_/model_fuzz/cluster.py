@@ -101,18 +101,14 @@ class RatisCluster:
                 max_messages = random.randint(0, self.config.max_messages_to_schedule)
                 schedule.append((choice, to, max_messages))
         else:
-            schedule = [(1, random.randint(0, self.config.max_messages_to_schedule)) for i in range(self.config.horizon)]
+            schedule = [(1, 1, random.randint(0, self.config.max_messages_to_schedule)) for i in range(self.config.horizon)]
             for ch in mimic:
                 if ch["type"] == "Crash":
                     crash_points[ch["step"]] = ch["node"]
                 elif ch["type"] == "Start":
                     start_points[ch["step"]] = ch["node"]
                 elif ch["type"] == "Schedule":
-                    try:
-                        schedule[ch["step"]] = (ch["node"], ch["node2"], ch["max_messages"])
-                    except:
-                        self.shutdown()
-                        return None, None, None
+                    schedule[ch["step"]] = (ch["node"], ch["node2"], ch["max_messages"])
                 elif ch["type"] == "ClientRequest":
                     client_requests.append(ch["step"])
 
@@ -144,7 +140,7 @@ class RatisCluster:
                     logging.debug(f"Crashing node {node_id}")
                     if node_id not in crashed:
                         self.network.send_crash(node_id)
-                        # self.servers[node_id].shutdown()
+                        self.servers[node_id].shutdown()
                     crashed.add(node_id)
                     trace.append({"type": "Crash", "node": node_id, "step": i})
                     self.network.add_event({"name": "Remove", "params": {"i": node_id, "node": node_id}})
@@ -168,11 +164,7 @@ class RatisCluster:
 
                 if key in mailboxes:
                     if schedule[i][0] not in crashed:
-                        try:
-                            self.network.schedule_replica(schedule[i][0], schedule[i][1], schedule[i][2])
-                        except:
-                            self.shutdown()
-                            return None, None, None
+                        self.network.schedule_replica(schedule[i][0], schedule[i][1], schedule[i][2])
                         trace.append({"type": "Schedule", "node": schedule[i][0], "node2": schedule[i][1], "step": i, "max_messages": schedule[i][2]})
                 
 
