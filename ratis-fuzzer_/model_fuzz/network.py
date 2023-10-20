@@ -153,7 +153,12 @@ class Network:
         self.request_ctr = 1
         self.event_trace = []
         self.leader_id = -1
+        self.timeout = False
+        self.multiple_leaders = False
         self.cluster_shutdown_ready = False
+
+        self.log_index = None
+        self.negative_log_index = False
 
         self.server = Server(addr, router)
         self.server_thread = Thread(target=self.server.serve_forever)
@@ -169,17 +174,16 @@ class Network:
         self.server.server_close()
         logging.debug('Network shutdown.')
     
-    def check_mailboxes(self):
-        queued_mailboxes = []
+    def check_mailboxes(self, key):
+        result = False
         try:
             self.lock.acquire()
-            for id in self.mailboxes.keys():
-                if len(self.mailboxes[id]) != 0:
-                    queued_mailboxes.append(id)
+            if key in self.mailboxes.keys():
+                result = True
         finally:
             if self.lock.locked():
                 self.lock.release()
-        return queued_mailboxes
+        return result
     
     def check_replicas(self):
         result = False
@@ -287,7 +291,8 @@ class Network:
                 else:
                     to = msg.to
                     fr = msg.fr
-                key = f"{to}_{fr}"
+                # key = f"{to}_{fr}"
+                key = str(to)
                 if to not in self.mailboxes:
                     self.mailboxes[key] = []
                 self.mailboxes[key].append(msg)
@@ -322,6 +327,13 @@ class Network:
         if event["type"] == "ShutdownReady":
             self.cluster_shutdown_ready = True
             return None
+        if event['type'] == 'LogUpdate':
+            self.log_index = int(event['log_index'])
+            if self.log_index < 0:
+                self.negative_log_index = True
+            logging.info(f'Log index updated: {self.log_index}')
+            # TODO - Simulate error
+            return None
         elif event["type"] == "ClientRequest":
             self.client_request_counter += 1
             return {
@@ -329,6 +341,10 @@ class Network:
                 "request": self.client_request_counter-1
             }
         elif event["type"] == "BecomeLeader":
+            if self.leader_id != -1:
+                if not self.timeout:
+                    self.multiple_leaders = True
+            self.timeout = False
             self.leader_id = event["node"]
             logging.debug(f'Leader elected: {self.leader_id}')
             return {
@@ -336,6 +352,7 @@ class Network:
                 "term": int(event["term"])
             }
         elif event["type"] == "Timeout":
+            self.timeout = True
             return {
                 "node": int(event["node"])
             }
@@ -383,7 +400,8 @@ class Network:
 
     def schedule_replica(self, replica, replica2, max_messages):
         messages_to_deliver = []
-        key = f'{replica}_{replica2}'
+        # key = f'{replica}_{replica2}'
+        key = str(replica)
         logging.debug(f'Scheduling replica-pair {key}')
         try:
             self.lock.acquire()

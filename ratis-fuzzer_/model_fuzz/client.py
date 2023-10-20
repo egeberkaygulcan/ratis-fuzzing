@@ -47,7 +47,7 @@ class RatisClient:
 
         self.thread = threading.Thread(target=run, args=(self.cmd, self.timeout))
         self.thread.start()
-        logging.debug('RatisClient started.')
+        logging.debug(f'RatisClient started.\n{self.cmd}')
 
     def shutdown(self) -> bool:
         try:

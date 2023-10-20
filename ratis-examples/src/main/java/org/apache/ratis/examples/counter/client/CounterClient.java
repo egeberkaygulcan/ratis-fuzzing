@@ -87,14 +87,12 @@ public final class CounterClient implements Closeable {
 
     //send INCREMENT command(s)
     // use BlockingApi
-    final ExecutorService executor = Executors.newFixedThreadPool(10);
-      final Future<RaftClientReply> fut = executor.submit(
-          () -> client.io().send(CounterCommand.INCREMENT.getMessage()));
-    futures.add(fut);
-    String elleVal = "{:type :invoke, :f :add, :value 1, :op-index " + request + ", :process " + client.getId().toString() + ", :time " + Instant.now().toEpochMilli() + ", :index " + ((2*request)-2) + "}\n";
-    executor.shutdown();
 
-    writeToElle(elleFile, elleVal);    
+    final Future<RaftClientReply> fut = client.async().send(CounterCommand.INCREMENT.getMessage());
+    futures.add(fut);
+    // String elleVal = "{:type :invoke, :f :add, :value 1, :op-index " + request + ", :process " + client.getId().toString() + ", :time " + Instant.now().toEpochMilli() + ", :index " + ((2*request)-2) + "}\n";
+
+    // writeToElle(elleFile, elleVal);    
 
     //wait for the futures
     for (Future<RaftClientReply> f : futures) {
@@ -102,14 +100,19 @@ public final class CounterClient implements Closeable {
       if (reply.isSuccess()) {
         final String count = reply.getMessage().getContent().toStringUtf8();
         System.out.println("Counter is incremented to " + count);
-        elleVal =  "{:type :ok, :f :add, :value 1, :op-index " + count + ", :process " + client.getId().toString() + ", :time " + Instant.now().toEpochMilli() + ", :index " + ((2*request)-1) + "}\n";
-        writeToElle(elleFile, elleVal);
+        // elleVal =  "{:type :ok, :f :add, :value 1, :op-index " + count + ", :process " + client.getId().toString() + ", :time " + Instant.now().toEpochMilli() + ", :index " + ((2*request)-1) + "}\n";
+        // writeToElle(elleFile, elleVal);
       } else {
         System.err.println("Failed " + reply);
+        throw new Exception("Failed client request");
       }
     }
     futures.clear();
     client.close();
+
+    for (Future<RaftClientReply> f : futures) {
+      f.get();
+    }
   }
 
   public static void main(String[] args) {

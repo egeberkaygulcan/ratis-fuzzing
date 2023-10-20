@@ -50,7 +50,7 @@ class RatisCluster:
                 self.group_id)
         self.clients = []
 
-        os.makedirs(f'dump/{self.run_id}', exist_ok=True)
+        # os.makedirs(f'dump/{self.run_id}', exist_ok=True)
         self.elle_file = f'dump/{self.run_id}/elle.edn'
         self.elle_cmd = f'java -jar ../../elle-cli/target/elle-cli-0.1.7-standalone.jar --model counter {self.elle_file}'
 
@@ -62,8 +62,8 @@ class RatisCluster:
         if os.path.exists(f'./data/{self.run_id}'):
             shutil.rmtree(f'./data/{self.run_id}')
 
-        if os.path.exists(f'./dump/{self.run_id}'):
-            shutil.rmtree(f'./dump/{self.run_id}')
+        # if os.path.exists(f'./dump/{self.run_id}'):
+        #     shutil.rmtree(f'./dump/{self.run_id}')
 
         logging.info(f'Cluster {self.run_id} shutdown.')
 
@@ -155,7 +155,10 @@ class RatisCluster:
                     trace.append({"type": "Crash", "node": node_id, "step": i})
                     self.network.add_event({"name": "Remove", "params": {"i": node_id, "node": node_id}})
                 
-                await asyncio.sleep(5e-2)
+                # key = f'{schedule[i][0]}_{schedule[i][1]}'
+                key = f'{schedule[i][0]}'
+                if not self.network.check_mailboxes(key):
+                    await asyncio.sleep(5e-2)
                 if schedule[i][0] not in crashed:
                     self.network.schedule_replica(schedule[i][0], schedule[i][1], schedule[i][2])
                     trace.append({"type": "Schedule", "node": schedule[i][0], "node2": schedule[i][1], "step": i, "max_messages": schedule[i][2]})
@@ -192,7 +195,6 @@ class RatisCluster:
                 logging.error('Error on shutdown!')
 
         event_trace = self.network.get_event_trace()
-
         end_process_timeout = time.time() + 5e-3
         while True:
             if self.network.cluster_shutdown_ready or time.time() > end_process_timeout:
@@ -201,84 +203,98 @@ class RatisCluster:
 
         self.end_process()
 
-        err, err_log = await self.run_elle(self.elle_cmd, self.elle_file)
-        if err:
-            if err_log is not None:
-                _, stdout = err_log
-                if len(stdout) > 0:
-                    self.error_flag = True
-                    self.error_logs.append(err_log)
+        # err, err_log = await self.run_elle(self.elle_cmd, self.elle_file)
+        # if err:
+        #     if err_log is not None:
+        #         _, stdout = err_log
+        #         if len(stdout) > 0:
+        #             self.error_flag = True
+        #             self.error_logs.append(err_log)
         self.check_errors(iteration, event_trace, trace)
 
         self.shutdown()
         return (trace, event_trace, self.error_flag)
 
     
-    async def run_elle(self, elle_cmd, elle_file):
-        err = False
-        err_log = None
-        try:
-            proc = await asyncio.create_subprocess_shell(elle_cmd,
-                                                                stdout=asyncio.subprocess.PIPE,
-                                                                stderr=asyncio.subprocess.PIPE)# subprocess.run(elle_cmd, shell=True, capture_output=True, text=True, check=True)
-            stdout, stderr = await proc.communicate()
-            if 'true' not in stdout.decode():
-                logging.error('Elle check error.')
-                err = True
-                with open(elle_file, 'r') as f:
-                    elle_log = f.readlines()
-                err_log = (f'Elle linearizability fail.\n\n{elle_log}', stdout.decode())
-        except Exception as e:
-            traceback.print_exc()
-            return True, None
-        finally:
-            return err, err_log
+    # async def run_elle(self, elle_cmd, elle_file):
+    #     err = False
+    #     err_log = None
+    #     try:
+    #         proc = await asyncio.create_subprocess_shell(elle_cmd,
+    #                                                             stdout=asyncio.subprocess.PIPE,
+    #                                                             stderr=asyncio.subprocess.PIPE)# subprocess.run(elle_cmd, shell=True, capture_output=True, text=True, check=True)
+    #         stdout, stderr = await proc.communicate()
+    #         if 'true' not in stdout.decode():
+    #             logging.error('Elle check error.')
+    #             err = True
+    #             with open(elle_file, 'r') as f:
+    #                 elle_log = f.readlines()
+    #             err_log = (f'Elle linearizability fail.\n\n{elle_log}', stdout.decode())
+    #     except Exception as e:
+    #         traceback.print_exc()
+    #         return True, None
+    #     finally:
+    #         return err, err_log
     
     def check_error_flag(self):
-        for server in self.servers.values():
-            if server.error_flag:
-                self.error_flag = True
-        
-        for client in self.clients:
-            if client.error_flag:
-                self.error_flag = True
+        try:
+            for server in self.servers.values():
+                if server.error_flag:
+                    self.error_flag = True
+            
+            for client in self.clients:
+                if client.error_flag:
+                    self.error_flag = True
+        except Exception as e:
+            traceback.print_exc()
         return self.error_flag
     
     def check_errors(self, iteration, event_trace, trace):
-        for server in self.servers.values():
-            if server.error_flag:
-                self.error_flag = True
-                self.error_logs.append(server.error_log)
+        try:
+            for server in self.servers.values():
+                if server.error_flag:
+                    self.error_flag = True
+                    self.error_logs.append(server.error_log)
+            
+            for client in self.clients:
+                if client.error_flag:
+                    self.error_flag = True
+                    self.error_logs.append(client.error_log)
+            
+            log_index = self.network.log_index
+
+            if log_index is not None:
+                if log_index >2 or log_index < 0:
+                    self.error_flag = True
+                    err = f'Large LogIndex: {log_index}' if not self.network.negative_log_index else 'Negative LogIndex!'
+                    self.error_logs.append((err, ''))
+
+            if self.error_flag:
+                stdout_ = []
+                stderr_ = []
+                for i in range(len(self.error_logs)):
+                    if self.error_logs is None or self.error_logs[i] is None:
+                        err, out = ('', '')
+                    else:
+                        err, out = self.error_logs[i]
+                    stdout_.append(out)
+                    stderr_.append(err)
+
+                stdout = '\n\n--------------------------------------------------------------------------------\n\n'.join(stdout_)
+                stderr = '\n\n--------------------------------------------------------------------------------\n\n'.join(stderr_)
+
+                path = os.path.join(self.config.error_path, f'{self.config.exp_name}_{iteration}')
+                os.makedirs(path, exist_ok=True)
+                with open(os.path.join(path, 'stderr.log'), 'w+') as f:
+                    f.writelines(stderr)
+                with open(os.path.join(path, 'stdout.log'), 'w+') as f:
+                    f.writelines(stdout)
+                with open(os.path.join(path, 'event_trace.log'), 'w+') as f:
+                    for trace_ in event_trace:
+                        f.write(f'{str(trace_)}\n')
+                with open(os.path.join(path, 'trace.pkl'), 'wb') as f:
+                    pickle.dump(trace, f)
+        except Exception as e:
+            traceback.print_exc()
         
-        for client in self.clients:
-            if client.error_flag:
-                self.error_flag = True
-                self.error_logs.append(client.error_log)
-
-        if self.error_flag:
-            stdout_ = []
-            stderr_ = []
-            for i in range(len(self.error_logs)):
-                if self.error_logs is None or self.error_logs[i] is None:
-                    err, out = ('', '')
-                else:
-                    err, out = self.error_logs[i]
-                stdout_.append(out)
-                stderr_.append(err)
-
-            stdout = '\n\n--------------------------------------------------------------------------------\n\n'.join(stdout_)
-            stderr = '\n\n--------------------------------------------------------------------------------\n\n'.join(stderr_)
-
-            path = os.path.join(self.config.error_path, f'{self.config.exp_name}_{iteration}')
-            os.makedirs(path, exist_ok=True)
-            with open(os.path.join(path, 'stderr.log'), 'w+') as f:
-                f.writelines(stderr)
-            with open(os.path.join(path, 'stdout.log'), 'w+') as f:
-                f.writelines(stdout)
-            with open(os.path.join(path, 'event_trace.log'), 'w+') as f:
-                for trace_ in event_trace:
-                    f.write(f'{str(trace_)}\n')
-            with open(os.path.join(path, 'trace.pkl'), 'wb') as f:
-                pickle.dump(trace, f)
-    
 

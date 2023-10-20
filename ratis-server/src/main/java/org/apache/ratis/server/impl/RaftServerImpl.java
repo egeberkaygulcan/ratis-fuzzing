@@ -1578,7 +1578,7 @@ class RaftServerImpl implements RaftServer.Division,
       logAppendEntries(isHeartbeat, () -> getMemberId() + ": succeeded to handle AppendEntries. Reply: "
           + ServerStringUtils.toAppendEntriesReplyString(reply));
       timer.stop();  // TODO: future never completes exceptionally?
-      sendEvent(new LogUpdateEvent(getId().toString(), entries));
+      // sendEvent(new LogUpdateEvent(getId().toString(), entries));
       return reply;
     });
   }

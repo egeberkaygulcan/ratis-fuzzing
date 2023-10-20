@@ -56,7 +56,7 @@ class Fuzzer:
             "bug_iterations" : []
         }
     
-    def save(self, iters):
+    def save(self, iters, random_state):
         path = self.config.save_dir
         os.makedirs(path, exist_ok=True)
         self.guider.save_states(os.path.join(path, f'{self.config.exp_name}_states.pkl'))
@@ -68,6 +68,9 @@ class Fuzzer:
         
         with open(os.path.join(path, f'{self.config.exp_name}_iters.pkl'), 'wb') as f:
             pickle.dump(iters, f)
+        
+        with open(os.path.join(path, f'{self.config.exp_name}_random_state.pkl'), 'wb') as f:
+            pickle.dump(random_state, f)
 
     def load(self):
         path = self.config.save_dir
@@ -82,6 +85,10 @@ class Fuzzer:
         if os.path.exists(os.path.join(path, f'{self.config.exp_name}_iters.pkl')):
             with open(os.path.join(path, f'{self.config.exp_name}_iters.pkl'), 'rb') as f:
                 self.prev_iters = pickle.load(f)
+        
+        if os.path.exists(os.path.join(path, f'{self.config.exp_name}_random_state.pkl')):
+            with open(os.path.join(path, f'{self.config.exp_name}_random_state.pkl'), 'rb') as f:
+                random.setstate(pickle.load(f))
 
     # def run_controlled(self):
     #     # TODO - Clusterify
@@ -163,9 +170,9 @@ class Fuzzer:
                 # if iter_count >= self.config.iterations:
                 #     return True
                 if iters != 0 and i % self.config.save_every == 0:
-                    self.save(iters)
+                    self.save(iters, random.getstate())
                 
-                if i % self.config.seed_frequency == 0 and not random_:
+                if iters % self.config.seed_frequency == 0 and not random_:
                     self.seed()
 
                 logging.info(f'##### Starting fuzzer iterations {iters}-{iters+self.config.num_workers-1} #####')
@@ -185,7 +192,7 @@ class Fuzzer:
                 run_ids = [iters+j for j in range(self.config.num_workers)]
                 results = await asyncio.gather(*self.generate_coros(range(iters, iters+self.config.num_workers, 1), mimics, run_ids))
                 k = 0
-                await asyncio.sleep(1)
+                # await asyncio.sleep(1)
                 for trace, event_trace, is_buggy in results:
                     if trace is None:
                         continue
@@ -213,7 +220,7 @@ class Fuzzer:
 
             self.stats["runtime"] = time.time() - start
             logging.info(self.stats)
-            self.save(self.config.iterations + self.prev_iters)
+            self.save(self.config.iterations + self.prev_iters, random.getstate())
         except Exception as e:
             traceback.print_exc()
 

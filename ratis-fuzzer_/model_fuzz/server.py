@@ -59,7 +59,7 @@ class RatisServer:
         self.cmd = self.get_cmd(restart)
         self.thread = threading.Thread(target=run, args=(self.cmd, self.timeout, self.run_id))
         self.thread.start()
-        logging.debug(f'RatisServer {self.peer_index} started.\n')
+        logging.debug(f'RatisServer {self.peer_index} started.\n{self.get_cmd(False)}')
 
     def shutdown(self) -> bool:
         try:

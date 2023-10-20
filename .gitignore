@@ -31,5 +31,7 @@ ratis-fuzzer/experiments_berkay
 ratis-fuzzer_/output
 ratis-fuzzer_/plots
 ratis-fuzzer_/experiments_berkay
+ratis-fuzzer_/experiments_berkay_
 ratis-fuzzer_/dump
 ratis-fuzzer_/data
+ratis-fuzzer_/model_fuzz/network.py

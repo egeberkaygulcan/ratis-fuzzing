@@ -19,12 +19,12 @@ import com.google.gson.JsonObject;
 public class LogUpdateEvent extends Event {
 
     public static final Logger LOG = LoggerFactory.getLogger(LogUpdateEvent.class);
-    private List<LogEntryProto> entries;
+    private long logIndex;
 
-    public LogUpdateEvent(String serverId, List<LogEntryProto> entries) {
-        this.type = "log_update";
-        this.serverId = serverId;
-        this.entries = entries;
+    public LogUpdateEvent(RaftPeerId serverId, long logIndex) {
+        this.type = "LogUpdate";
+        this.serverId = serverId.toString();
+        this.logIndex = logIndex;
 
         LOG.info("New log update event on server " + this.serverId);
     }
@@ -34,25 +34,25 @@ public class LogUpdateEvent extends Event {
         JsonObject json = new JsonObject();
         json.addProperty("type", type);
         json.addProperty("server_id", serverId);
+        json.addProperty("log_index", logIndex);
         
-        JsonObject entries_ = new JsonObject();
-        int i = 0;
-        String entryStr;
-        for(LogEntryProto entry : entries) {
-            if (entry.hasStateMachineLogEntry()) {
-                JsonObject entryJson = new JsonObject();
-                entryStr = Base64.getEncoder().encodeToString(entry.getStateMachineLogEntry().getLogData().toByteArray());
-                entryJson.addProperty("data_len", entryStr.length());
-                if (entryStr.length() > 0) {
-                    entryJson.addProperty("data", entryStr);
-                } else {
-                    entryJson.addProperty("data", "");
-                }
-                entries_.add(Integer.toString(i), entryJson);
-                i++;
-            }
-        }
-        json.add("entries", entries_);
+        // JsonObject entries_ = new JsonObject();
+        // int i = 0;
+        // String entryStr;
+        // for(LogEntryProto entry : entries) {
+        //     if (entry.hasStateMachineLogEntry()) {
+        //         JsonObject entryJson = new JsonObject();
+        //         entryStr = Base64.getEncoder().encodeToString(entry.getStateMachineLogEntry().getLogData().toByteArray());
+        //         entryJson.addProperty("data_len", entryStr.length());
+        //         if (entryStr.length() > 0) {
+        //             entryJson.addProperty("data", entryStr);
+        //         } else {
+        //             entryJson.addProperty("data", "");
+        //         }
+        //         entries_.add(Integer.toString(i), entryJson);
+        //         i++;
+        //     }
+        // }
 
         Gson gson = GsonHelper.gson;
         return gson.toJson(json);

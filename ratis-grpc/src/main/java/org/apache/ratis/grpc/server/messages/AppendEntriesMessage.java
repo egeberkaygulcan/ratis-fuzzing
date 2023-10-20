@@ -32,7 +32,7 @@ public class AppendEntriesMessage extends Message {
         this.logAppender = logAppender;
         this.invokeServerId = invokeServerId;
 
-        fuzzerClient.sendEvent(new LogUpdateEvent(this.proto.getServerRequest().getRequestorId().toStringUtf8(), this.proto.getEntriesList()));
+        // fuzzerClient.sendEvent(new LogUpdateEvent(this.proto.getServerRequest().getRequestorId().toStringUtf8(), this.proto.getEntriesList()));
 
         LOG.info("Intercepted append entries from server " + this.proto.getServerRequest().getRequestorId().toStringUtf8() + " to " + this.proto.getServerRequest().getReplyId().toStringUtf8());
         

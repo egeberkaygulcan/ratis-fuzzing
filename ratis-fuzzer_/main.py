@@ -1,3 +1,7 @@
+import os
+import time
+import random
+import pickle
 import asyncio
 import logging
 import argparse
@@ -7,7 +11,7 @@ from pandas import read_csv
 from types import SimpleNamespace
 
 from model_fuzz.fuzzer import Fuzzer
-from model_fuzz.guider import TLCGuider, TraceGuider
+from model_fuzz.guider import TLCGuider, TraceGuider, EmptyGuider
 from model_fuzz.mutator import SwapMutator, SwapCrashStepsMutator, SwapCrashNodesMutator, CombinedMutator, MaxMessagesMutator, DefaultMutator
 
 def parse_args():
@@ -16,6 +20,7 @@ def parse_args():
     parser.add_argument('-c', '--config', type=str, default='random_state_config.csv')
     parser.add_argument('-l', '--load', action='store_true')
     parser.add_argument('-ct', '--control', type=str)
+    parser.add_argument('-s', '--seed', type=int, default=123456)
 
     return parser.parse_args()
 
@@ -95,6 +100,8 @@ def validate_config(config):
                 new_config.guider = TraceGuider(tlc_addr)
             elif config['guider'] == 'state':
                 new_config.guider = TLCGuider(tlc_addr)
+            elif config['guider'] == 'empty':
+                new_config.guider = EmptyGuider(tlc_addr)
             else:
                 new_config.guider = TLCGuider(tlc_addr)
         else:
@@ -121,7 +128,7 @@ def validate_config(config):
             new_config.snapshots_path = config["snapshots_path"]
         
         if "max_message_to_schedule" not in config:
-            new_config.max_messages_to_schedule = 5
+            new_config.max_messages_to_schedule = 20
             
         save_dir = 'output/saved'
         if "save_dir" in config:
@@ -149,6 +156,11 @@ def main():
         logging.basicConfig(level=logging.INFO)
     
     experiment_config = read_csv(args.config, index_col=False)
+    random_seed = + time.time_ns()
+    random.seed(random_seed)
+    os.makedirs('output/saved', exist_ok=True)
+    with open('output/saved/random_seed.pkl', 'wb') as f:
+        pickle.dump(random_seed, f)
     
     load = args.load
     for index, row in experiment_config.iterrows():

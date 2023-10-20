@@ -3,6 +3,26 @@ import pickle
 import logging
 import requests
 
+class EmptyGuider:
+    def __init__(self, tlc_addr) -> None:
+        self.tlc_addr = tlc_addr
+        self.states = {}
+    
+    def check_new_state(self, trace, event_trace, name, record = False) -> int:
+        return 1
+
+    def coverage(self):
+        return 1
+
+    def save_states(self, dir_):
+        pass
+        
+    def load_states(self, dir_):
+        pass
+
+    def reset(self):
+        self.states = {}
+
 from hashlib import sha256
 class TLCGuider:
     def __init__(self, tlc_addr) -> None:
