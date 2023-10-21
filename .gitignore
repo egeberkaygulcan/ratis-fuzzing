@@ -27,11 +27,11 @@ ratis-fuzzer/saved
 ratis-fuzzer/dump
 ratis-fuzzer/output
 ratis-fuzzer/plots
-ratis-fuzzer/experiments_berkay
+ratis-fuzzer/experiments
 ratis-fuzzer_/output
 ratis-fuzzer_/plots
-ratis-fuzzer_/experiments_berkay
-ratis-fuzzer_/experiments_berkay_
+ratis-fuzzer_/experiments
+ratis-fuzzer_/experiments_
 ratis-fuzzer_/dump
 ratis-fuzzer_/data
 ratis-fuzzer_/model_fuzz/network.py
