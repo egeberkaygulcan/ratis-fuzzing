@@ -1,5 +1,6 @@
 package org.apache.ratis.server.fuzzer;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Vector;
@@ -19,6 +20,8 @@ import org.apache.ratis.server.fuzzer.comm.Route;
 import org.apache.ratis.server.fuzzer.events.Event;
 import org.apache.ratis.server.fuzzer.events.ShutdownReadyEvent;
 import org.apache.ratis.server.fuzzer.messages.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -33,6 +36,8 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
 public class FuzzerClient extends Thread{
+
+    Logger LOG = LoggerFactory.getLogger(FuzzerClient.class);
 
     private final String fuzzerAddress = "127.0.0.1";
     private int fuzzerPort;

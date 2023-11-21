@@ -4,13 +4,17 @@ import okhttp3.*;
 
 import java.io.IOException;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonObject;
 import com.google.gson.Gson;
 
 public class FuzzerCaller {
+
+    Logger LOG = LoggerFactory.getLogger(FuzzerCaller.class);
+
     private OkHttpClient client = new OkHttpClient();
     private static MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private String fuzzerAddress;

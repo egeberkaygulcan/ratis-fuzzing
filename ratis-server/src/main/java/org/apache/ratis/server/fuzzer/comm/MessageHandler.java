@@ -13,12 +13,15 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.ratis.protocol.RaftPeerId;
 import org.apache.ratis.server.fuzzer.FuzzerClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpHeaderValues.APPLICATION_JSON;
 
 public class MessageHandler{
 
+    Logger LOG = LoggerFactory.getLogger(MessageHandler.class);
     private Vector<JsonMessage> messages;
     private final ReentrantLock lock = new ReentrantLock();
 
@@ -70,7 +73,7 @@ public class MessageHandler{
             throw new IOException("not a json request");
         }
         String str = content.toString(CharsetUtil.UTF_8);
-        return JsonMessage.fromJsonString(str.substring(1, str.length() - 1).replace("\\", ""));
+        return JsonMessage.fromJsonString(str); //.substring(1, str.length() - 1).replace("\\", "")
     }
 
     public Vector<JsonMessage> getMessages() {
