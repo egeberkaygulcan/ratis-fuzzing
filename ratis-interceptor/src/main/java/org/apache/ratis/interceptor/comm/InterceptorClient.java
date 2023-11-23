@@ -45,7 +45,7 @@ public class InterceptorClient {
         return "";
     }
 
-    public void sendMessage(InterceptorMessage.Builder messageBuilder) {
+    public void sendMessage(InterceptorMessage.Builder messageBuilder) throws IOException{
         // TODO:
         //  [ ] need to return a future to wait for a message on
         //  [x] use the message builder to construct a message after assigning message id, from address

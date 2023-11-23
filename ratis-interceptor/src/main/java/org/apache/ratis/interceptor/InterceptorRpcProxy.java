@@ -1,16 +1,15 @@
 package org.apache.ratis.interceptor;
 
 import org.apache.ratis.conf.RaftProperties;
-import org.apache.ratis.netty.NettyRpcProxy;
+import org.apache.ratis.interceptor.comm.InterceptorMessage;
 import org.apache.ratis.protocol.RaftPeer;
-import org.apache.ratis.util.IOUtils;
 import org.apache.ratis.util.PeerProxyMap;
 
 import java.io.Closeable;
 import java.io.IOException;
 
+// The proxy server can use the listen address to communicate the message to the 
 public class InterceptorRpcProxy implements Closeable {
-    // TODO: need to figure out what this does
     public static class PeerMap extends PeerProxyMap<InterceptorRpcProxy> {
         private final RaftProperties properties;
 
@@ -39,4 +38,8 @@ public class InterceptorRpcProxy implements Closeable {
 
     @Override
     public void close() {}
+
+    public InterceptorMessage send() {
+        return null;
+    }
 }

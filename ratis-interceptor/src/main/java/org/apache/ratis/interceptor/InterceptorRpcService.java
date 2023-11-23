@@ -16,6 +16,7 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
     public static final Logger LOG = LoggerFactory.getLogger(InterceptorRpcService.class);
 
     private final RaftServer raftServer;
+    private final InetSocketAddress iListenerAddress;
     private final InetSocketAddress listenerAddress;
     private final InetSocketAddress serverAddress;
 
@@ -25,17 +26,19 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
         super(server::getId, id -> new InterceptorRpcProxy.PeerMap(id.toString(), server.getProperties()));
         this.raftServer = server;
 
+        final String iLhost = InterceptorConfigKeys.InterceptorListener.host(server.getProperties());
+        final int iLport = InterceptorConfigKeys.InterceptorListener.port(server.getProperties());
+        this.iListenerAddress = new InetSocketAddress(iLhost, iLport);
+
         final String lhost = InterceptorConfigKeys.Listener.host(server.getProperties());
         final int lport = InterceptorConfigKeys.Listener.port(server.getProperties());
-
         this.listenerAddress = new InetSocketAddress(lhost, lport);
 
         final String shost = InterceptorConfigKeys.Server.host(server.getProperties());
         final int sport = InterceptorConfigKeys.Server.port(server.getProperties());
+        this.serverAddress = new InetSocketAddress(shost, sport);
 
-        this.serverAddress = new InetSocketAddress(lhost, lport);
-
-        this.iClient = new InterceptorClient(server, this.serverAddress, this.listenerAddress);
+        this.iClient = new InterceptorClient(server, this.serverAddress, this.iListenerAddress);
     }
 
     @Override

@@ -4,7 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import org.apache.ratis.proto.RaftProtos.*;
+
+import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,7 +81,6 @@ public class InterceptorMessage {
         private String from;
         private String id;
         private String requestId;
-        private String type;
 
         private RequestVoteRequestProto requestVoteRequest;
         private RequestVoteReplyProto requestVoteReply;
@@ -143,13 +146,37 @@ public class InterceptorMessage {
             return this;
         }
 
-        public InterceptorMessage build() {
-            // TODO: construct the data encoding based on each message type
-            return null;
+        public InterceptorMessage build() throws IOException {
+            byte[] data;
+            String to;
+            String type = "";
+            
+            if(this.requestVoteRequest != null) {
+                data = InterceptorMessageUtils.fromRequestVoteRequest(this.requestVoteRequest);
+                to = this.requestVoteRequest.getServerRequest().getReplyId().toStringUtf8();
+                type = "request_vote_request";
+            } else if(this.requestVoteReply != null) {
+                data = InterceptorMessageUtils.fromRequestVoteReply(this.requestVoteReply);
+                to = this.requestVoteReply.getServerReply().getRequestorId().toStringUtf8();
+                type = "request_vote_reply";
+            } else if(this.appendEntriesRequest != null) {
+                data = InterceptorMessageUtils.fromAppendEntriesRequest(this.appendEntriesRequest);
+                to = this.appendEntriesRequest.getServerRequest().getReplyId().toStringUtf8();
+                type = "append_entries_request";
+            } else if(this.appendEntriesReply != null) {
+                data = InterceptorMessageUtils.fromAppendEntriesReply(this.appendEntriesReply);
+                to = this.appendEntriesReply.getServerReply().getRequestorId().toStringUtf8();
+                type = "append_entries_reply";
+            } else {
+                throw new IOException("invalid message type");
+            }
+            
+            return new InterceptorMessage(this.from, to, type, data, id, requestId);
         }
 
         public InterceptorMessage buildWithJsonString(String jsonString) {
-            // TODO: deserializing the json to InterceptorMessage
+            JsonObject ob = JsonParser.parseString(jsonString).getAsJsonObject();
+
             return null;
         }
     }

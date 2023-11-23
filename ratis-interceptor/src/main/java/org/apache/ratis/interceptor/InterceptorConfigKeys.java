@@ -45,6 +45,38 @@ public interface InterceptorConfigKeys {
         }
     }
 
+    interface InterceptorListener {
+        Logger LOG = LoggerFactory.getLogger(InterceptorListener.class);
+
+        static Consumer<String> getDefaultLog() {
+            return LOG::info;
+        }
+
+        String PREFIX = InterceptorConfigKeys.PREFIX + ".ilistener";
+        String HOST_KEY = PREFIX + ".host";
+        String HOST_DEFAULT = "127.0.0.1";
+
+        String PORT_KEY = PREFIX + ".port";
+        int PORT_DEFAULT = 2023;
+
+        static String host(RaftProperties properties) {
+            return get(properties::get, HOST_KEY, HOST_DEFAULT, getDefaultLog());
+        }
+
+        static void setHost(RaftProperties properties, String host) {
+            set(properties::set, HOST_KEY, host);
+        }
+
+        static int port(RaftProperties properties) {
+            return getInt(properties::getInt,
+                    PORT_KEY, PORT_DEFAULT, getDefaultLog(), requireMin(0), requireMax(65536));
+        }
+
+        static void setPort(RaftProperties properties, int port) {
+            setInt(properties::setInt, PORT_KEY, port);
+        }
+    }
+
     interface Listener {
         Logger LOG = LoggerFactory.getLogger(Listener.class);
 
@@ -57,7 +89,7 @@ public interface InterceptorConfigKeys {
         String HOST_DEFAULT = "127.0.0.1";
 
         String PORT_KEY = PREFIX + ".port";
-        int PORT_DEFAULT = 2023;
+        int PORT_DEFAULT = 3023;
 
         static String host(RaftProperties properties) {
             return get(properties::get, HOST_KEY, HOST_DEFAULT, getDefaultLog());
