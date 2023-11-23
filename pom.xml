@@ -87,6 +87,7 @@
     <module>ratis-tools</module>
     <module>ratis-shell</module>
     <module>ratis-assembly</module>
+    <module>ratis-interceptor</module>
   </modules>
 
   <pluginRepositories>
