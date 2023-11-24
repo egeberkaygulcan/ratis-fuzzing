@@ -5,6 +5,7 @@ import org.apache.ratis.interceptor.comm.InterceptorMessage;
 import org.apache.ratis.rpc.SupportedRpcType;
 import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.server.RaftServerRpcWithProxy;
+import org.apache.ratis.util.TimeDuration;
 import org.apache.ratis.proto.RaftProtos.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
     private final InetSocketAddress iListenerAddress;
     private final InetSocketAddress listenerAddress;
     private final InetSocketAddress serverAddress;
-
+    private final boolean intercept;
     private final InterceptorClient iClient;
 
     public InterceptorRpcService(RaftServer server) {
@@ -38,7 +39,9 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
         final int sport = InterceptorConfigKeys.Server.port(server.getProperties());
         this.serverAddress = new InetSocketAddress(shost, sport);
 
-        this.iClient = new InterceptorClient(server, this.serverAddress, this.iListenerAddress);
+        this.intercept = InterceptorConfigKeys.enabled(server.getProperties());
+        TimeDuration replyWaitTimeout = InterceptorConfigKeys.replyWaitTimeout(server.getProperties());
+        this.iClient = this.intercept ? new InterceptorClient(server, this.serverAddress, this.iListenerAddress, replyWaitTimeout) : null;
     }
 
     @Override
@@ -46,12 +49,16 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
 
     @Override
     public void startImpl() throws IOException {
-        this.iClient.start();
+        if(this.intercept) {
+            this.iClient.start();
+        }
     }
 
     @Override
     public void closeImpl() throws IOException {
-        this.iClient.stop();
+        if(this.intercept) {
+            this.iClient.stop();
+        }
     }
 
     @Override
@@ -66,7 +73,10 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
                 .setRequestId(iClient.getNewRequestId());
 
         // todo: poll on a future and return once you have the reply
-        iClient.sendMessage(iMessageBuilder);
+        if(this.intercept) {
+            InterceptorMessage message =  iClient.sendMessageWithReply(iMessageBuilder);
+
+        }
 
         return null;
     }

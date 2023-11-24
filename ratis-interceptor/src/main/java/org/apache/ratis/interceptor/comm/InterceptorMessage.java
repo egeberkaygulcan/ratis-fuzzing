@@ -55,6 +55,15 @@ public class InterceptorMessage {
         return this.to;
     }
 
+    // Used to check if the message contains a request that the RPC service needs to poll for a reply
+    public boolean needToWaitForReply() {
+        return this.requestId != "" && (this.type == "request_vote_request" || this.type == "append_entries_request");
+    }
+
+    public String getRequestId() {
+        return this.requestId;
+    }
+
     public String toJsonString() {
         JsonObject json = new JsonObject();
         json.addProperty("from", this.from);
@@ -75,6 +84,10 @@ public class InterceptorMessage {
         json.add("params", paramsJson);
 
         return gson.toJson(json);
+    }
+
+    public RequestVoteReplyProto toRequestVoteReply() {
+        return null;
     }
 
     public static class Builder {

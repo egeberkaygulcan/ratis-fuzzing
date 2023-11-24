@@ -1,17 +1,45 @@
 package org.apache.ratis.interceptor;
 
 import org.apache.ratis.conf.RaftProperties;
+import org.apache.ratis.util.TimeDuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.function.Consumer;
 
 import static org.apache.ratis.conf.ConfUtils.*;
-import static org.apache.ratis.conf.ConfUtils.setInt;
 
 public interface InterceptorConfigKeys {
 
     String PREFIX="raft.interceptor";
+
+    Logger LOG = LoggerFactory.getLogger(InterceptorConfigKeys.class);
+    
+    static Consumer<String> getDefaultLog() {
+        return LOG::info;
+    }
+
+    String ENABLED_KEY = PREFIX + ".enabled";
+    boolean ENABLED_DEFAULT = false;
+
+    static boolean enabled(RaftProperties properties) {
+        return getBoolean(properties::getBoolean, ENABLED_KEY, ENABLED_DEFAULT, getDefaultLog());
+    }
+
+    static void setEnabled(RaftProperties properties, boolean enabled) {
+        setBoolean(properties::setBoolean, ENABLED_KEY, enabled);
+    }
+
+    String REPLY_WAIT_TIMEOUT_KEY = PREFIX+".reply_wait_timeout";
+    TimeDuration REPLY_WAIT_TIMEOUT_DEFAULT = TimeDuration.ONE_SECOND;
+
+    static TimeDuration replyWaitTimeout(RaftProperties properties) {
+        return getTimeDuration(properties.getTimeDuration(REPLY_WAIT_TIMEOUT_DEFAULT.getUnit()), REPLY_WAIT_TIMEOUT_KEY, REPLY_WAIT_TIMEOUT_DEFAULT, getDefaultLog());
+    }
+    
+    static void setReplyWaitTimeout(RaftProperties properties, TimeDuration waitTimeout) {
+        setTimeDuration(properties::setTimeDuration, REPLY_WAIT_TIMEOUT_KEY, waitTimeout);
+    }
 
     interface Server {
         Logger LOG = LoggerFactory.getLogger(Server.class);
