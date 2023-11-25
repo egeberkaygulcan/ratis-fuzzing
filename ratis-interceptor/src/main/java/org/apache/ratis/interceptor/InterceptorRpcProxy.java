@@ -8,7 +8,8 @@ import org.apache.ratis.util.PeerProxyMap;
 import java.io.Closeable;
 import java.io.IOException;
 
-// The proxy server can use the listen address to communicate the message to the 
+// The proxy initiates a communication to each peer and is used to communicate to that peer
+// We need the proxy to send messages that are not intercepted
 public class InterceptorRpcProxy implements Closeable {
     public static class PeerMap extends PeerProxyMap<InterceptorRpcProxy> {
         private final RaftProperties properties;
@@ -39,7 +40,9 @@ public class InterceptorRpcProxy implements Closeable {
     @Override
     public void close() {}
 
-    public InterceptorMessage send() {
+    public InterceptorMessage send(InterceptorMessage request) {
+        // TODO:
+        //  [ ] need to figure out the right address to the peer and send a http request to that peer
         return null;
     }
 }

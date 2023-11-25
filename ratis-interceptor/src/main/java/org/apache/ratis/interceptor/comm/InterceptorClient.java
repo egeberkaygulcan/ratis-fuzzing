@@ -4,18 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.squareup.okhttp.*;
+
+import org.apache.ratis.protocol.Message;
 import org.apache.ratis.protocol.exceptions.TimeoutIOException;
 import org.apache.ratis.server.RaftServer;
-import org.apache.ratis.thirdparty.io.netty.channel.ChannelFuture;
 import org.apache.ratis.util.IOUtils;
-import org.apache.ratis.util.ProtoUtils;
 import org.apache.ratis.util.TimeDuration;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Map;
-
-import javax.print.attribute.standard.Media;
 import java.util.concurrent.*;
 
 public class InterceptorClient {
@@ -23,23 +20,35 @@ public class InterceptorClient {
     //  [ ] Need to initiate a connection pool to the interceptor server
     //  [x] Need to define an message interface to communicate with the interceptor server
     //  [ ] Need to figure out how to start the listener server (own the thread? extend the thread interface?)
-    //  [ ] Need to tag and keep track of requests and implement a future interface
+    //  [x] Need to tag and keep track of requests and implement a future interface
+
+    @FunctionalInterface
+    public static interface MessageHandler {
+        InterceptorMessage apply(InterceptorMessage interceptorMessage) throws IOException;
+    }
+
     private RaftServer raftServer;
     private InetSocketAddress interceptorAddress;
     private InetSocketAddress listenAddress;
     private InterceptorServer listenServer;
     private TimeDuration replyWaitTime;
     private OkHttpClient client = new OkHttpClient();
-    private MessagePollingThread pollingThread;
+    private MessagePollingThread pollingThread; 
 
-    public InterceptorClient(RaftServer raftServer, InetSocketAddress interceptorAddress, InetSocketAddress listenAddress, TimeDuration replyWaitTime) {
+    public InterceptorClient(
+        RaftServer raftServer, 
+        InetSocketAddress interceptorAddress, 
+        InetSocketAddress listenAddress, 
+        TimeDuration replyWaitTime,
+        MessageHandler messageHandler
+    ) {
         this.raftServer = raftServer;
         this.interceptorAddress = interceptorAddress;
         this.listenAddress = listenAddress;
         this.replyWaitTime = replyWaitTime;
 
         this.listenServer = new InterceptorServer(listenAddress);
-        this.pollingThread = new MessagePollingThread(this.listenServer);
+        this.pollingThread = new MessagePollingThread(this.listenServer, messageHandler);
     }
 
     public void start() throws IOException {
@@ -91,7 +100,7 @@ public class InterceptorClient {
         }
     }
 
-    public InterceptorMessage sendMessageWithReply(InterceptorMessage.Builder messageBuilder) throws IOException{
+    public InterceptorMessage sendMessage(InterceptorMessage.Builder messageBuilder) throws IOException{
         // TODO:
         //  [X] need to construct a future to wait for a message on
         //  [x] use the message builder to construct a message after assigning message id, from address
@@ -118,15 +127,19 @@ public class InterceptorClient {
         }
     }
 
-    // TODO: polling thread that reads the messages and completes the futures that were waiting
+    // TODO: 
+    //  [ ] polling functions that reads the messages
+    //  [ ] completes the futures that were waiting
+    //  [ ] calls the handler for the messages that are not pending
     private class MessagePollingThread extends Thread {
         private Map<String, CompletableFuture<InterceptorMessage>> pendingRequests;
         private InterceptorServer listenServer;
+        private MessageHandler messageHandler;
 
-
-        public MessagePollingThread(InterceptorServer listenServer) {
+        public MessagePollingThread(InterceptorServer listenServer, MessageHandler messageHandler) {
             this.listenServer = listenServer;
             this.pendingRequests = new ConcurrentHashMap<>();
+            this.messageHandler = messageHandler;
         }
 
         public void addPendingRequests(String requestId, CompletableFuture<InterceptorMessage> reply) {

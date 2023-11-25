@@ -55,6 +55,10 @@ public class InterceptorMessage {
         return this.to;
     }
 
+    public String getType() {
+        return this.type;
+    }
+
     // Used to check if the message contains a request that the RPC service needs to poll for a reply
     public boolean needToWaitForReply() {
         return this.requestId != "" && (this.type == "request_vote_request" || this.type == "append_entries_request");
@@ -86,8 +90,12 @@ public class InterceptorMessage {
         return gson.toJson(json);
     }
 
-    public RequestVoteReplyProto toRequestVoteReply() {
-        return null;
+    public RequestVoteRequestProto toRequestVoteRequest() throws IOException{
+        return InterceptorMessageUtils.toRequestVoteRequest(this.data);
+    }
+
+    public RequestVoteReplyProto toRequestVoteReply() throws IOException{
+        return InterceptorMessageUtils.toRequestVoteReply(this.data);
     }
 
     public static class Builder {
@@ -167,11 +175,11 @@ public class InterceptorMessage {
             if(this.requestVoteRequest != null) {
                 data = InterceptorMessageUtils.fromRequestVoteRequest(this.requestVoteRequest);
                 to = this.requestVoteRequest.getServerRequest().getReplyId().toStringUtf8();
-                type = "request_vote_request";
+                type = InterceptorMessageUtils.MessageType.RequestVoteRequest.toString();
             } else if(this.requestVoteReply != null) {
                 data = InterceptorMessageUtils.fromRequestVoteReply(this.requestVoteReply);
                 to = this.requestVoteReply.getServerReply().getRequestorId().toStringUtf8();
-                type = "request_vote_reply";
+                type = InterceptorMessageUtils.MessageType.RequestVoteReply.toString();
             } else if(this.appendEntriesRequest != null) {
                 data = InterceptorMessageUtils.fromAppendEntriesRequest(this.appendEntriesRequest);
                 to = this.appendEntriesRequest.getServerRequest().getReplyId().toStringUtf8();
