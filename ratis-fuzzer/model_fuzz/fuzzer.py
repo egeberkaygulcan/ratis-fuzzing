@@ -7,6 +7,8 @@ import asyncio
 import traceback
 
 from itertools import cycle
+
+from model_fuzz.cluster import RatisCluster
 from model_fuzz.workers import WorkerUtil
 
 class Fuzzer:
@@ -90,13 +92,14 @@ class Fuzzer:
             with open(os.path.join(path, f'{self.config.exp_name}_random_state.pkl'), 'rb') as f:
                 random.setstate(pickle.load(f))
 
-    # def run_controlled(self):
-    #     # TODO - Clusterify
-    #     file = self.args.control
-    #     logging.info(file)
-    #     with open(file, 'rb') as f:
-    #         trace = pickle.load(f)
-    #     self.run_iteration(0, trace, controlled=True)
+    async def run_controlled(self, filename):
+        with open(filename, 'rb') as f:
+          trace = pickle.load(f)
+        ports = self.generate_ports(0)
+        cluster = RatisCluster(self.config, ports, 0, self.config.base_peer_port, next(self.group_ids))
+        new_trace, event_trace, error_flag = await cluster.run_iteration(0, trace)
+        if new_trace is not None:
+            print(error_flag)
 
     def seed(self):
         logging.info("Seeding...")

@@ -166,9 +166,9 @@ def main():
     for index, row in experiment_config.iterrows():
         config = validate_config(row.to_dict())
         fuzzer = Fuzzer(load, config)
-        # if args.control is not None:
-        #     fuzzer.run_controlled()
-        #     break
+        if args.control is not None:
+            asyncio.run(fuzzer.run_controlled(args.control))
+            break
         try:
             asyncio.run(fuzzer.run())
         except:

@@ -86,7 +86,6 @@ class RatisCluster:
     async def run_iteration(self, iteration, mimic=None):
         if self.network_error:
             return None, None, None
-        # TODO - Update
         logging.info(f'Starting iteration {iteration}')
         trace = []
         crashed = set()
