@@ -130,7 +130,7 @@ public class InterceptorClient {
     // TODO: 
     //  [ ] polling functions that reads the messages
     //  [ ] completes the futures that were waiting
-    //  [ ] calls the handler for the messages that are not pending
+    //  [ ] calls the handler for the messages that are not pending ?
     private class MessagePollingThread extends Thread {
         private Map<String, CompletableFuture<InterceptorMessage>> pendingRequests;
         private InterceptorServer listenServer;

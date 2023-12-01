@@ -98,6 +98,30 @@ public class InterceptorMessage {
         return InterceptorMessageUtils.toRequestVoteReply(this.data);
     }
 
+    public AppendEntriesRequestProto toAppendEntriesRequest() throws IOException{
+        return InterceptorMessageUtils.toAppendEntriesRequest(this.data);
+    }
+
+    public AppendEntriesReplyProto toAppendEntriesReply() throws IOException{
+        return InterceptorMessageUtils.toAppendEntriesReply(this.data);
+    }
+
+    public InstallSnapshotRequestProto toInstallSnapshotRequest() throws IOException{
+        return InterceptorMessageUtils.toInstallSnapshotRequest(this.data);
+    }
+
+    public InstallSnapshotReplyProto toInstallSnapshotReply() throws IOException{
+        return InterceptorMessageUtils.toInstallSnapshotReply(this.data);
+    }
+
+    public StartLeaderElectionRequestProto toStartLeaderElectionRequest() throws IOException{
+        return InterceptorMessageUtils.toStartLeaderElectionRequest(this.data);
+    }
+
+    public StartLeaderElectionReplyProto toStartLeaderElectionReply() throws IOException{
+        return InterceptorMessageUtils.toStartLeaderElectionReply(this.data);
+    }
+
     public static class Builder {
         private String from;
         private String id;

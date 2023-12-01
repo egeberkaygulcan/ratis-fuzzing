@@ -33,6 +33,7 @@ import org.apache.ratis.util.JavaUtils;
 import org.apache.ratis.util.MemoizedSupplier;
 import org.apache.ratis.util.TimeDuration;
 import org.apache.ratis.proto.RaftProtos.*;
+import org.apache.ratis.protocol.RaftPeer;
 import org.apache.ratis.protocol.RaftPeerId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -177,7 +178,15 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
             case RequestVoteRequest:
                 RequestVoteReplyProto reply = this.raftServer.requestVote(message.toRequestVoteRequest());
                 return new InterceptorMessage.Builder().setRequestVoteReply(reply).build();
-            // TODO: need to complete the remaining requests
+            case AppendEntriesRequest:
+                AppendEntriesReplyProto aEReply = this.raftServer.appendEntries(message.toAppendEntriesRequest());
+                return new InterceptorMessage.Builder().setAppendEntriesReply(aEReply).build();
+            case InstallSnapshotRequest:
+                InstallSnapshotReplyProto iSReply = this.raftServer.installSnapshot(message.toInstallSnapshotRequest());
+                return new InterceptorMessage.Builder().setInstallSnapshotReply(iSReply).build();
+            case StartLeaderElectionRequest:
+                StartLeaderElectionReplyProto sLEReply = this.raftServer.startLeaderElection(message.toStartLeaderElectionRequest());
+                return new InterceptorMessage.Builder().setStartLeaderElectionReply(sLEReply).build();
             default:
                 break;
         }
@@ -203,19 +212,57 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
 
     @Override
     public AppendEntriesReplyProto appendEntries(AppendEntriesRequestProto request) throws IOException {
-        // TODO: complete this
-        return null;
+        InterceptorMessage.Builder iMessageBuilder = new InterceptorMessage.Builder()
+                .setAppendEntriesRequest(request)
+                .setRequestId(iClient.getNewRequestId());
+
+        if(this.intercept) {
+            InterceptorMessage message = iClient.sendMessage(iMessageBuilder);
+            return message.toAppendEntriesReply();
+        }
+
+        final RaftPeerId id = RaftPeerId.valueOf(request.getServerRequest().getReplyId());
+        InterceptorRpcProxy proxy = getProxies().getProxy(id);
+        InterceptorMessage reply = proxy.send(iMessageBuilder.build());
+
+        return reply.toAppendEntriesReply();
     }
 
     @Override
     public InstallSnapshotReplyProto installSnapshot(InstallSnapshotRequestProto request) throws IOException {
-        // TODO: complete this
-        return null;
+        InterceptorMessage.Builder iMessageBuilder = new InterceptorMessage.Builder()
+                .setInstallSnapshotRequest(request)
+                .setRequestId(iClient.getNewRequestId());
+
+        // TODO: remove?
+        if(this.intercept) {
+            InterceptorMessage message = iClient.sendMessage(iMessageBuilder);
+            return message.toInstallSnapshotReply();
+        }
+
+        final RaftPeerId id = RaftPeerId.valueOf(request.getServerRequest().getReplyId());
+        InterceptorRpcProxy proxy = getProxies().getProxy(id);
+        InterceptorMessage reply = proxy.send(iMessageBuilder.build());
+
+        return reply.toInstallSnapshotReply();
     }
 
     @Override
     public StartLeaderElectionReplyProto startLeaderElection(StartLeaderElectionRequestProto request) throws IOException {
-        // TODO: complete this
-        return null;
+        InterceptorMessage.Builder iMessageBuilder = new InterceptorMessage.Builder()
+                .setStartLeaderElectionRequest(request)
+                .setRequestId(iClient.getNewRequestId());
+
+        // TODO: remove?
+        if(this.intercept) {
+            InterceptorMessage message = iClient.sendMessage(iMessageBuilder);
+            return message.toStartLeaderElectionReply();
+        }
+
+        final RaftPeerId id = RaftPeerId.valueOf(request.getServerRequest().getReplyId());
+        InterceptorRpcProxy proxy = getProxies().getProxy(id);
+        InterceptorMessage reply = proxy.send(iMessageBuilder.build());
+
+        return reply.toStartLeaderElectionReply();
     }
 }

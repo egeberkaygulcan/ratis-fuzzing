@@ -151,7 +151,7 @@ public class GrpcLogAppender extends LogAppenderBase {
   }
 
   private boolean isFollowerCommitBehindLastCommitIndex() {
-    return getRaftLog().getLastCommittedIndex() > getFollower().getCommitIndex(); // TODO - Commit index related code
+    return getRaftLog().getLastCommittedIndex() > getFollower().getCommitIndex();
   }
 
   @Override

@@ -31,8 +31,7 @@ class RatisServer:
             self.server_client_port,
             self.peer_index,
             self.peer_addresses,
-            self.group_id,
-            r
+            self.group_id
         )
         return cmd
     

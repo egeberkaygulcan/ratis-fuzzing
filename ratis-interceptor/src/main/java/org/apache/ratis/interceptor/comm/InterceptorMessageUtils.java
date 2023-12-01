@@ -11,6 +11,12 @@ public class InterceptorMessageUtils {
     public static enum MessageType {
         RequestVoteRequest("request_vote_request"),
         RequestVoteReply("request_vote_reply"),
+        AppendEntriesRequest("append_entries_request"),
+        AppendEntriesReply("append_entries_reply"),
+        InstallSnapshotRequest("install_snapshot_request"),
+        InstallSnapshotReply("install_snapshot_reply"),
+        StartLeaderElectionRequest("start_leader_election_request"),
+        StartLeaderElectionReply("start_leader_election, reply"),
         None("");
 
         private String type;
@@ -26,7 +32,12 @@ public class InterceptorMessageUtils {
             switch (type) {
                 case "request_vote_request":
                     return RequestVoteRequest;
-            
+                case "append_entries_request":
+                    return AppendEntriesRequest;
+                case "install_snapshot_request":
+                    return InstallSnapshotRequest;
+                case "start_leader_election_request":
+                    return StartLeaderElectionRequest; 
                 default:
                     return None;
             }
@@ -50,6 +61,26 @@ public class InterceptorMessageUtils {
     }
 
     public static byte[] fromAppendEntriesReply(AppendEntriesReplyProto reply) throws IOException {
+        String out = JsonFormat.printer().print(reply);
+        return out.getBytes(StandardCharsets.UTF_8);
+    }
+
+    public static byte[] fromInstallSnapshotRequest(InstallSnapshotRequestProto request) throws IOException{
+        String out = JsonFormat.printer().print(request);
+        return out.getBytes(StandardCharsets.UTF_8);
+    }
+
+    public static byte[] fromInstallSnapshotReply(InstallSnapshotReplyProto reply) throws IOException {
+        String out = JsonFormat.printer().print(reply);
+        return out.getBytes(StandardCharsets.UTF_8);
+    }
+
+    public static byte[] fromStartLeaderElectionRequest(StartLeaderElectionRequestProto request) throws IOException{
+        String out = JsonFormat.printer().print(request);
+        return out.getBytes(StandardCharsets.UTF_8);
+    }
+
+    public static byte[] fromStartLeaderElectionReply(StartLeaderElectionReplyProto reply) throws IOException {
         String out = JsonFormat.printer().print(reply);
         return out.getBytes(StandardCharsets.UTF_8);
     }
@@ -85,6 +116,42 @@ public class InterceptorMessageUtils {
         String jsonData = new String(data, StandardCharsets.UTF_8);
 
         AppendEntriesReplyProto.Builder builder = AppendEntriesReplyProto.newBuilder();
+        JsonFormat.parser().ignoringUnknownFields().merge(jsonData, builder);
+
+        return builder.build();
+    }
+
+    public static InstallSnapshotRequestProto toInstallSnapshotRequest(byte[] data) throws IOException{
+        String jsonData = new String(data, StandardCharsets.UTF_8);
+
+        InstallSnapshotRequestProto.Builder builder = InstallSnapshotRequestProto.newBuilder();
+        JsonFormat.parser().ignoringUnknownFields().merge(jsonData, builder);
+
+        return builder.build();
+    }
+
+    public static InstallSnapshotReplyProto toInstallSnapshotReply(byte[] data) throws IOException{
+        String jsonData = new String(data, StandardCharsets.UTF_8);
+
+        InstallSnapshotReplyProto.Builder builder = InstallSnapshotReplyProto.newBuilder();
+        JsonFormat.parser().ignoringUnknownFields().merge(jsonData, builder);
+
+        return builder.build();
+    }
+
+    public static StartLeaderElectionRequestProto toStartLeaderElectionRequest(byte[] data) throws IOException{
+        String jsonData = new String(data, StandardCharsets.UTF_8);
+
+        StartLeaderElectionRequestProto.Builder builder = StartLeaderElectionRequestProto.newBuilder();
+        JsonFormat.parser().ignoringUnknownFields().merge(jsonData, builder);
+
+        return builder.build();
+    }
+
+    public static StartLeaderElectionReplyProto toStartLeaderElectionReply(byte[] data) throws IOException{
+        String jsonData = new String(data, StandardCharsets.UTF_8);
+
+        StartLeaderElectionReplyProto.Builder builder = StartLeaderElectionReplyProto.newBuilder();
         JsonFormat.parser().ignoringUnknownFields().merge(jsonData, builder);
 
         return builder.build();
