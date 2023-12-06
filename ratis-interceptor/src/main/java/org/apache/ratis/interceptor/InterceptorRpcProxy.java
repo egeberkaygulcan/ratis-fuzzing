@@ -50,7 +50,7 @@ public class InterceptorRpcProxy implements Closeable {
     public InterceptorMessage send(InterceptorMessage request) {
         // TODO:
         //  [X] need to figure out the right address to the peer and send a http request to that peer
-        String address = this.peer.getAddress();
+        String address = getPeerAddress();
         String json = request.toJsonString();
 
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -64,14 +64,18 @@ public class InterceptorRpcProxy implements Closeable {
             response = client.newCall(httpRequest).execute();
             if (response != null) {
                 msg = new InterceptorMessage.Builder().buildWithJsonString(response.body().string());
+                if (msg != null) {
+                    return msg;
+                }
             }
         } catch (IOException e) {
             // TODO: handle exception
         }
-        if (msg != null) {
-            return msg;
-        }
 
         return null;
+    }
+
+    public String getPeerAddress() {
+        return this.peer.getAddress();
     }
 }

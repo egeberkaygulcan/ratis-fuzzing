@@ -1,9 +1,16 @@
 package org.apache.ratis.interceptor.comm;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.ratis.proto.RaftProtos.*;
+import org.apache.ratis.protocol.RaftClientReply;
+import org.apache.ratis.protocol.RaftClientRequest;
+import org.apache.ratis.thirdparty.com.google.gson.JsonSerializer;
 import org.apache.ratis.thirdparty.com.google.protobuf.util.JsonFormat;
 
 public class InterceptorMessageUtils {
@@ -17,6 +24,8 @@ public class InterceptorMessageUtils {
         InstallSnapshotReply("install_snapshot_reply"),
         StartLeaderElectionRequest("start_leader_election_request"),
         StartLeaderElectionReply("start_leader_election, reply"),
+        RaftClientRequest("raft_client_request"),
+        RaftClientReply("raft_client_reply"),
         None("");
 
         private String type;
@@ -38,6 +47,8 @@ public class InterceptorMessageUtils {
                     return InstallSnapshotRequest;
                 case "start_leader_election_request":
                     return StartLeaderElectionRequest; 
+                case "raft_client_request":
+                    return RaftClientRequest;
                 default:
                     return None;
             }
@@ -82,6 +93,20 @@ public class InterceptorMessageUtils {
 
     public static byte[] fromStartLeaderElectionReply(StartLeaderElectionReplyProto reply) throws IOException {
         String out = JsonFormat.printer().print(reply);
+        return out.getBytes(StandardCharsets.UTF_8);
+    }
+
+    public static byte[] fromRaftClientRequest(RaftClientRequest request) throws IOException{
+        // TODO: Validate
+        Gson gson = new GsonBuilder().create();
+        String out = gson.toJson(request);
+        return out.getBytes(StandardCharsets.UTF_8);
+    }
+
+    public static byte[] fromRaftClientReply(RaftClientReply reply) throws IOException {
+        // TODO: Validate
+        Gson gson = new GsonBuilder().create();
+        String out = gson.toJson(reply);
         return out.getBytes(StandardCharsets.UTF_8);
     }
 
@@ -155,5 +180,25 @@ public class InterceptorMessageUtils {
         JsonFormat.parser().ignoringUnknownFields().merge(jsonData, builder);
 
         return builder.build();
+    }
+
+    public static RaftClientRequest toRaftClientRequest(byte[] data) throws IOException{
+        // TODO: verify
+        String jsonData = new String(data, StandardCharsets.UTF_8);
+
+        Gson gson = new GsonBuilder().create();
+        RaftClientRequest request = gson.fromJson(jsonData, RaftClientRequest.class);
+
+        return request;
+    }
+
+    public static RaftClientReply toRaftClientReply(byte[] data) throws IOException{
+        // TODO: verify
+        String jsonData = new String(data, StandardCharsets.UTF_8);
+
+        Gson gson = new GsonBuilder().create();
+        RaftClientReply reply = gson.fromJson(jsonData, RaftClientReply.class);
+
+        return reply;
     }
 }

@@ -7,6 +7,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import org.apache.ratis.proto.RaftProtos.*;
+import org.apache.ratis.protocol.RaftClientReply;
+import org.apache.ratis.protocol.RaftClientRequest;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
 import java.util.Base64;
@@ -118,6 +122,14 @@ public class InterceptorMessage {
         return InterceptorMessageUtils.toStartLeaderElectionRequest(this.data);
     }
 
+    public RaftClientRequest toRaftClientRequest() throws IOException{
+        return InterceptorMessageUtils.toRaftClientRequest(this.data);
+    }
+
+    public RaftClientReply toRaftClientReply() throws IOException{
+        return InterceptorMessageUtils.toRaftClientReply(this.data);
+    }
+
     public StartLeaderElectionReplyProto toStartLeaderElectionReply() throws IOException{
         return InterceptorMessageUtils.toStartLeaderElectionReply(this.data);
     }
@@ -135,6 +147,9 @@ public class InterceptorMessage {
         private InstallSnapshotReplyProto installSnapshotReply;
         private StartLeaderElectionRequestProto startLeaderElectionRequest;
         private StartLeaderElectionReplyProto startLeaderElectionReply;
+        private RaftClientRequest raftClientRequest;
+        private RaftClientReply raftClientReply;
+
 
         public Builder() {}
 
@@ -182,12 +197,24 @@ public class InterceptorMessage {
             this.installSnapshotReply = installSnapshotReply;
             return this;
         }
+
         public Builder setStartLeaderElectionRequest(StartLeaderElectionRequestProto startLeaderElectionRequest) {
             this.startLeaderElectionRequest = startLeaderElectionRequest;
             return this;
         }
+
         public Builder setStartLeaderElectionReply(StartLeaderElectionReplyProto startLeaderElectionReply) {
             this.startLeaderElectionReply = startLeaderElectionReply;
+            return this;
+        }
+
+        public Builder setRaftClientRequest(RaftClientRequest raftClientRequest) {
+            this.raftClientRequest = raftClientRequest;
+            return this;
+        }
+
+        public Builder setRaftClientReply(RaftClientReply raftClientReply) {
+            this.raftClientReply = raftClientReply;
             return this;
         }
 
@@ -212,6 +239,30 @@ public class InterceptorMessage {
                 data = InterceptorMessageUtils.fromAppendEntriesReply(this.appendEntriesReply);
                 to = this.appendEntriesReply.getServerReply().getRequestorId().toStringUtf8();
                 type = "append_entries_reply";
+            } else if (this.installSnapshotRequest != null) {
+                data = InterceptorMessageUtils.fromInstallSnapshotRequest(this.installSnapshotRequest);
+                to = this.installSnapshotRequest.getServerRequest().getReplyId().toStringUtf8();
+                type = InterceptorMessageUtils.MessageType.InstallSnapshotRequest.toString();
+            } else if (this.installSnapshotReply != null) {
+                data = InterceptorMessageUtils.fromInstallSnapshotReply(this.installSnapshotReply);
+                to = this.installSnapshotReply.getServerReply().getRequestorId().toStringUtf8();
+                type = InterceptorMessageUtils.MessageType.InstallSnapshotReply.toString();
+            } else if (this.startLeaderElectionRequest != null) {
+                data = InterceptorMessageUtils.fromStartLeaderElectionRequest(this.startLeaderElectionRequest);
+                to = this.startLeaderElectionRequest.getServerRequest().getReplyId().toStringUtf8();
+                type = InterceptorMessageUtils.MessageType.StartLeaderElectionRequest.toString();
+            } else if (this.startLeaderElectionReply != null) {
+                data = InterceptorMessageUtils.fromStartLeaderElectionReply(this.startLeaderElectionReply);
+                to = this.startLeaderElectionReply.getServerReply().getRequestorId().toStringUtf8();
+                type = InterceptorMessageUtils.MessageType.StartLeaderElectionReply.toString();
+            } else if (this.raftClientRequest != null) {
+                data = InterceptorMessageUtils.fromRaftClientRequest(this.raftClientRequest);
+                to = this.raftClientRequest.getReplierId();
+                type = InterceptorMessageUtils.MessageType.RaftClientRequest.toString();
+            } else if (this.raftClientReply != null) {
+                data = InterceptorMessageUtils.fromRaftClientReply(this.raftClientReply);
+                to = this.raftClientReply.getRequestorId();
+                type = InterceptorMessageUtils.MessageType.RaftClientReply.toString();
             } else {
                 throw new IOException("invalid message type");
             }
@@ -221,6 +272,55 @@ public class InterceptorMessage {
 
         public InterceptorMessage buildWithJsonString(String jsonString) {
             JsonObject ob = JsonParser.parseString(jsonString).getAsJsonObject();
+
+            InterceptorMessage.Builder builder = new InterceptorMessage.Builder()
+                    .setFrom(ob.get("from").getAsString())
+                    .setID(ob.get("id").getAsString())
+                    .setRequestId(ob.get("request_id").getAsString());
+            
+            InterceptorMessageUtils.MessageType messageType = InterceptorMessageUtils.MessageType.fromString(ob.get("type").getAsString());
+
+            try {
+                switch (messageType) {
+                    case RequestVoteRequest:
+                        builder.setRequestVoteRequest(InterceptorMessageUtils.toRequestVoteRequest(ob.get("data").getAsString().getBytes()));
+                        break;
+                    case RequestVoteReply:
+                        builder.setRequestVoteReply(InterceptorMessageUtils.toRequestVoteReply(ob.get("data").getAsString().getBytes()));
+                        break;
+                    case AppendEntriesRequest:
+                        builder.setAppendEntriesRequest(InterceptorMessageUtils.toAppendEntriesRequest(ob.get("data").getAsString().getBytes()));
+                        break;
+                    case AppendEntriesReply:
+                        builder.setAppendEntriesReply(InterceptorMessageUtils.toAppendEntriesReply(ob.get("data").getAsString().getBytes()));
+                        break;
+                    case InstallSnapshotRequest:
+                        builder.setInstallSnapshotRequest(InterceptorMessageUtils.toInstallSnapshotRequest(ob.get("data").getAsString().getBytes()));
+                        break;
+                    case InstallSnapshotReply:
+                        builder.setInstallSnapshotReply(InterceptorMessageUtils.toInstallSnapshotReply(ob.get("data").getAsString().getBytes()));
+                        break;
+                    case StartLeaderElectionRequest:
+                        builder.setStartLeaderElectionRequest(InterceptorMessageUtils.toStartLeaderElectionRequest(ob.get("data").getAsString().getBytes()));
+                        break;
+                    case StartLeaderElectionReply:
+                        builder.setStartLeaderElectionReply(InterceptorMessageUtils.toStartLeaderElectionReply(ob.get("data").getAsString().getBytes()));
+                        break;
+                    case RaftClientRequest:
+                        builder.setRaftClientRequest(InterceptorMessageUtils.toRaftClientRequest(ob.get("data").getAsString().getBytes()));
+                        break;
+                    case RaftClientReply:
+                        builder.setRaftClientReply(InterceptorMessageUtils.toRaftClientReply(ob.get("data").getAsString().getBytes()));
+                        break;
+                    default:
+                        break;
+                }
+
+                InterceptorMessage message = builder.build();
+                return message;
+            } catch (IOException e) {
+                // Handle
+            }
 
             return null;
         }

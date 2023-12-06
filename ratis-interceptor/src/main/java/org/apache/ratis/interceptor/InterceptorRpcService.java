@@ -33,6 +33,7 @@ import org.apache.ratis.util.JavaUtils;
 import org.apache.ratis.util.MemoizedSupplier;
 import org.apache.ratis.util.TimeDuration;
 import org.apache.ratis.proto.RaftProtos.*;
+import org.apache.ratis.protocol.RaftClientReply;
 import org.apache.ratis.protocol.RaftPeer;
 import org.apache.ratis.protocol.RaftPeerId;
 import org.slf4j.Logger;
@@ -187,6 +188,10 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
             case StartLeaderElectionRequest:
                 StartLeaderElectionReplyProto sLEReply = this.raftServer.startLeaderElection(message.toStartLeaderElectionRequest());
                 return new InterceptorMessage.Builder().setStartLeaderElectionReply(sLEReply).build();
+            case RaftClientRequest:
+                // TODO: Submit client request async or not?
+                RaftClientReply RCReply = this.raftServer.submitClientRequest(message.toRaftClientRequest());
+                return new InterceptorMessage.Builder().setRaftClientReply(RCReply).build();
             default:
                 break;
         }
