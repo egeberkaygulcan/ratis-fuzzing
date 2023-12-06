@@ -35,7 +35,7 @@ public interface RaftConfigKeys {
     String PREFIX = RaftConfigKeys.PREFIX + ".rpc";
 
     String TYPE_KEY = PREFIX + ".type";
-    String TYPE_DEFAULT = SupportedRpcType.GRPC.name();
+    String TYPE_DEFAULT = SupportedRpcType.INTERCEPTOR.name();
 
     static RpcType type(RaftProperties properties, Consumer<String> logger) {
       final String t = get(properties::get, TYPE_KEY, TYPE_DEFAULT, logger);

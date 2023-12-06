@@ -51,10 +51,14 @@ public class InterceptorClient {
         this.listenAddress = listenAddress;
         this.replyWaitTime = replyWaitTime;
 
-        this.listenServer = new InterceptorServer(listenAddress);
+        try {
+            this.listenServer = new InterceptorServer(listenAddress);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
         this.pollingThread = new MessagePollingThread(this.listenServer, messageHandler);
         this.counter = new AtomicInteger();
-        this.random = new Random((long) this.interceptorAddress.getPort());
+        this.random = new Random((long) this.listenAddress.getPort());
     }
 
     public void start() throws IOException {
@@ -82,6 +86,8 @@ public class InterceptorClient {
             response.body().close();
         }
     }
+
+    // TODO: SendEvent
 
     public String getNewRequestId() {
         return this.raftServer.getId().toString() + "_" + Integer.toString(this.counter.getAndIncrement());

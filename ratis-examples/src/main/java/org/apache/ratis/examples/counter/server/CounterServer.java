@@ -19,10 +19,9 @@ package org.apache.ratis.examples.counter.server;
 
 import org.apache.ratis.client.RaftClient;
 import org.apache.ratis.conf.RaftProperties;
-import org.apache.ratis.examples.common.ClusterWrapper;
 import org.apache.ratis.examples.common.Constants;
 import org.apache.ratis.examples.counter.CounterCommand;
-import org.apache.ratis.grpc.GrpcConfigKeys;
+import org.apache.ratis.interceptor.InterceptorConfigKeys;
 import org.apache.ratis.protocol.RaftClientReply;
 import org.apache.ratis.protocol.RaftGroup;
 import org.apache.ratis.protocol.RaftGroupId;
@@ -30,10 +29,11 @@ import org.apache.ratis.protocol.RaftPeer;
 import org.apache.ratis.protocol.RaftPeerId;
 import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.server.RaftServerConfigKeys;
-import org.apache.ratis.server.fuzzer.FuzzerClient;
 import org.apache.ratis.util.NetUtils;
 import org.apache.ratis.util.SizeInBytes;
 import org.apache.ratis.util.TimeDuration;
+
+import okhttp3.Interceptor;
 
 import java.io.Closeable;
 import java.io.File;
@@ -65,7 +65,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public final class CounterServer implements Closeable {
   private final RaftServer server;
 
-  public CounterServer(RaftPeer peer, File storageDir, RaftGroup RAFT_GROUP) throws IOException {
+  public CounterServer(RaftPeer peer, File storageDir, RaftGroup RAFT_GROUP, int fuzzerPort, int interceptorListenerPort) throws IOException {
     //create a property object
     final RaftProperties properties = new RaftProperties();
 
@@ -83,7 +83,11 @@ public final class CounterServer implements Closeable {
 
     //set the port (different for each peer) in RaftProperty object
     final int port = NetUtils.createSocketAddr(peer.getAddress()).getPort();
-    GrpcConfigKeys.Server.setPort(properties, port);
+    InterceptorConfigKeys.Listener.setPort(properties, port);
+    InterceptorConfigKeys.Server.setPort(properties, fuzzerPort);
+    InterceptorConfigKeys.InterceptorListener.setPort(properties, interceptorListenerPort);
+    InterceptorConfigKeys.setEnabled(properties, false);
+    // GrpcConfigKeys.Server.setPort(properties, port);
 
     //create the counter state machine which holds the counter value
     final CounterStateMachine counterStateMachine = new CounterStateMachine();
@@ -107,11 +111,11 @@ public final class CounterServer implements Closeable {
   }
 
   public static void main(String[] args) {
+    // java -Dlog4j.configuration=file:ratis-examples/src/main/resources/log4j.properties -cp ratis-examples/target/ratis-examples-2.5.1.jar org.apache.ratis.examples.counter.server.CounterServer 0 7073 6002 3 127.0.0.1:10000,127.0.0.1:10001,127.0.0.1:10002 02511d47-d67c-49a3-9011-abb3109a44c1 0
     try {
-      // int fuzzerPort = Integer.parseInt(args[0]);
       int run_id = Integer.parseInt(args[0]);
       int fuzzerPort = Integer.parseInt(args[1]);
-      int serverClientPort = Integer.parseInt(args[2]);
+      int interceptorListenerPort = Integer.parseInt(args[2]);
       final int peerIndex = Integer.parseInt(args[3]);
 
       String[] addresses = args[4].split(",");
@@ -128,11 +132,8 @@ public final class CounterServer implements Closeable {
       int restart = Integer.parseInt(args[6]);
 
       System.setProperty("exp.build.data", "./data");
-      FuzzerClient fuzzerClient = FuzzerClient.getInstance();
-      fuzzerClient.setServerClientPort(serverClientPort);
-      fuzzerClient.setFuzzerPort(fuzzerPort);
-      fuzzerClient.initServer();
-      startServer(run_id, peerIndex, PEERS, RAFT_GROUP, restart);
+      // TODO: Bootup system
+      startServer(run_id, peerIndex, PEERS, RAFT_GROUP, restart, fuzzerPort, interceptorListenerPort);
       System.exit(0);
     } catch(Throwable e) {
       e.printStackTrace();
@@ -146,33 +147,39 @@ public final class CounterServer implements Closeable {
     } 
   }
 
-  private static void startServer(int runId, int peerIndex, List<RaftPeer> PEERS, RaftGroup RAFT_GROUP, int restart) throws Exception {
+  private static void startServer(int runId, int peerIndex, List<RaftPeer> PEERS, RaftGroup RAFT_GROUP, int restart, int fuzzerPort, int interceptorListenerPort) throws Exception {
     //get peer and define storage dir
     final RaftPeer currentPeer = PEERS.get(peerIndex-1);
     final File storageDir = new File("./data/" + runId + "/" + currentPeer.getId());
-    final FuzzerClient fuzzerClient = FuzzerClient.getInstance();
     //start a counter server
-    try(CounterServer counterServer = new CounterServer(currentPeer, storageDir, RAFT_GROUP)) {
+    try(CounterServer counterServer = new CounterServer(currentPeer, storageDir, RAFT_GROUP, fuzzerPort, interceptorListenerPort)) {
       counterServer.start();
 
-      if (restart != 1)
-        fuzzerClient.registerServer(Integer.toString(peerIndex));
-      boolean crashFlag;
-      while(!fuzzerClient.shouldShutdown()) {
-        crashFlag = fuzzerClient.getCrash();
-        if (crashFlag) {
-          counterServer.close();
-          fuzzerClient.close();
-          fuzzerClient.join();
-          break;
-        }
-
-        fuzzerClient.getAndExecuteMessages();
-        TimeUnit.MILLISECONDS.sleep(1);
-      }
+      //exit when any input entered
+      new Scanner(System.in, UTF_8.name()).nextLine();
     }
+    // TODO: New control loop
+  //   try(CounterServer counterServer = new CounterServer(currentPeer, storageDir, RAFT_GROUP)) {
+  //     counterServer.start();
 
-    if (!fuzzerClient.getCrash())
-      fuzzerClient.sendShutdownReadyEvent();
+  //     if (restart != 1)
+  //       fuzzerClient.registerServer(Integer.toString(peerIndex));
+  //     boolean crashFlag;
+  //     while(!fuzzerClient.shouldShutdown()) {
+  //       crashFlag = fuzzerClient.getCrash();
+  //       if (crashFlag) {
+  //         counterServer.close();
+  //         fuzzerClient.close();
+  //         fuzzerClient.join();
+  //         break;
+  //       }
+
+  //       fuzzerClient.getAndExecuteMessages();
+  //       TimeUnit.MILLISECONDS.sleep(1);
+  //     }
+  //   }
+
+  //   if (!fuzzerClient.getCrash())
+  //     fuzzerClient.sendShutdownReadyEvent();
   }
 }

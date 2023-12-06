@@ -7,7 +7,6 @@
     <version>2.5.1</version>
   </parent>
 
-  <groupId>org.apache</groupId>
   <artifactId>ratis-interceptor</artifactId>
   <name>Apache Ratis Interceptor RPC</name>
 

@@ -18,6 +18,7 @@
 package org.apache.ratis.interceptor;
 
 import org.apache.ratis.client.ClientFactory;
+import org.apache.ratis.conf.Parameters;
 import org.apache.ratis.conf.RaftProperties;
 import org.apache.ratis.protocol.ClientId;
 import org.apache.ratis.rpc.SupportedRpcType;
@@ -28,6 +29,10 @@ import org.slf4j.LoggerFactory;
 
 public class InterceptorFactory implements ServerFactory, ClientFactory {
     public static final Logger LOG = LoggerFactory.getLogger(InterceptorFactory.class);
+
+    public InterceptorFactory(Parameters parameters) {
+
+    }
 
     @Override
     public SupportedRpcType getRpcType() {

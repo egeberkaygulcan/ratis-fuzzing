@@ -103,8 +103,9 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
 
     public InterceptorRpcService(RaftServer server) {
         super(server::getId, id -> new InterceptorRpcProxy.PeerMap(id.toString(), server.getProperties()));
+        LOG.info("CREATED INTERCEPTOR RPC SERVICE.");
         this.raftServer = server;
-
+        
         final String iLhost = InterceptorConfigKeys.InterceptorListener.host(server.getProperties());
         final int iLport = InterceptorConfigKeys.InterceptorListener.port(server.getProperties());
         this.iListenerAddress = new InetSocketAddress(iLhost, iLport);
@@ -189,7 +190,6 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
                 StartLeaderElectionReplyProto sLEReply = this.raftServer.startLeaderElection(message.toStartLeaderElectionRequest());
                 return new InterceptorMessage.Builder().setStartLeaderElectionReply(sLEReply).build();
             case RaftClientRequest:
-                // TODO: Submit client request async or not?
                 RaftClientReply RCReply = this.raftServer.submitClientRequest(message.toRaftClientRequest());
                 return new InterceptorMessage.Builder().setRaftClientReply(RCReply).build();
             default:
@@ -198,12 +198,11 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
         return null;
     }
 
-
     @Override
     public RequestVoteReplyProto requestVote(RequestVoteRequestProto request) throws IOException {
         InterceptorMessage.Builder iMessageBuilder = new InterceptorMessage.Builder()
-                .setRequestVoteRequest(request)
-                .setRequestId(iClient.getNewRequestId());
+                .setRequestVoteRequest(request);
+                // .setRequestId(iClient.getNewRequestId());
 
         if(this.intercept) {
             InterceptorMessage message =  iClient.sendMessage(iMessageBuilder);
@@ -218,8 +217,8 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
     @Override
     public AppendEntriesReplyProto appendEntries(AppendEntriesRequestProto request) throws IOException {
         InterceptorMessage.Builder iMessageBuilder = new InterceptorMessage.Builder()
-                .setAppendEntriesRequest(request)
-                .setRequestId(iClient.getNewRequestId());
+                .setAppendEntriesRequest(request);
+                // .setRequestId(iClient.getNewRequestId());
 
         if(this.intercept) {
             InterceptorMessage message = iClient.sendMessage(iMessageBuilder);
@@ -236,8 +235,8 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
     @Override
     public InstallSnapshotReplyProto installSnapshot(InstallSnapshotRequestProto request) throws IOException {
         InterceptorMessage.Builder iMessageBuilder = new InterceptorMessage.Builder()
-                .setInstallSnapshotRequest(request)
-                .setRequestId(iClient.getNewRequestId());
+                .setInstallSnapshotRequest(request);
+                // .setRequestId(iClient.getNewRequestId());
 
         // TODO: remove?
         if(this.intercept) {
@@ -255,8 +254,8 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
     @Override
     public StartLeaderElectionReplyProto startLeaderElection(StartLeaderElectionRequestProto request) throws IOException {
         InterceptorMessage.Builder iMessageBuilder = new InterceptorMessage.Builder()
-                .setStartLeaderElectionRequest(request)
-                .setRequestId(iClient.getNewRequestId());
+                .setStartLeaderElectionRequest(request);
+                // .setRequestId(iClient.getNewRequestId());
 
         // TODO: remove?
         if(this.intercept) {

@@ -39,8 +39,6 @@ import org.apache.ratis.protocol.exceptions.NotReplicatedException;
 import org.apache.ratis.protocol.exceptions.ReadIndexException;
 import org.apache.ratis.protocol.exceptions.ReconfigurationTimeoutException;
 import org.apache.ratis.server.RaftServerConfigKeys;
-import org.apache.ratis.server.fuzzer.FuzzerClient;
-import org.apache.ratis.server.fuzzer.events.LogUpdateEvent;
 import org.apache.ratis.server.impl.ReadIndexHeartbeats.AppendEntriesListener;
 import org.apache.ratis.server.leader.FollowerInfo;
 import org.apache.ratis.server.leader.LeaderState;
@@ -847,9 +845,8 @@ class LeaderStateImpl implements LeaderState {
   
   private Optional<MinMajorityMax> getMajorityMin(ToLongFunction<FollowerInfo> followerIndex,
       LongSupplier logIndex, long gapThreshold) {
-    FuzzerClient fuzzerClient = FuzzerClient.getInstance();
     final RaftPeerId selfId = server.getId();
-    fuzzerClient.sendEvent(new LogUpdateEvent(selfId, logIndex.getAsLong()));
+    // TODO: LogUpdate event (logIndex.getAsLong())
     final RaftConfigurationImpl conf = server.getRaftConf();
 
     final CurrentOldFollowerInfos infos = followerInfoMap.getFollowerInfos(conf);

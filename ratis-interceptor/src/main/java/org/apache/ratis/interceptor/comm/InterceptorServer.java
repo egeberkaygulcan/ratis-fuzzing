@@ -1,42 +1,12 @@
 package org.apache.ratis.interceptor.comm;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
-import java.util.concurrent.locks.ReentrantLock;
-
-import org.apache.ratis.interceptor.InterceptorConfigKeys;
-import org.apache.ratis.interceptor.comm.InterceptorClient.MessageHandler;
-import org.apache.ratis.thirdparty.com.google.protobuf.ByteString.Output;
-import org.apache.ratis.thirdparty.io.netty.buffer.ByteBuf;
-import org.apache.ratis.thirdparty.io.netty.buffer.Unpooled;
-import org.apache.ratis.thirdparty.io.netty.channel.ChannelFutureListener;
-import org.apache.ratis.thirdparty.io.netty.channel.ChannelHandler;
-import org.apache.ratis.thirdparty.io.netty.channel.ChannelHandlerContext;
-import org.apache.ratis.thirdparty.io.netty.channel.EventLoopGroup;
-import org.apache.ratis.thirdparty.io.netty.channel.SimpleChannelInboundHandler;
-import org.apache.ratis.thirdparty.io.netty.handler.codec.http.DefaultFullHttpResponse;
-import org.apache.ratis.thirdparty.io.netty.handler.codec.http.FullHttpRequest;
-import org.apache.ratis.thirdparty.io.netty.handler.codec.http.FullHttpResponse;
-import org.apache.ratis.thirdparty.io.netty.handler.codec.http.HttpResponseStatus;
-import org.apache.ratis.thirdparty.io.netty.handler.codec.http.HttpUtil;
-import org.apache.ratis.thirdparty.io.netty.util.CharsetUtil;
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.ratis.thirdparty.io.netty.handler.codec.http.HttpMethod;
-
-import com.squareup.okhttp.Route;
-
-import com.sun.net.httpserver.*;
-
-import static org.apache.ratis.thirdparty.io.netty.handler.codec.http.HttpHeaderNames.*;
-import static org.apache.ratis.thirdparty.io.netty.handler.codec.http.HttpHeaderValues.APPLICATION_JSON;
-import static org.apache.ratis.thirdparty.io.netty.handler.codec.http.HttpHeaderValues.CLOSE;
-import static org.apache.ratis.thirdparty.io.netty.handler.codec.http.HttpHeaderValues.KEEP_ALIVE;
 
 import fi.iki.elonen.NanoHTTPD;
 public class InterceptorServer extends NanoHTTPD {
@@ -55,8 +25,8 @@ public class InterceptorServer extends NanoHTTPD {
     public InterceptorServer(InetSocketAddress listenAddress) throws IOException {
         super(listenAddress.getPort());
         this.listenAddress = listenAddress;
-        start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
-
+        this.receivedMessages = new CopyOnWriteArrayList<InterceptorMessage>();
+        start(NanoHTTPD.SOCKET_READ_TIMEOUT, false); // TODO: Is this blocking?
     }
 
     @Override
@@ -65,8 +35,10 @@ public class InterceptorServer extends NanoHTTPD {
             try {
                 session.parseBody(new HashMap<>());
                 String requestBody = session.getQueryParameterString();
-                // TODO: Parse body and add to receivedMessages
-                return newFixedLengthResponse("Request body + " + requestBody);
+                InterceptorMessage.Builder b = new InterceptorMessage.Builder();
+                InterceptorMessage message = b.buildWithJsonString(requestBody);
+                this.receivedMessages.add(message);
+                return newFixedLengthResponse("Ok\n");
             } catch (IOException | ResponseException e) {
                 LOG.error("Exception while receiving POST.", e);
             }
@@ -77,9 +49,8 @@ public class InterceptorServer extends NanoHTTPD {
     }
 
     public List<InterceptorMessage> getReceivedMessages() {
-        // TODO: thread safe access to the interceptor messages
-        return null;
+        List<InterceptorMessage> ret = new CopyOnWriteArrayList<InterceptorMessage>(this.receivedMessages);
+        this.receivedMessages.clear();
+        return ret;
     }
-
-        
 }

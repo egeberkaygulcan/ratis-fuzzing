@@ -24,8 +24,6 @@ import org.apache.ratis.protocol.RaftPeerId;
 import org.apache.ratis.server.DivisionInfo;
 import org.apache.ratis.server.RaftConfiguration;
 import org.apache.ratis.server.RaftServerConfigKeys;
-import org.apache.ratis.server.fuzzer.FuzzerClient;
-import org.apache.ratis.server.fuzzer.events.BecomeLeaderEvent;
 import org.apache.ratis.server.protocol.TermIndex;
 import org.apache.ratis.server.util.ServerStringUtils;
 import org.apache.ratis.thirdparty.com.google.common.annotations.VisibleForTesting;
@@ -192,7 +190,6 @@ class LeaderElection implements Runnable {
   private final ConfAndTerm round0;
   private int term_;
 
-  private final FuzzerClient fuzzerClient = FuzzerClient.getInstance();
 
   LeaderElection(RaftServerImpl server, boolean force) {
     this.name = server.getMemberId() + "-" + JavaUtils.getClassSimpleName(getClass()) + COUNT.incrementAndGet();
@@ -241,7 +238,7 @@ class LeaderElection implements Runnable {
 
   @Override
   public void run() {
-    fuzzerClient.setElection(true);
+    // TODO: FuzzerClient setElection true
     if (!lifeCycle.compareAndTransition(STARTING, RUNNING)) {
       final LifeCycle.State state = lifeCycle.getCurrentState();
       LOG.info("{}: skip running since this is already {}", this, state);
@@ -253,7 +250,7 @@ class LeaderElection implements Runnable {
         if (skipPreVote || askForVotes(Phase.PRE_VOTE, round)) {
           if (askForVotes(Phase.ELECTION, round)) {
             server.changeToLeader();
-            fuzzerClient.sendEvent(new BecomeLeaderEvent(this.term_, server.getId().toString()));
+            // TODO: BecomeLeader event
           }
         }
       }
@@ -269,14 +266,14 @@ class LeaderElection implements Runnable {
         } else {
           LOG.error("{}: Failed, state={}", this, state, e);
         }
-        fuzzerClient.setElection(false);
+        // TODO FuzzerClient setElection false
         shutdown();
       }
     } finally {
       // Update leader election completion metric(s).
       server.getLeaderElectionMetrics().onNewLeaderElectionCompletion();
       lifeCycle.checkStateAndClose(() -> {});
-      fuzzerClient.setElection(false);
+      // TODO: FuzzerClient setElection false
     }
   }
 

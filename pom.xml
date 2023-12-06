@@ -78,6 +78,7 @@
     <module>ratis-resource-bundle</module>
     <module>ratis-grpc</module>
     <module>ratis-netty</module>
+    <module>ratis-interceptor</module>
 
     <module>ratis-test</module>
 
@@ -87,7 +88,6 @@
     <module>ratis-tools</module>
     <module>ratis-shell</module>
     <module>ratis-assembly</module>
-    <module>ratis-interceptor</module>
   </modules>
 
   <pluginRepositories>
@@ -303,6 +303,11 @@
       </dependency>
       <dependency>
         <artifactId>ratis-shell</artifactId>
+        <groupId>org.apache.ratis</groupId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <artifactId>ratis-interceptor</artifactId>
         <groupId>org.apache.ratis</groupId>
         <version>${project.version}</version>
       </dependency>

@@ -57,6 +57,7 @@
       <groupId>org.apache.ratis</groupId>
     </dependency>
 
+
     <dependency>
       <artifactId>ratis-server</artifactId>
       <groupId>org.apache.ratis</groupId>
@@ -89,6 +90,12 @@
       <scope>test</scope>
       <type>test-jar</type>
     </dependency>
+
+    <dependency>
+      <artifactId>ratis-interceptor</artifactId>
+      <groupId>org.apache.ratis</groupId>
+    </dependency>
+
     <dependency>
       <artifactId>ratis-test</artifactId>
       <groupId>org.apache.ratis</groupId>
