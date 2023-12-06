@@ -56,9 +56,3 @@ public class InterceptorClientRpc extends RaftClientRpcWithProxy<InterceptorRpcP
         return null;
     }
 }
-
-// public class InterceptorClientRpc extends NettyClientRpc {
-//     public  InterceptorClientRpc(ClientId clientId, RaftProperties raftProperties) {
-//         super(clientId, raftProperties);
-//     }
-// }

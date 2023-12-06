@@ -13,7 +13,9 @@ import org.apache.ratis.util.TimeDuration;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class InterceptorClient {
     // TODO
@@ -34,6 +36,8 @@ public class InterceptorClient {
     private TimeDuration replyWaitTime;
     private OkHttpClient client = new OkHttpClient();
     private MessagePollingThread pollingThread; 
+    private AtomicInteger counter;
+    private Random random;
 
     public InterceptorClient(
         RaftServer raftServer, 
@@ -49,6 +53,8 @@ public class InterceptorClient {
 
         this.listenServer = new InterceptorServer(listenAddress);
         this.pollingThread = new MessagePollingThread(this.listenServer, messageHandler);
+        this.counter = new AtomicInteger();
+        this.random = new Random((long) this.interceptorAddress.getPort());
     }
 
     public void start() throws IOException {
@@ -78,13 +84,15 @@ public class InterceptorClient {
     }
 
     public String getNewRequestId() {
-        // TODO: need to use a concurrent counter here
-        return "";
+        return this.raftServer.getId().toString() + "_" + Integer.toString(this.counter.getAndIncrement());
     }
 
     public String getNewMessageId() {
-        // TODO: need to use a random number generator here to generate new IDs
-        return "";
+        return this.random.ints(48, 123)
+            .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i>= 97))
+            .limit(16)
+            .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+            .toString();
     }
 
     private void sendMessageToServer(String message) throws IOException {
