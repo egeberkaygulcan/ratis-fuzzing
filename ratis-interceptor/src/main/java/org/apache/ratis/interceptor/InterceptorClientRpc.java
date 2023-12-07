@@ -36,7 +36,7 @@ public class InterceptorClientRpc extends RaftClientRpcWithProxy<InterceptorRpcP
 
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         Request httpRequest = new Request.Builder()
-                .url(address)
+                .url("http://" + address)
                 .post(RequestBody.create(JSON, msg.toJsonString()))
                 .build();
         Response response = null;

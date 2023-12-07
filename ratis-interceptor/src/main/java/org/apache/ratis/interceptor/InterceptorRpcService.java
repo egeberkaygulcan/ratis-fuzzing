@@ -70,6 +70,7 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
         @Override
         public void channelRead0(ChannelHandlerContext ctx, Object msg) {
             if (msg instanceof  FullHttpRequest) {
+                LOG.info("Received new message.");
                 FullHttpRequest req = (FullHttpRequest) msg;
                 FullHttpResponse res;
                 try {
@@ -77,9 +78,12 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
                     if(content == null || content.readableBytes() <= 0){
                         throw new IOException("empty request");
                     }
-                    if(!req.headers().get(CONTENT_TYPE).equals(APPLICATION_JSON.toString())) {
+    
+                    if(!(req.headers().get(CONTENT_TYPE).equals(APPLICATION_JSON.toString()) || req.headers().get(CONTENT_TYPE).equals("application/json; charset=utf-8"))) {
+                        LOG.info("Throwing IOException.");
                         throw new IOException("not a json request");
                     }
+                    LOG.info("Building message with Json string.");
                     InterceptorMessage requestMessage = new InterceptorMessage.Builder().buildWithJsonString(content.toString(StandardCharsets.UTF_8));
                     InterceptorMessage replyMessage = handle(requestMessage);
                     byte[] responseContent = replyMessage.toJsonString().getBytes(StandardCharsets.UTF_8);
@@ -103,7 +107,7 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
 
     public InterceptorRpcService(RaftServer server) {
         super(server::getId, id -> new InterceptorRpcProxy.PeerMap(id.toString(), server.getProperties()));
-        LOG.info("CREATED INTERCEPTOR RPC SERVICE.");
+        LOG.info("InterceptorRpcService started.");
         this.raftServer = server;
         
         final String iLhost = InterceptorConfigKeys.InterceptorListener.host(server.getProperties());
@@ -176,6 +180,7 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
 
     InterceptorMessage handle(InterceptorMessage message) throws IOException{
         InterceptorMessageUtils.MessageType messageType = InterceptorMessageUtils.MessageType.fromString(message.getType());
+        LOG.info("Handling message of type " + messageType.toString());
         switch (messageType) {
             case RequestVoteRequest:
                 RequestVoteReplyProto reply = this.raftServer.requestVote(message.toRequestVoteRequest());
@@ -200,27 +205,35 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
 
     @Override
     public RequestVoteReplyProto requestVote(RequestVoteRequestProto request) throws IOException {
+        LOG.info("RequestVoteRequest from " + request.getServerRequest().getRequestorId().toStringUtf8() + " to " + request.getServerRequest().getReplyId().toStringUtf8());
         InterceptorMessage.Builder iMessageBuilder = new InterceptorMessage.Builder()
                 .setRequestVoteRequest(request);
-                // .setRequestId(iClient.getNewRequestId());
 
         if(this.intercept) {
+            iMessageBuilder.setRequestId(iClient.getNewRequestId());
             InterceptorMessage message =  iClient.sendMessage(iMessageBuilder);
             return message.toRequestVoteReply();
         }
         final RaftPeerId id = RaftPeerId.valueOf(request.getServerRequest().getReplyId());
         InterceptorRpcProxy proxy = getProxies().getProxy(id);
+        LOG.info("Proxy address: " + proxy.getPeerAddress());
         InterceptorMessage reply = proxy.send(iMessageBuilder.build());
+
+        if (reply == null) {
+            throw new IOException("Received null reply.");
+        }
+        
         return reply.toRequestVoteReply();
     }
 
     @Override
     public AppendEntriesReplyProto appendEntries(AppendEntriesRequestProto request) throws IOException {
+        LOG.info("AppendEntriesRequest from " + request.getServerRequest().getRequestorId().toStringUtf8() + " to " + request.getServerRequest().getReplyId().toStringUtf8());
         InterceptorMessage.Builder iMessageBuilder = new InterceptorMessage.Builder()
                 .setAppendEntriesRequest(request);
-                // .setRequestId(iClient.getNewRequestId());
 
         if(this.intercept) {
+            iMessageBuilder.setRequestId(iClient.getNewRequestId());
             InterceptorMessage message = iClient.sendMessage(iMessageBuilder);
             return message.toAppendEntriesReply();
         }
@@ -229,17 +242,21 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
         InterceptorRpcProxy proxy = getProxies().getProxy(id);
         InterceptorMessage reply = proxy.send(iMessageBuilder.build());
 
+        if (reply == null) {
+            throw new IOException("Received null reply.");
+        }
+
         return reply.toAppendEntriesReply();
     }
 
     @Override
     public InstallSnapshotReplyProto installSnapshot(InstallSnapshotRequestProto request) throws IOException {
+        LOG.info("InstallSnapshotRequest from " + request.getServerRequest().getRequestorId().toStringUtf8() + " to " + request.getServerRequest().getReplyId().toStringUtf8());
         InterceptorMessage.Builder iMessageBuilder = new InterceptorMessage.Builder()
                 .setInstallSnapshotRequest(request);
-                // .setRequestId(iClient.getNewRequestId());
 
-        // TODO: remove?
         if(this.intercept) {
+            iMessageBuilder.setRequestId(iClient.getNewRequestId());
             InterceptorMessage message = iClient.sendMessage(iMessageBuilder);
             return message.toInstallSnapshotReply();
         }
@@ -248,17 +265,21 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
         InterceptorRpcProxy proxy = getProxies().getProxy(id);
         InterceptorMessage reply = proxy.send(iMessageBuilder.build());
 
+        if (reply == null) {
+            throw new IOException("Received null reply.");
+        }
+
         return reply.toInstallSnapshotReply();
     }
 
     @Override
     public StartLeaderElectionReplyProto startLeaderElection(StartLeaderElectionRequestProto request) throws IOException {
+        LOG.info("StartLeaderElectionRequest from " + request.getServerRequest().getRequestorId().toStringUtf8() + " to " + request.getServerRequest().getReplyId().toStringUtf8());
         InterceptorMessage.Builder iMessageBuilder = new InterceptorMessage.Builder()
-                .setStartLeaderElectionRequest(request);
-                // .setRequestId(iClient.getNewRequestId());
+                .setStartLeaderElectionRequest(request);   
 
-        // TODO: remove?
         if(this.intercept) {
+            iMessageBuilder.setRequestId(iClient.getNewRequestId());
             InterceptorMessage message = iClient.sendMessage(iMessageBuilder);
             return message.toStartLeaderElectionReply();
         }
@@ -266,6 +287,10 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
         final RaftPeerId id = RaftPeerId.valueOf(request.getServerRequest().getReplyId());
         InterceptorRpcProxy proxy = getProxies().getProxy(id);
         InterceptorMessage reply = proxy.send(iMessageBuilder.build());
+
+        if (reply == null) {
+            throw new IOException("Received null reply.");
+        }
 
         return reply.toStartLeaderElectionReply();
     }

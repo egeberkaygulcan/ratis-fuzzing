@@ -6,9 +6,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import org.apache.ratis.interceptor.InterceptorRpcService;
 import org.apache.ratis.proto.RaftProtos.*;
 import org.apache.ratis.protocol.RaftClientReply;
 import org.apache.ratis.protocol.RaftClientRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -18,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InterceptorMessage {
+    public static final Logger LOG = LoggerFactory.getLogger(InterceptorMessage.class);
     private final String from;
     private final String to;
     private final byte[] data;
@@ -135,6 +139,7 @@ public class InterceptorMessage {
     }
 
     public static class Builder {
+        public static final Logger LOG = LoggerFactory.getLogger(Builder.class);
         private String from;
         private String id;
         private String requestId;
@@ -271,16 +276,17 @@ public class InterceptorMessage {
         }
 
         public InterceptorMessage buildWithJsonString(String jsonString) {
-            JsonObject ob = JsonParser.parseString(jsonString).getAsJsonObject();
-
-            InterceptorMessage.Builder builder = new InterceptorMessage.Builder()
-                    .setFrom(ob.get("from").getAsString())
-                    .setID(ob.get("id").getAsString())
-                    .setRequestId(ob.get("request_id").getAsString());
-            
-            InterceptorMessageUtils.MessageType messageType = InterceptorMessageUtils.MessageType.fromString(ob.get("type").getAsString());
+            LOG.info("Building message with Json string.");
+            LOG.info(jsonString);
 
             try {
+                JsonObject ob = JsonParser.parseString(jsonString).getAsJsonObject();
+                InterceptorMessage.Builder builder = new InterceptorMessage.Builder();
+                        // .setFrom(ob.get("from").getAsString())
+                        // .setID(ob.get("id").getAsString())
+                        // .setRequestId(ob.get("request_id").getAsString());
+                
+                InterceptorMessageUtils.MessageType messageType = InterceptorMessageUtils.MessageType.fromString(ob.get("type").getAsString());
                 switch (messageType) {
                     case RequestVoteRequest:
                         builder.setRequestVoteRequest(InterceptorMessageUtils.toRequestVoteRequest(ob.get("data").getAsString().getBytes()));
@@ -317,9 +323,10 @@ public class InterceptorMessage {
                 }
 
                 InterceptorMessage message = builder.build();
+                LOG.info("Message built.");
                 return message;
             } catch (IOException e) {
-                // Handle
+                LOG.error("Error while building with Json string: ", e);
             }
 
             return null;

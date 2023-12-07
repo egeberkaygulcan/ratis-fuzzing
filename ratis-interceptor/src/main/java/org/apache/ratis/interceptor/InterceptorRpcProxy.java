@@ -9,6 +9,8 @@ import org.apache.ratis.conf.RaftProperties;
 import org.apache.ratis.interceptor.comm.InterceptorMessage;
 import org.apache.ratis.protocol.RaftPeer;
 import org.apache.ratis.util.PeerProxyMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -37,6 +39,7 @@ public class InterceptorRpcProxy implements Closeable {
         }
     }
 
+    public static final Logger LOG = LoggerFactory.getLogger(InterceptorRpcProxy.class);
     private final RaftPeer peer;
     private OkHttpClient client = new OkHttpClient();
 
@@ -51,11 +54,12 @@ public class InterceptorRpcProxy implements Closeable {
         // TODO:
         //  [X] need to figure out the right address to the peer and send a http request to that peer
         String address = getPeerAddress();
+        LOG.info("Peer address: " + address);
         String json = request.toJsonString();
 
-        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        MediaType JSON = MediaType.parse("application/json");
         Request httpRequest = new Request.Builder()
-                .url(address)
+                .url("http://" + address)
                 .post(RequestBody.create(JSON, json))
                 .build();
         Response response = null;
@@ -63,13 +67,14 @@ public class InterceptorRpcProxy implements Closeable {
         try {
             response = client.newCall(httpRequest).execute();
             if (response != null) {
+                LOG.info("Constructing message from response.");
                 msg = new InterceptorMessage.Builder().buildWithJsonString(response.body().string());
                 if (msg != null) {
                     return msg;
                 }
             }
         } catch (IOException e) {
-            // TODO: handle exception
+            LOG.error("Could not send message: ", e);
         }
 
         return null;

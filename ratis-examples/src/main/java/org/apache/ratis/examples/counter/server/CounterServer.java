@@ -83,6 +83,7 @@ public final class CounterServer implements Closeable {
 
     //set the port (different for each peer) in RaftProperty object
     final int port = NetUtils.createSocketAddr(peer.getAddress()).getPort();
+    System.out.println("RPC port: " + port);
     InterceptorConfigKeys.Listener.setPort(properties, port);
     InterceptorConfigKeys.Server.setPort(properties, fuzzerPort);
     InterceptorConfigKeys.InterceptorListener.setPort(properties, interceptorListenerPort);

@@ -6,14 +6,20 @@ import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 import org.apache.ratis.proto.RaftProtos.*;
 import org.apache.ratis.protocol.RaftClientReply;
 import org.apache.ratis.protocol.RaftClientRequest;
+import org.apache.ratis.thirdparty.com.codahale.metrics.MetricRegistryListener.Base;
 import org.apache.ratis.thirdparty.com.google.gson.JsonSerializer;
 import org.apache.ratis.thirdparty.com.google.protobuf.util.JsonFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InterceptorMessageUtils {
+
+    public static final Logger LOG = LoggerFactory.getLogger(InterceptorMessageUtils.class);
 
     public static enum MessageType {
         RequestVoteRequest("request_vote_request"),
@@ -111,15 +117,25 @@ public class InterceptorMessageUtils {
     }
 
     public static RequestVoteRequestProto toRequestVoteRequest(byte[] data) throws IOException{
-        String jsonData = new String(data, StandardCharsets.UTF_8);
+        try {
+            LOG.info(data.toString());
+            data = Base64.getDecoder().decode(data);
+            LOG.info(data.toString());
+            String jsonData = new String(data, StandardCharsets.UTF_8);
+            LOG.info("jsonData: " + jsonData);
 
-        RequestVoteRequestProto.Builder builder = RequestVoteRequestProto.newBuilder();
-        JsonFormat.parser().ignoringUnknownFields().merge(jsonData, builder);
+            RequestVoteRequestProto.Builder builder = RequestVoteRequestProto.newBuilder();
+            JsonFormat.parser().ignoringUnknownFields().merge(jsonData, builder);
 
-        return builder.build();
+            return builder.build();
+        } catch (Exception e) {
+            LOG.error("Error on toRequestVoteRequest: ", e);
+        }
+        return null;
     }
 
     public static RequestVoteReplyProto toRequestVoteReply(byte[] data) throws IOException{
+        data = Base64.getDecoder().decode(data);
         String jsonData = new String(data, StandardCharsets.UTF_8);
 
         RequestVoteReplyProto.Builder builder = RequestVoteReplyProto.newBuilder();
@@ -129,6 +145,7 @@ public class InterceptorMessageUtils {
     }
 
     public static AppendEntriesRequestProto toAppendEntriesRequest(byte[] data) throws IOException{
+        data = Base64.getDecoder().decode(data);
         String jsonData = new String(data, StandardCharsets.UTF_8);
 
         AppendEntriesRequestProto.Builder builder = AppendEntriesRequestProto.newBuilder();
@@ -138,6 +155,7 @@ public class InterceptorMessageUtils {
     }
 
     public static AppendEntriesReplyProto toAppendEntriesReply(byte[] data) throws IOException{
+        data = Base64.getDecoder().decode(data);
         String jsonData = new String(data, StandardCharsets.UTF_8);
 
         AppendEntriesReplyProto.Builder builder = AppendEntriesReplyProto.newBuilder();
@@ -147,6 +165,7 @@ public class InterceptorMessageUtils {
     }
 
     public static InstallSnapshotRequestProto toInstallSnapshotRequest(byte[] data) throws IOException{
+        data = Base64.getDecoder().decode(data);
         String jsonData = new String(data, StandardCharsets.UTF_8);
 
         InstallSnapshotRequestProto.Builder builder = InstallSnapshotRequestProto.newBuilder();
@@ -156,6 +175,7 @@ public class InterceptorMessageUtils {
     }
 
     public static InstallSnapshotReplyProto toInstallSnapshotReply(byte[] data) throws IOException{
+        data = Base64.getDecoder().decode(data);
         String jsonData = new String(data, StandardCharsets.UTF_8);
 
         InstallSnapshotReplyProto.Builder builder = InstallSnapshotReplyProto.newBuilder();
@@ -165,6 +185,7 @@ public class InterceptorMessageUtils {
     }
 
     public static StartLeaderElectionRequestProto toStartLeaderElectionRequest(byte[] data) throws IOException{
+        data = Base64.getDecoder().decode(data);
         String jsonData = new String(data, StandardCharsets.UTF_8);
 
         StartLeaderElectionRequestProto.Builder builder = StartLeaderElectionRequestProto.newBuilder();
@@ -174,6 +195,7 @@ public class InterceptorMessageUtils {
     }
 
     public static StartLeaderElectionReplyProto toStartLeaderElectionReply(byte[] data) throws IOException{
+        data = Base64.getDecoder().decode(data);
         String jsonData = new String(data, StandardCharsets.UTF_8);
 
         StartLeaderElectionReplyProto.Builder builder = StartLeaderElectionReplyProto.newBuilder();
@@ -183,6 +205,7 @@ public class InterceptorMessageUtils {
     }
 
     public static RaftClientRequest toRaftClientRequest(byte[] data) throws IOException{
+        data = Base64.getDecoder().decode(data);
         // TODO: verify
         String jsonData = new String(data, StandardCharsets.UTF_8);
 
@@ -193,6 +216,7 @@ public class InterceptorMessageUtils {
     }
 
     public static RaftClientReply toRaftClientReply(byte[] data) throws IOException{
+        data = Base64.getDecoder().decode(data);
         // TODO: verify
         String jsonData = new String(data, StandardCharsets.UTF_8);
 
