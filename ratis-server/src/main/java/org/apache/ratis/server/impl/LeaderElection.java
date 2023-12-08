@@ -96,6 +96,7 @@ class LeaderElection implements Runnable {
     for(Exception e : exceptions) {
       final int j = i++;
       LogUtils.infoOrTrace(LOG, () -> "  Exception " + j, e);
+      // e.printStackTrace();
     }
     return resultAndTerm;
   }
@@ -446,6 +447,7 @@ class LeaderElection implements Runnable {
         }
       } catch(ExecutionException e) {
         LogUtils.infoOrTrace(LOG, () -> this + " got exception when requesting votes", e);
+        // e.printStackTrace();
         exceptions.add(e);
       }
       waitForNum--;

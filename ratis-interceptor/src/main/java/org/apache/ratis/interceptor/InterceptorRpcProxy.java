@@ -1,8 +1,5 @@
 package org.apache.ratis.interceptor;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import com.squareup.okhttp.*;
 
 import org.apache.ratis.conf.RaftProperties;
@@ -14,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 // The proxy initiates a communication to each peer and is used to communicate to that peer
 // We need the proxy to send messages that are not intercepted
@@ -66,14 +62,20 @@ public class InterceptorRpcProxy implements Closeable {
         InterceptorMessage msg = null;
         try {
             response = client.newCall(httpRequest).execute();
-            if (response != null) {
-                LOG.info("Constructing message from response.");
-                msg = new InterceptorMessage.Builder().buildWithJsonString(response.body().string());
-                if (msg != null) {
-                    return msg;
+            if (response.isSuccessful()) {
+                if (response != null) {
+                    String responseBody = response.body().string();
+                    response.body().close();
+                    LOG.info("Constructing message from response: " + responseBody);
+                    msg = new InterceptorMessage.Builder().buildWithJsonString(responseBody);
+                    if (msg != null) {
+                        return msg;
+                    }
                 }
-            }
-        } catch (IOException e) {
+                LOG.error("Response is null.");
+            }   
+            LOG.error("Response unsuccesfull.");
+        } catch (Exception e) {
             LOG.error("Could not send message: ", e);
         }
 

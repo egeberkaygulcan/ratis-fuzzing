@@ -76,12 +76,11 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
                 try {
                     ByteBuf content = req.content();
                     if(content == null || content.readableBytes() <= 0){
-                        throw new IOException("empty request");
+                        LOG.error("Empty request.");
                     }
     
                     if(!(req.headers().get(CONTENT_TYPE).equals(APPLICATION_JSON.toString()) || req.headers().get(CONTENT_TYPE).equals("application/json; charset=utf-8"))) {
-                        LOG.info("Throwing IOException.");
-                        throw new IOException("not a json request");
+                        LOG.error("Not a Json request");
                     }
                     LOG.info("Building message with Json string.");
                     InterceptorMessage requestMessage = new InterceptorMessage.Builder().buildWithJsonString(content.toString(StandardCharsets.UTF_8));
@@ -91,6 +90,7 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
                 } catch (Exception e) {
                     res = new DefaultFullHttpResponse(req.protocolVersion(),
                             HttpResponseStatus.INTERNAL_SERVER_ERROR);
+                    LOG.error("Error on channelRead0: ", e);
                 }
                 res.headers().set(CONTENT_TYPE, "text/plain; charset=UTF-8");
                 if (HttpUtil.isKeepAlive(req)) {

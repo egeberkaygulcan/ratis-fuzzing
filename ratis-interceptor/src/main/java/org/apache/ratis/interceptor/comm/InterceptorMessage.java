@@ -10,12 +10,14 @@ import org.apache.ratis.interceptor.InterceptorRpcService;
 import org.apache.ratis.proto.RaftProtos.*;
 import org.apache.ratis.protocol.RaftClientReply;
 import org.apache.ratis.protocol.RaftClientRequest;
+import org.apache.ratis.thirdparty.com.codahale.metrics.MetricRegistryListener.Base;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,25 +79,30 @@ public class InterceptorMessage {
     }
 
     public String toJsonString() {
-        JsonObject json = new JsonObject();
-        json.addProperty("from", this.from);
-        json.addProperty("to", this.to);
-        json.addProperty("type", this.type);
-        json.addProperty("id", this.id);
+        try {
+            JsonObject json = new JsonObject();
+            json.addProperty("from", this.from);
+            json.addProperty("to", this.to);
+            json.addProperty("type", this.type);
+            json.addProperty("id", this.id);
 
-        JsonObject dataJson = new JsonObject();
-        dataJson.addProperty("data", Base64.getEncoder().encodeToString(this.data));
-        dataJson.addProperty("request_id", this.requestId);
+            JsonObject dataJson = new JsonObject();
+            dataJson.addProperty("data", Base64.getEncoder().encodeToString(this.data));
+            dataJson.addProperty("request_id", this.requestId);
 
-        Gson gson = new GsonBuilder().create();
-        JsonElement paramsJson = gson.toJsonTree(this.params);
+            Gson gson = new GsonBuilder().create();
+            JsonElement paramsJson = gson.toJsonTree(this.params);
 
-        byte[] dataBytes = gson.toJson(dataJson).getBytes();
+            byte[] dataBytes = gson.toJson(dataJson).getBytes();
 
-        json.addProperty("data", Base64.getEncoder().encodeToString(dataBytes));
-        json.add("params", paramsJson);
+            json.addProperty("data", Base64.getEncoder().encodeToString(dataBytes));
+            json.add("params", paramsJson);
 
-        return gson.toJson(json);
+            return gson.toJson(json);
+        } catch (Exception e) {
+            LOG.error("Could not convert to Json string: ", e);
+        }
+        return null;
     }
 
     public RequestVoteRequestProto toRequestVoteRequest() throws IOException{
@@ -239,11 +246,11 @@ public class InterceptorMessage {
             } else if(this.appendEntriesRequest != null) {
                 data = InterceptorMessageUtils.fromAppendEntriesRequest(this.appendEntriesRequest);
                 to = this.appendEntriesRequest.getServerRequest().getReplyId().toStringUtf8();
-                type = "append_entries_request";
+                type = InterceptorMessageUtils.MessageType.AppendEntriesRequest.toString();
             } else if(this.appendEntriesReply != null) {
                 data = InterceptorMessageUtils.fromAppendEntriesReply(this.appendEntriesReply);
                 to = this.appendEntriesReply.getServerReply().getRequestorId().toStringUtf8();
-                type = "append_entries_reply";
+                type = InterceptorMessageUtils.MessageType.AppendEntriesReply.toString();
             } else if (this.installSnapshotRequest != null) {
                 data = InterceptorMessageUtils.fromInstallSnapshotRequest(this.installSnapshotRequest);
                 to = this.installSnapshotRequest.getServerRequest().getReplyId().toStringUtf8();
@@ -276,47 +283,57 @@ public class InterceptorMessage {
         }
 
         public InterceptorMessage buildWithJsonString(String jsonString) {
-            LOG.info("Building message with Json string.");
-            LOG.info(jsonString);
+            if (jsonString == null) {
+                LOG.error("Received null string at buildWithJsonString.");
+                return null;
+            }
 
             try {
                 JsonObject ob = JsonParser.parseString(jsonString).getAsJsonObject();
+                if (ob == null) {
+                    LOG.error("JsonObject null at buildWithJsonString.");
+                    return null;
+                }
                 InterceptorMessage.Builder builder = new InterceptorMessage.Builder();
                         // .setFrom(ob.get("from").getAsString())
                         // .setID(ob.get("id").getAsString())
-                        // .setRequestId(ob.get("request_id").getAsString());
-                
+                        // TODO: .setRequestId(ob.get("request_id").getAsString());
+                LOG.info("Message type: " + ob.get("type").getAsString());
                 InterceptorMessageUtils.MessageType messageType = InterceptorMessageUtils.MessageType.fromString(ob.get("type").getAsString());
+                LOG.info("messageType: " + messageType);
+                JsonObject compositeData = JsonParser.parseString(new String(Base64.getDecoder().decode(ob.get("data").getAsString()), StandardCharsets.ISO_8859_1)).getAsJsonObject();
+                byte[] data = Base64.getDecoder().decode(compositeData.get("data").getAsString());
+                // String requestId = compositeData.get("request_id").getAsString();
                 switch (messageType) {
                     case RequestVoteRequest:
-                        builder.setRequestVoteRequest(InterceptorMessageUtils.toRequestVoteRequest(ob.get("data").getAsString().getBytes()));
+                        builder.setRequestVoteRequest(InterceptorMessageUtils.toRequestVoteRequest(data));
                         break;
                     case RequestVoteReply:
-                        builder.setRequestVoteReply(InterceptorMessageUtils.toRequestVoteReply(ob.get("data").getAsString().getBytes()));
+                        builder.setRequestVoteReply(InterceptorMessageUtils.toRequestVoteReply(data));
                         break;
                     case AppendEntriesRequest:
-                        builder.setAppendEntriesRequest(InterceptorMessageUtils.toAppendEntriesRequest(ob.get("data").getAsString().getBytes()));
+                        builder.setAppendEntriesRequest(InterceptorMessageUtils.toAppendEntriesRequest(data));
                         break;
                     case AppendEntriesReply:
-                        builder.setAppendEntriesReply(InterceptorMessageUtils.toAppendEntriesReply(ob.get("data").getAsString().getBytes()));
+                        builder.setAppendEntriesReply(InterceptorMessageUtils.toAppendEntriesReply(data));
                         break;
                     case InstallSnapshotRequest:
-                        builder.setInstallSnapshotRequest(InterceptorMessageUtils.toInstallSnapshotRequest(ob.get("data").getAsString().getBytes()));
+                        builder.setInstallSnapshotRequest(InterceptorMessageUtils.toInstallSnapshotRequest(data));
                         break;
                     case InstallSnapshotReply:
-                        builder.setInstallSnapshotReply(InterceptorMessageUtils.toInstallSnapshotReply(ob.get("data").getAsString().getBytes()));
+                        builder.setInstallSnapshotReply(InterceptorMessageUtils.toInstallSnapshotReply(data));
                         break;
                     case StartLeaderElectionRequest:
-                        builder.setStartLeaderElectionRequest(InterceptorMessageUtils.toStartLeaderElectionRequest(ob.get("data").getAsString().getBytes()));
+                        builder.setStartLeaderElectionRequest(InterceptorMessageUtils.toStartLeaderElectionRequest(data));
                         break;
                     case StartLeaderElectionReply:
-                        builder.setStartLeaderElectionReply(InterceptorMessageUtils.toStartLeaderElectionReply(ob.get("data").getAsString().getBytes()));
+                        builder.setStartLeaderElectionReply(InterceptorMessageUtils.toStartLeaderElectionReply(data));
                         break;
                     case RaftClientRequest:
-                        builder.setRaftClientRequest(InterceptorMessageUtils.toRaftClientRequest(ob.get("data").getAsString().getBytes()));
+                        builder.setRaftClientRequest(InterceptorMessageUtils.toRaftClientRequest(data));
                         break;
                     case RaftClientReply:
-                        builder.setRaftClientReply(InterceptorMessageUtils.toRaftClientReply(ob.get("data").getAsString().getBytes()));
+                        builder.setRaftClientReply(InterceptorMessageUtils.toRaftClientReply(data));
                         break;
                     default:
                         break;
@@ -325,7 +342,7 @@ public class InterceptorMessage {
                 InterceptorMessage message = builder.build();
                 LOG.info("Message built.");
                 return message;
-            } catch (IOException e) {
+            } catch (Exception e) {
                 LOG.error("Error while building with Json string: ", e);
             }
 

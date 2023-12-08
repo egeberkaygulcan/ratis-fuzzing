@@ -26,3 +26,4 @@ ratis-fuzzer/output
 ratis-fuzzer/plots
 ratis-fuzzer/experiments
 ratis-fuzzer/experiments_
+data/

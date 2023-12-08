@@ -29,7 +29,7 @@ public class InterceptorMessageUtils {
         InstallSnapshotRequest("install_snapshot_request"),
         InstallSnapshotReply("install_snapshot_reply"),
         StartLeaderElectionRequest("start_leader_election_request"),
-        StartLeaderElectionReply("start_leader_election, reply"),
+        StartLeaderElectionReply("start_leader_election_reply"),
         RaftClientRequest("raft_client_request"),
         RaftClientReply("raft_client_reply"),
         None("");
@@ -47,14 +47,24 @@ public class InterceptorMessageUtils {
             switch (type) {
                 case "request_vote_request":
                     return RequestVoteRequest;
+                case "request_vote_reply":
+                    return RequestVoteReply;
                 case "append_entries_request":
                     return AppendEntriesRequest;
+                case "append_entries_reply":
+                    return AppendEntriesReply;
                 case "install_snapshot_request":
                     return InstallSnapshotRequest;
+                case "install_snapshot_reply":
+                    return InstallSnapshotReply;
                 case "start_leader_election_request":
                     return StartLeaderElectionRequest; 
+                case "start_leader_election_reply":
+                    return StartLeaderElectionReply;
                 case "raft_client_request":
                     return RaftClientRequest;
+                case "raft_client_reply":
+                    return RaftClientReply;
                 default:
                     return None;
             }
@@ -64,6 +74,7 @@ public class InterceptorMessageUtils {
 
     public static byte[] fromRequestVoteRequest(RequestVoteRequestProto request) throws IOException{
         String out = JsonFormat.printer().print(request);
+        // LOG.info("Out: " + out);
         return out.getBytes(StandardCharsets.UTF_8);
     }
 
@@ -118,11 +129,8 @@ public class InterceptorMessageUtils {
 
     public static RequestVoteRequestProto toRequestVoteRequest(byte[] data) throws IOException{
         try {
-            LOG.info(data.toString());
-            data = Base64.getDecoder().decode(data);
-            LOG.info(data.toString());
             String jsonData = new String(data, StandardCharsets.UTF_8);
-            LOG.info("jsonData: " + jsonData);
+            // LOG.info("jsonData: " + jsonData);
 
             RequestVoteRequestProto.Builder builder = RequestVoteRequestProto.newBuilder();
             JsonFormat.parser().ignoringUnknownFields().merge(jsonData, builder);
@@ -135,17 +143,21 @@ public class InterceptorMessageUtils {
     }
 
     public static RequestVoteReplyProto toRequestVoteReply(byte[] data) throws IOException{
-        data = Base64.getDecoder().decode(data);
-        String jsonData = new String(data, StandardCharsets.UTF_8);
+        try {
+            String jsonData = new String(data, StandardCharsets.UTF_8);
 
-        RequestVoteReplyProto.Builder builder = RequestVoteReplyProto.newBuilder();
-        JsonFormat.parser().ignoringUnknownFields().merge(jsonData, builder);
+            RequestVoteReplyProto.Builder builder = RequestVoteReplyProto.newBuilder();
+            JsonFormat.parser().ignoringUnknownFields().merge(jsonData, builder);
 
-        return builder.build();
+            return builder.build();
+        } catch (Exception e) {
+            LOG.error("Error on toRequestVoteReply", e);
+        }
+
+        return null;
     }
 
     public static AppendEntriesRequestProto toAppendEntriesRequest(byte[] data) throws IOException{
-        data = Base64.getDecoder().decode(data);
         String jsonData = new String(data, StandardCharsets.UTF_8);
 
         AppendEntriesRequestProto.Builder builder = AppendEntriesRequestProto.newBuilder();
@@ -155,7 +167,6 @@ public class InterceptorMessageUtils {
     }
 
     public static AppendEntriesReplyProto toAppendEntriesReply(byte[] data) throws IOException{
-        data = Base64.getDecoder().decode(data);
         String jsonData = new String(data, StandardCharsets.UTF_8);
 
         AppendEntriesReplyProto.Builder builder = AppendEntriesReplyProto.newBuilder();
@@ -165,7 +176,6 @@ public class InterceptorMessageUtils {
     }
 
     public static InstallSnapshotRequestProto toInstallSnapshotRequest(byte[] data) throws IOException{
-        data = Base64.getDecoder().decode(data);
         String jsonData = new String(data, StandardCharsets.UTF_8);
 
         InstallSnapshotRequestProto.Builder builder = InstallSnapshotRequestProto.newBuilder();
@@ -175,7 +185,6 @@ public class InterceptorMessageUtils {
     }
 
     public static InstallSnapshotReplyProto toInstallSnapshotReply(byte[] data) throws IOException{
-        data = Base64.getDecoder().decode(data);
         String jsonData = new String(data, StandardCharsets.UTF_8);
 
         InstallSnapshotReplyProto.Builder builder = InstallSnapshotReplyProto.newBuilder();
@@ -185,7 +194,6 @@ public class InterceptorMessageUtils {
     }
 
     public static StartLeaderElectionRequestProto toStartLeaderElectionRequest(byte[] data) throws IOException{
-        data = Base64.getDecoder().decode(data);
         String jsonData = new String(data, StandardCharsets.UTF_8);
 
         StartLeaderElectionRequestProto.Builder builder = StartLeaderElectionRequestProto.newBuilder();
@@ -195,7 +203,6 @@ public class InterceptorMessageUtils {
     }
 
     public static StartLeaderElectionReplyProto toStartLeaderElectionReply(byte[] data) throws IOException{
-        data = Base64.getDecoder().decode(data);
         String jsonData = new String(data, StandardCharsets.UTF_8);
 
         StartLeaderElectionReplyProto.Builder builder = StartLeaderElectionReplyProto.newBuilder();
@@ -205,7 +212,6 @@ public class InterceptorMessageUtils {
     }
 
     public static RaftClientRequest toRaftClientRequest(byte[] data) throws IOException{
-        data = Base64.getDecoder().decode(data);
         // TODO: verify
         String jsonData = new String(data, StandardCharsets.UTF_8);
 
@@ -216,7 +222,6 @@ public class InterceptorMessageUtils {
     }
 
     public static RaftClientReply toRaftClientReply(byte[] data) throws IOException{
-        data = Base64.getDecoder().decode(data);
         // TODO: verify
         String jsonData = new String(data, StandardCharsets.UTF_8);
 
