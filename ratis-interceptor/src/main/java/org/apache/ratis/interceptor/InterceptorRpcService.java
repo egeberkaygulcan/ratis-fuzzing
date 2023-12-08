@@ -1,5 +1,6 @@
 package org.apache.ratis.interceptor;
 
+import org.apache.ratis.client.impl.ClientProtoUtils;
 import org.apache.ratis.interceptor.comm.InterceptorClient;
 import org.apache.ratis.interceptor.comm.InterceptorMessage;
 import org.apache.ratis.interceptor.comm.InterceptorMessageUtils;
@@ -195,8 +196,8 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
                 StartLeaderElectionReplyProto sLEReply = this.raftServer.startLeaderElection(message.toStartLeaderElectionRequest());
                 return new InterceptorMessage.Builder().setStartLeaderElectionReply(sLEReply).build();
             case RaftClientRequest:
-                RaftClientReply RCReply = this.raftServer.submitClientRequest(message.toRaftClientRequest());
-                return new InterceptorMessage.Builder().setRaftClientReply(RCReply).build();
+                RaftClientReply RCReply = this.raftServer.submitClientRequest(ClientProtoUtils.toRaftClientRequest(message.toRaftClientRequest()));
+                return new InterceptorMessage.Builder().setRaftClientReply(ClientProtoUtils.toRaftClientReplyProto(RCReply)).build();
             default:
                 break;
         }

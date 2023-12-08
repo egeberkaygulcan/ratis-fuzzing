@@ -16,11 +16,10 @@ class RatisClient:
         self.error_log = None
 
         self.log4j_config = '-Dlog4j.configuration=file:../ratis-examples/src/main/resources/log4j.properties'
-        self.cmd = 'java {} -cp {} org.apache.ratis.examples.counter.client.CounterClient {} {} {} {}'.format(
+        self.cmd = 'java {} -cp {} org.apache.ratis.examples.counter.client.CounterClient {} {} {}'.format(
             self.log4j_config,
             self.config.jar_path,
             self.request,
-            self.elle_file,
             self.peer_addresses,
             self.group_id
         )

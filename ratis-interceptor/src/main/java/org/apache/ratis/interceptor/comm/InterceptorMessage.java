@@ -133,11 +133,11 @@ public class InterceptorMessage {
         return InterceptorMessageUtils.toStartLeaderElectionRequest(this.data);
     }
 
-    public RaftClientRequest toRaftClientRequest() throws IOException{
+    public RaftClientRequestProto toRaftClientRequest() throws IOException{
         return InterceptorMessageUtils.toRaftClientRequest(this.data);
     }
 
-    public RaftClientReply toRaftClientReply() throws IOException{
+    public RaftClientReplyProto toRaftClientReply() throws IOException{
         return InterceptorMessageUtils.toRaftClientReply(this.data);
     }
 
@@ -159,8 +159,8 @@ public class InterceptorMessage {
         private InstallSnapshotReplyProto installSnapshotReply;
         private StartLeaderElectionRequestProto startLeaderElectionRequest;
         private StartLeaderElectionReplyProto startLeaderElectionReply;
-        private RaftClientRequest raftClientRequest;
-        private RaftClientReply raftClientReply;
+        private RaftClientRequestProto raftClientRequest;
+        private RaftClientReplyProto raftClientReply;
 
 
         public Builder() {}
@@ -220,12 +220,12 @@ public class InterceptorMessage {
             return this;
         }
 
-        public Builder setRaftClientRequest(RaftClientRequest raftClientRequest) {
+        public Builder setRaftClientRequest(RaftClientRequestProto raftClientRequest) {
             this.raftClientRequest = raftClientRequest;
             return this;
         }
 
-        public Builder setRaftClientReply(RaftClientReply raftClientReply) {
+        public Builder setRaftClientReply(RaftClientReplyProto raftClientReply) {
             this.raftClientReply = raftClientReply;
             return this;
         }
@@ -269,11 +269,11 @@ public class InterceptorMessage {
                 type = InterceptorMessageUtils.MessageType.StartLeaderElectionReply.toString();
             } else if (this.raftClientRequest != null) {
                 data = InterceptorMessageUtils.fromRaftClientRequest(this.raftClientRequest);
-                to = this.raftClientRequest.getReplierId();
+                to = this.raftClientRequest.getRpcRequest().getReplyId().toStringUtf8();
                 type = InterceptorMessageUtils.MessageType.RaftClientRequest.toString();
             } else if (this.raftClientReply != null) {
                 data = InterceptorMessageUtils.fromRaftClientReply(this.raftClientReply);
-                to = this.raftClientReply.getRequestorId();
+                to = this.raftClientReply.getRpcReply().getRequestorId().toStringUtf8();
                 type = InterceptorMessageUtils.MessageType.RaftClientReply.toString();
             } else {
                 throw new IOException("invalid message type");

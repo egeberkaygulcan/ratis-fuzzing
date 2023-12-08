@@ -81,23 +81,15 @@ public final class CounterClient implements Closeable {
     }
   }
 
-  private void run(int request, String elleFile) throws Exception {
+  private void run(int request) throws Exception {
     System.out.printf("Sending %s command", CounterCommand.INCREMENT);
-    final List<Future<RaftClientReply>> futures = new ArrayList<>();
+    // final List<Future<RaftClientReply>> futures = new ArrayList<>();
 
     //send INCREMENT command(s)
     // use BlockingApi
 
-    final Future<RaftClientReply> fut = client.async().send(CounterCommand.INCREMENT.getMessage());
-    futures.add(fut);
-    // String elleVal = "{:type :invoke, :f :add, :value 1, :op-index " + request + ", :process " + client.getId().toString() + ", :time " + Instant.now().toEpochMilli() + ", :index " + ((2*request)-2) + "}\n";
-
-    // writeToElle(elleFile, elleVal);    
-
-    //wait for the futures
-    for (Future<RaftClientReply> f : futures) {
-      final RaftClientReply reply = f.get();
-      if (reply.isSuccess()) {
+    final RaftClientReply reply = client.io().send(CounterCommand.INCREMENT.getMessage());
+    if (reply.isSuccess()) {
         final String count = reply.getMessage().getContent().toStringUtf8();
         System.out.println("Counter is incremented to " + count);
         // elleVal =  "{:type :ok, :f :add, :value 1, :op-index " + count + ", :process " + client.getId().toString() + ", :time " + Instant.now().toEpochMilli() + ", :index " + ((2*request)-1) + "}\n";
@@ -106,31 +98,48 @@ public final class CounterClient implements Closeable {
         System.err.println("Failed " + reply);
         throw new Exception("Failed client request");
       }
-    }
-    futures.clear();
+    // futures.add(fut);
+    // String elleVal = "{:type :invoke, :f :add, :value 1, :op-index " + request + ", :process " + client.getId().toString() + ", :time " + Instant.now().toEpochMilli() + ", :index " + ((2*request)-2) + "}\n";
+
+    // writeToElle(elleFile, elleVal);    
+
+    //wait for the futures
+    // for (Future<RaftClientReply> f : futures) {
+    //   final RaftClientReply reply = f.get();
+    //   if (reply.isSuccess()) {
+    //     final String count = reply.getMessage().getContent().toStringUtf8();
+    //     System.out.println("Counter is incremented to " + count);
+    //     // elleVal =  "{:type :ok, :f :add, :value 1, :op-index " + count + ", :process " + client.getId().toString() + ", :time " + Instant.now().toEpochMilli() + ", :index " + ((2*request)-1) + "}\n";
+    //     // writeToElle(elleFile, elleVal);
+    //   } else {
+    //     System.err.println("Failed " + reply);
+    //     throw new Exception("Failed client request");
+    //   }
+    // }
+    // futures.clear();
     client.close();
 
-    for (Future<RaftClientReply> f : futures) {
-      f.get();
-    }
+    // for (Future<RaftClientReply> f : futures) {
+    //   f.get();
+    // }
   }
 
   public static void main(String[] args) {
+    // java -Dlog4j.configuration=file:../ratis-examples/src/main/resources/log4j.properties -cp ratis-examples/target/ratis-examples-2.5.1.jar org.apache.ratis.examples.counter.client.CounterClient 1 127.0.0.1:10000,127.0.0.1:10001,127.0.0.1:10002 02511d47-d67c-49a3-9011-abb3109a44c1
     int request = Integer.parseInt(args[0]);
-    String elleFile = args[1];
 
-    String[] addresses = args[2].split(",");
+    String[] addresses = args[1].split(",");
     final List<RaftPeer> peers = new ArrayList<>(addresses.length);
     final int priority = 0;
     for (int i = 0; i < addresses.length; i++) {
       peers.add(RaftPeer.newBuilder().setId(Integer.toString(i+1)).setAddress(addresses[i]).setPriority(priority).build());
     }
     final List<RaftPeer> PEERS = Collections.unmodifiableList(peers);
-    final UUID GROUP_ID = UUID.fromString(args[3]); // "02511d47-d67c-49a3-9011-abb3109a44c1"
+    final UUID GROUP_ID = UUID.fromString(args[2]); // "02511d47-d67c-49a3-9011-abb3109a44c1"
     final RaftGroup RAFT_GROUP = RaftGroup.valueOf(RaftGroupId.valueOf(GROUP_ID), PEERS);
     
     try(CounterClient client = new CounterClient(RAFT_GROUP)) {
-      client.run(request, elleFile);
+      client.run(request);
       System.exit(0);
     } catch (Throwable e) {
       e.printStackTrace();

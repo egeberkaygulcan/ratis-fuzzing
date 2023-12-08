@@ -113,17 +113,13 @@ public class InterceptorMessageUtils {
         return out.getBytes(StandardCharsets.UTF_8);
     }
 
-    public static byte[] fromRaftClientRequest(RaftClientRequest request) throws IOException{
-        // TODO: Validate
-        Gson gson = new GsonBuilder().create();
-        String out = gson.toJson(request);
+    public static byte[] fromRaftClientRequest(RaftClientRequestProto request) throws IOException{
+        String out = JsonFormat.printer().print(request);
         return out.getBytes(StandardCharsets.UTF_8);
     }
 
-    public static byte[] fromRaftClientReply(RaftClientReply reply) throws IOException {
-        // TODO: Validate
-        Gson gson = new GsonBuilder().create();
-        String out = gson.toJson(reply);
+    public static byte[] fromRaftClientReply(RaftClientReplyProto reply) throws IOException {
+        String out = JsonFormat.printer().print(reply);
         return out.getBytes(StandardCharsets.UTF_8);
     }
 
@@ -211,23 +207,21 @@ public class InterceptorMessageUtils {
         return builder.build();
     }
 
-    public static RaftClientRequest toRaftClientRequest(byte[] data) throws IOException{
-        // TODO: verify
+    public static RaftClientRequestProto toRaftClientRequest(byte[] data) throws IOException{
         String jsonData = new String(data, StandardCharsets.UTF_8);
 
-        Gson gson = new GsonBuilder().create();
-        RaftClientRequest request = gson.fromJson(jsonData, RaftClientRequest.class);
+        RaftClientRequestProto.Builder builder = RaftClientRequestProto.newBuilder();
+        JsonFormat.parser().ignoringUnknownFields().merge(jsonData, builder);
 
-        return request;
+        return builder.build();
     }
 
-    public static RaftClientReply toRaftClientReply(byte[] data) throws IOException{
-        // TODO: verify
+    public static RaftClientReplyProto toRaftClientReply(byte[] data) throws IOException{
         String jsonData = new String(data, StandardCharsets.UTF_8);
 
-        Gson gson = new GsonBuilder().create();
-        RaftClientReply reply = gson.fromJson(jsonData, RaftClientReply.class);
+        RaftClientReplyProto.Builder builder = RaftClientReplyProto.newBuilder();
+        JsonFormat.parser().ignoringUnknownFields().merge(jsonData, builder);
 
-        return reply;
+        return builder.build();
     }
 }
