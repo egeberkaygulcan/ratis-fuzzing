@@ -87,7 +87,7 @@ public final class CounterServer implements Closeable {
     InterceptorConfigKeys.Listener.setPort(properties, port);
     InterceptorConfigKeys.Server.setPort(properties, fuzzerPort);
     InterceptorConfigKeys.InterceptorListener.setPort(properties, interceptorListenerPort);
-    InterceptorConfigKeys.setEnabled(properties, false);
+    InterceptorConfigKeys.setEnabled(properties, true);
     // GrpcConfigKeys.Server.setPort(properties, port);
 
     //create the counter state machine which holds the counter value
@@ -156,8 +156,8 @@ public final class CounterServer implements Closeable {
     try(CounterServer counterServer = new CounterServer(currentPeer, storageDir, RAFT_GROUP, fuzzerPort, interceptorListenerPort)) {
       counterServer.start();
 
-      //exit when any input entered
-      new Scanner(System.in, UTF_8.name()).nextLine();
+      // Loop forever
+      while(true){}
     }
     // TODO: New control loop
   //   try(CounterServer counterServer = new CounterServer(currentPeer, storageDir, RAFT_GROUP)) {

@@ -307,7 +307,11 @@ public class InterceptorMessage {
                 LOG.info("messageType: " + messageType);
                 JsonObject compositeData = JsonParser.parseString(new String(Base64.getDecoder().decode(ob.get("data").getAsString()), StandardCharsets.ISO_8859_1)).getAsJsonObject();
                 byte[] data = Base64.getDecoder().decode(compositeData.get("data").getAsString());
-                // String requestId = compositeData.get("request_id").getAsString();
+                if(compositeData.has("request_id")){
+                    String requestId = compositeData.get("request_id").getAsString();
+                    builder.setRequestId(requestId);
+                    LOG.info("Request id: "+requestId);
+                }
                 switch (messageType) {
                     case RequestVoteRequest:
                         builder.setRequestVoteRequest(InterceptorMessageUtils.toRequestVoteRequest(data));

@@ -63,26 +63,33 @@ public class InterceptorClient {
         } catch (Exception e) {
             LOG.error("Error on initializing InterceptorServer: ", e);
         }
-        this.pollingThread = new MessagePollingThread(this.listenServer, messageHandler);
         this.counter = new AtomicInteger();
         this.random = new Random((long) this.listenAddress.getPort());
+        this.pollingThread = new MessagePollingThread(this.listenServer, messageHandler, this);
     }
 
     public void start() throws IOException {
         try {
+            LOG.info("Starting interceptor client");
+            this.pollingThread.start();
             this.listenServer.startServer();
+            register();
         } catch (Exception e) {
             LOG.error("Error on starting InterceptorServer: ", e);
         }
-        register();
     }
 
-    public void stop() throws IOException {}
+    public void stop() throws IOException {
+        LOG.info("Stopping interceptor client");
+        this.pollingThread.interrupt();
+        this.listenServer.stopServer();
+    }
 
     public void register() throws IOException {
+        LOG.info("Registering!");
         JsonObject ob = new JsonObject();
         ob.addProperty("id", this.raftServer.getId().toString());
-        ob.addProperty("addr", this.listenAddress.toString());
+        ob.addProperty("addr", this.listenAddress.toString().replace("/", ""));
 
         Gson gson = new GsonBuilder().create();
         String registerString = gson.toJson(ob);
@@ -114,6 +121,7 @@ public class InterceptorClient {
     }
 
     private void sendMessageToServer(String message) throws IOException {
+        LOG.info("Sending message: "+message);
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         Request request = new Request.Builder()
                 .url("http://"+this.interceptorAddress.toString()+"/message")
@@ -151,6 +159,7 @@ public class InterceptorClient {
         } catch (ExecutionException e) {
             throw IOUtils.toIOException(e);
         } catch (TimeoutException e) {
+            LOG.info("Did not receive a reply for request: "+requestId);
             throw new TimeoutIOException(e.getMessage(), e);
         }
     }
@@ -158,17 +167,19 @@ public class InterceptorClient {
     // TODO: 
     //  [X] polling functions that reads the messages
     //  [X] completes the futures that were waiting
-    //  [ ] calls the handler for the messages that are not pending ?
+    //  [x] calls the handler for the messages that are not pending
     private class MessagePollingThread extends Thread {
         public final Logger LOG = LoggerFactory.getLogger(MessagePollingThread.class);
         private Map<String, CompletableFuture<InterceptorMessage>> pendingRequests;
         private InterceptorServer listenServer;
         private MessageHandler messageHandler;
+        private InterceptorClient iClient;
 
-        public MessagePollingThread(InterceptorServer listenServer, MessageHandler messageHandler) {
+        public MessagePollingThread(InterceptorServer listenServer, MessageHandler messageHandler, InterceptorClient iClient) {
             this.listenServer = listenServer;
             this.pendingRequests = new ConcurrentHashMap<>();
             this.messageHandler = messageHandler;
+            this.iClient = iClient;
         }
 
         public void addPendingRequests(String requestId, CompletableFuture<InterceptorMessage> reply) {
@@ -176,15 +187,29 @@ public class InterceptorClient {
         }
 
         public void pollAndCompleteMessages() {
-            while(true) {
+            while(!this.isInterrupted()) {
                 List<InterceptorMessage> receivedMessages = this.listenServer.getReceivedMessages();
 
                 if (receivedMessages.size() > 0) {
                     for (InterceptorMessage message : receivedMessages) {
-                        CompletableFuture<InterceptorMessage> messageFuture = pendingRequests.get(message.getRequestId());
-                        if(messageFuture != null) {
-                            messageFuture.complete(message);
-                            pendingRequests.remove(message.getRequestId());
+                        try {
+                            LOG.info("Processing new message: "+message.toJsonString());
+                            String requestID = message.getRequestId();
+                            CompletableFuture<InterceptorMessage> messageFuture = pendingRequests.get(requestID);
+                            if(messageFuture != null) {
+                                // Then this is a reply message to a request that is sent
+                                LOG.info("received a response for id: "+requestID);
+                                messageFuture.complete(message);
+                                pendingRequests.remove(requestID);
+                            } else {
+                                // Otherwise its a new request that the process needs to reply to
+                                LOG.info("handling a new request: "+ requestID);
+                                InterceptorMessage reply = messageHandler.apply(message);
+                                iClient.sendMessageToServer(reply.toJsonString());
+                            }
+                        } catch (Exception e) {
+                            LOG.error("Error processing new message: "+e.getMessage());
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -195,6 +220,11 @@ public class InterceptorClient {
                     LOG.error("Error while trying to sleep: ", e);
                 }
             }
+        }
+
+        @Override
+        public void run() {
+            pollAndCompleteMessages();
         }
     }
 

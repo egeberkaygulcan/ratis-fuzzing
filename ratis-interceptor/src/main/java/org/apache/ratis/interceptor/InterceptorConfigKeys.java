@@ -19,7 +19,7 @@ public interface InterceptorConfigKeys {
         return LOG::info;
     }
 
-    String ENABLED_KEY = PREFIX + ".enabled";
+    String ENABLED_KEY = PREFIX + ".intercept";
     boolean ENABLED_DEFAULT = false;
 
     static boolean enabled(RaftProperties properties) {

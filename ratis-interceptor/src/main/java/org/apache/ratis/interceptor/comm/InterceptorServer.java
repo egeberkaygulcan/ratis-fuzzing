@@ -11,35 +11,38 @@ import org.slf4j.LoggerFactory;
 import fi.iki.elonen.NanoHTTPD;
 public class InterceptorServer extends NanoHTTPD {
         
-    // }
     // TODO:
     //  1. Need to start a http server and listen to messages
     //  3. Add the necessary stuff from the previous instrumentation to start the server here
 
     Logger LOG = LoggerFactory.getLogger(InterceptorServer.class);
 
-    private InetSocketAddress listenAddress;
-
     private List<InterceptorMessage> receivedMessages;
 
     public InterceptorServer(InetSocketAddress listenAddress) throws IOException {
         super(listenAddress.getPort());
-        this.listenAddress = listenAddress;
         this.receivedMessages = new CopyOnWriteArrayList<InterceptorMessage>();
     }
 
     public void startServer() throws IOException {
+        LOG.info("Starting interceptor server!");
         start(NanoHTTPD.SOCKET_READ_TIMEOUT, false); // TODO: Is this blocking?
+    }
+
+    public void stopServer() throws IOException {
+        stop();
     }
 
     @Override
     public Response serve(IHTTPSession session) {
         if (session.getMethod() == Method.POST) {
             try {
-                session.parseBody(new HashMap<>());
-                String requestBody = session.getQueryParameterString();
-                InterceptorMessage.Builder b = new InterceptorMessage.Builder();
-                InterceptorMessage message = b.buildWithJsonString(requestBody);
+                LOG.info("Received a message http request");
+                HashMap<String, String> body = new HashMap<>();
+                session.parseBody(body);
+                String requestBody = body.get("postData");
+                LOG.info("Received a new message: "+requestBody);
+                InterceptorMessage message = (new InterceptorMessage.Builder()).buildWithJsonString(requestBody);
                 this.receivedMessages.add(message);
                 return newFixedLengthResponse("Ok\n");
             } catch (IOException | ResponseException e) {

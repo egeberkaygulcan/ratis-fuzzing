@@ -186,19 +186,19 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
         switch (messageType) {
             case RequestVoteRequest:
                 RequestVoteReplyProto reply = this.raftServer.requestVote(message.toRequestVoteRequest());
-                return new InterceptorMessage.Builder().setRequestVoteReply(reply).build();
+                return new InterceptorMessage.Builder().setRequestVoteReply(reply).setRequestId(message.getRequestId()).build();
             case AppendEntriesRequest:
                 AppendEntriesReplyProto aEReply = this.raftServer.appendEntries(message.toAppendEntriesRequest());
-                return new InterceptorMessage.Builder().setAppendEntriesReply(aEReply).build();
+                return new InterceptorMessage.Builder().setAppendEntriesReply(aEReply).setRequestId(message.getRequestId()).build();
             case InstallSnapshotRequest:
                 InstallSnapshotReplyProto iSReply = this.raftServer.installSnapshot(message.toInstallSnapshotRequest());
-                return new InterceptorMessage.Builder().setInstallSnapshotReply(iSReply).build();
+                return new InterceptorMessage.Builder().setInstallSnapshotReply(iSReply).setRequestId(message.getRequestId()).build();
             case StartLeaderElectionRequest:
                 StartLeaderElectionReplyProto sLEReply = this.raftServer.startLeaderElection(message.toStartLeaderElectionRequest());
-                return new InterceptorMessage.Builder().setStartLeaderElectionReply(sLEReply).build();
+                return new InterceptorMessage.Builder().setStartLeaderElectionReply(sLEReply).setRequestId(message.getRequestId()).build();
             case RaftClientRequest:
                 RaftClientReply RCReply = this.raftServer.submitClientRequest(ClientProtoUtils.toRaftClientRequest(message.toRaftClientRequest()));
-                return new InterceptorMessage.Builder().setRaftClientReply(ClientProtoUtils.toRaftClientReplyProto(RCReply)).build();
+                return new InterceptorMessage.Builder().setRaftClientReply(ClientProtoUtils.toRaftClientReplyProto(RCReply)).setRequestId(message.getRequestId()).build();
             default:
                 break;
         }
@@ -221,6 +221,8 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
             params.put("last_log_idx", (double) request.getCandidateLastEntry().getIndex());
             params.put("last_log_term", (double) request.getCandidateLastEntry().getTerm());
 
+            // TODO: 
+            //  [ ] Move params to the builder
             InterceptorMessage message =  iClient.sendMessage(iMessageBuilder, params);
             return message.toRequestVoteReply();
         }
@@ -244,7 +246,7 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
 
         if(this.intercept) {
             iMessageBuilder.setRequestId(iClient.getNewRequestId());
-            InterceptorMessage message = iClient.sendMessage(iMessageBuilder);
+            InterceptorMessage message = iClient.sendMessage(iMessageBuilder, null);
             return message.toAppendEntriesReply();
         }
 
