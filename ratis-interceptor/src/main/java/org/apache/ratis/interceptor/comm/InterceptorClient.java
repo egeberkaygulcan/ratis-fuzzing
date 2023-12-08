@@ -5,13 +5,18 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.squareup.okhttp.*;
 
+import org.apache.ratis.interceptor.InterceptorRpcService;
 import org.apache.ratis.protocol.Message;
 import org.apache.ratis.protocol.exceptions.TimeoutIOException;
 import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.util.IOUtils;
 import org.apache.ratis.util.TimeDuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.*;
@@ -20,15 +25,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class InterceptorClient {
     // TODO
     //  [ ] Need to initiate a connection pool to the interceptor server
-    //  [x] Need to define an message interface to communicate with the interceptor server
-    //  [ ] Need to figure out how to start the listener server (own the thread? extend the thread interface?)
-    //  [x] Need to tag and keep track of requests and implement a future interface
+    //  [X] Need to define an message interface to communicate with the interceptor server
+    //  [X] Need to figure out how to start the listener server (own the thread? extend the thread interface?)
+    //  [X] Need to tag and keep track of requests and implement a future interface
+    //  [ ] Need to add send event
 
     @FunctionalInterface
     public static interface MessageHandler {
         InterceptorMessage apply(InterceptorMessage interceptorMessage) throws IOException;
     }
 
+    public static final Logger LOG = LoggerFactory.getLogger(InterceptorClient.class);
     private RaftServer raftServer;
     private InetSocketAddress interceptorAddress;
     private InetSocketAddress listenAddress;
@@ -54,7 +61,7 @@ public class InterceptorClient {
         try {
             this.listenServer = new InterceptorServer(listenAddress);
         } catch (Exception e) {
-            // TODO: handle exception
+            LOG.error("Error on initializing InterceptorServer: ", e);
         }
         this.pollingThread = new MessagePollingThread(this.listenServer, messageHandler);
         this.counter = new AtomicInteger();
@@ -62,6 +69,11 @@ public class InterceptorClient {
     }
 
     public void start() throws IOException {
+        try {
+            this.listenServer.startServer();
+        } catch (Exception e) {
+            LOG.error("Error on starting InterceptorServer: ", e);
+        }
         register();
     }
 
@@ -114,14 +126,16 @@ public class InterceptorClient {
         }
     }
 
-    public InterceptorMessage sendMessage(InterceptorMessage.Builder messageBuilder) throws IOException{
+    public InterceptorMessage sendMessage(InterceptorMessage.Builder messageBuilder, Map<String, Object> params) throws IOException{
         // TODO:
         //  [X] need to construct a future to wait for a message on
-        //  [x] use the message builder to construct a message after assigning message id, from address
+        //  [X] use the message builder to construct a message after assigning message id, from address
         InterceptorMessage message = messageBuilder
             .setID(getNewMessageId())
             .setFrom(raftServer.getId().toString())
             .build();
+        if (params != null)
+            message.setParams(params);
 
         String requestId = message.getRequestId();
         CompletableFuture<InterceptorMessage> reply = new CompletableFuture<>();
@@ -142,10 +156,11 @@ public class InterceptorClient {
     }
 
     // TODO: 
-    //  [ ] polling functions that reads the messages
-    //  [ ] completes the futures that were waiting
+    //  [X] polling functions that reads the messages
+    //  [X] completes the futures that were waiting
     //  [ ] calls the handler for the messages that are not pending ?
     private class MessagePollingThread extends Thread {
+        public final Logger LOG = LoggerFactory.getLogger(MessagePollingThread.class);
         private Map<String, CompletableFuture<InterceptorMessage>> pendingRequests;
         private InterceptorServer listenServer;
         private MessageHandler messageHandler;
@@ -158,6 +173,28 @@ public class InterceptorClient {
 
         public void addPendingRequests(String requestId, CompletableFuture<InterceptorMessage> reply) {
             this.pendingRequests.put(requestId, reply);
+        }
+
+        public void pollAndCompleteMessages() {
+            while(true) {
+                List<InterceptorMessage> receivedMessages = this.listenServer.getReceivedMessages();
+
+                if (receivedMessages.size() > 0) {
+                    for (InterceptorMessage message : receivedMessages) {
+                        CompletableFuture<InterceptorMessage> messageFuture = pendingRequests.get(message.getRequestId());
+                        if(messageFuture != null) {
+                            messageFuture.complete(message);
+                            pendingRequests.remove(message.getRequestId());
+                        }
+                    }
+                }
+
+                try {
+                    Thread.sleep(1);
+                } catch (Exception e) {
+                    LOG.error("Error while trying to sleep: ", e);
+                }
+            }
         }
     }
 

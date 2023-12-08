@@ -53,7 +53,7 @@ public class InterceptorRpcProxy implements Closeable {
         LOG.info("Peer address: " + address);
         String json = request.toJsonString();
 
-        MediaType JSON = MediaType.parse("application/json");
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         Request httpRequest = new Request.Builder()
                 .url("http://" + address)
                 .post(RequestBody.create(JSON, json))

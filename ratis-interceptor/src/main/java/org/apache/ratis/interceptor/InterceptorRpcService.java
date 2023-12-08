@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 
 import static org.apache.ratis.thirdparty.io.netty.handler.codec.http.HttpHeaderNames.*;
 import static org.apache.ratis.thirdparty.io.netty.handler.codec.http.HttpHeaderValues.*;
@@ -212,7 +213,15 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
 
         if(this.intercept) {
             iMessageBuilder.setRequestId(iClient.getNewRequestId());
-            InterceptorMessage message =  iClient.sendMessage(iMessageBuilder);
+
+            HashMap<String, Object> params = new HashMap<>();
+            params.put("prevote", request.getPreVote());
+            params.put("term", (double) request.getCandidateTerm());
+            params.put("candidate_id", (double) Integer.parseInt(request.getServerRequest().getRequestorId().toStringUtf8()));
+            params.put("last_log_idx", (double) request.getCandidateLastEntry().getIndex());
+            params.put("last_log_term", (double) request.getCandidateLastEntry().getTerm());
+
+            InterceptorMessage message =  iClient.sendMessage(iMessageBuilder, params);
             return message.toRequestVoteReply();
         }
         final RaftPeerId id = RaftPeerId.valueOf(request.getServerRequest().getReplyId());
@@ -258,7 +267,7 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
 
         if(this.intercept) {
             iMessageBuilder.setRequestId(iClient.getNewRequestId());
-            InterceptorMessage message = iClient.sendMessage(iMessageBuilder);
+            InterceptorMessage message = iClient.sendMessage(iMessageBuilder, null);
             return message.toInstallSnapshotReply();
         }
 
@@ -281,7 +290,7 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
 
         if(this.intercept) {
             iMessageBuilder.setRequestId(iClient.getNewRequestId());
-            InterceptorMessage message = iClient.sendMessage(iMessageBuilder);
+            InterceptorMessage message = iClient.sendMessage(iMessageBuilder, null);
             return message.toStartLeaderElectionReply();
         }
 

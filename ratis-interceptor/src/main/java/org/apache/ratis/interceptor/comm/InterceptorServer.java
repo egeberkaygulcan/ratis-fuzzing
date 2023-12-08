@@ -26,6 +26,9 @@ public class InterceptorServer extends NanoHTTPD {
         super(listenAddress.getPort());
         this.listenAddress = listenAddress;
         this.receivedMessages = new CopyOnWriteArrayList<InterceptorMessage>();
+    }
+
+    public void startServer() throws IOException {
         start(NanoHTTPD.SOCKET_READ_TIMEOUT, false); // TODO: Is this blocking?
     }
 

@@ -31,7 +31,7 @@ public class InterceptorMessage {
     private final String id;
     private final String requestId;
 
-    private final Map<String, Object> params;
+    private Map<String, Object> params;
 
     private InterceptorMessage(String from, String to, String type, byte[] data, String id) {
         this.from = from;
@@ -51,6 +51,10 @@ public class InterceptorMessage {
         this.id = id;
         this.requestId = requestId;
         this.params = new HashMap<>();
+    }
+
+    public void setParams(Map<String, Object> params) {
+        this.params = params;
     }
 
     public void setParam(String key, Object value) {
