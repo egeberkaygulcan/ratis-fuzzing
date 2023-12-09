@@ -26,6 +26,7 @@ import org.apache.ratis.util.Timestamp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.ToIntFunction;
@@ -146,7 +147,13 @@ class FollowerState extends Daemon {
             // election timeout, should become a candidate
             // TODO:
             // [ ] StateChangeEvent to candidate
-            // [ ] TimeoutEvent 
+            // [X] TimeoutEvent
+            HashMap<String, Object> eventParams = new HashMap<>();
+            eventParams.put("type", "Timeout");
+            eventParams.put("server_id", server.getId().toString());
+            eventParams.put("node", server.getId().toString());
+            this.server.getServerRpc().sendEvent(eventParams); 
+            
             server.changeToCandidate(false);
             break;
           }

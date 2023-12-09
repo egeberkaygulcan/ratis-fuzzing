@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -368,5 +369,17 @@ public final class NettyRpcService extends RaftServerRpcWithProxy<NettyRpcProxy,
       getProxies().handleException(id, e, false);
       throw e;
     }
+  }
+
+  @Override
+  public void sendEvent(HashMap<String, Object> eventParams) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'sendEvent'");
+  }
+
+  @Override
+  public boolean getParam(String param) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getParam'");
   }
 }

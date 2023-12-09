@@ -31,14 +31,15 @@ class RatisServer:
             self.server_client_port,
             self.peer_index,
             self.peer_addresses,
-            self.group_id
+            self.group_id,
+            r
         )
         return cmd
     
     def start(self, restart=False) -> None:
         def run(cmd, timeout, run_id):
             try:
-                result = subprocess.run(cmd, shell=True, capture_output=True, text=True, check=True, timeout=timeout)
+                result = subprocess.run(cmd, shell=True, capture_output=False, text=True, check=True, timeout=timeout)
                 logging.debug(result.stdout)
             except subprocess.CalledProcessError as e:
                 if len(e.stderr) > 0:

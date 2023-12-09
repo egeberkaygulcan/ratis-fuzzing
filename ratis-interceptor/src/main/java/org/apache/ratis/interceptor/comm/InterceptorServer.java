@@ -26,7 +26,7 @@ public class InterceptorServer extends NanoHTTPD {
 
     public void startServer() throws IOException {
         LOG.info("Starting interceptor server!");
-        start(NanoHTTPD.SOCKET_READ_TIMEOUT, false); // TODO: Is this blocking?
+        start(NanoHTTPD.SOCKET_READ_TIMEOUT, false); 
     }
 
     public void stopServer() throws IOException {

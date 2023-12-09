@@ -139,7 +139,7 @@ class RatisCluster:
                     break
                 if i in start_points and start_points[i] in crashed:
                     node_id = start_points[i]
-                    logging.debug(f"Starting crashed node {node_id}")
+                    logging.info(f"Starting crashed node {node_id}")
                     self.servers[node_id].start(True)
                     trace.append({"type": "Start", "node": node_id, "step": i})
                     self.network.add_event({"name": "Add", "params": {"i": node_id, "node": node_id}})
@@ -147,7 +147,7 @@ class RatisCluster:
                 
                 if i in crash_points:
                     node_id = crash_points[i]
-                    logging.debug(f"Crashing node {node_id}")
+                    logging.info(f"Crashing node {node_id}")
                     if node_id not in crashed:
                         # self.network.send_crash(node_id)
                         self.servers[node_id].shutdown()

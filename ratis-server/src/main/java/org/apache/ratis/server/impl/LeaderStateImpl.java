@@ -846,7 +846,13 @@ class LeaderStateImpl implements LeaderState {
   private Optional<MinMajorityMax> getMajorityMin(ToLongFunction<FollowerInfo> followerIndex,
       LongSupplier logIndex, long gapThreshold) {
     final RaftPeerId selfId = server.getId();
-    // TODO: LogUpdate event (logIndex.getAsLong())
+    // LogUpdate event
+    HashMap<String, Object> eventParams = new HashMap<>();
+    eventParams.put("type", "LogUpdate");
+    eventParams.put("server_id", server.getId().toString());
+    eventParams.put("log_index", logIndex.getAsLong());
+    this.server.getServerRpc().sendEvent(eventParams);
+
     final RaftConfigurationImpl conf = server.getRaftConf();
 
     final CurrentOldFollowerInfos infos = followerInfoMap.getFollowerInfos(conf);

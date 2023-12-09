@@ -53,12 +53,12 @@ public class InterceptorMessage {
         this.params = new HashMap<>();
     }
 
-    public void setParams(Map<String, Object> params) {
-        this.params = params;
-    }
-
     public void setParam(String key, Object value) {
         this.params.put(key, value);
+    }
+
+    public void setParams(Map<String, Object> params) {
+        this.params = params;
     }
 
     public String getFrom() {
@@ -154,6 +154,8 @@ public class InterceptorMessage {
         private String from;
         private String id;
         private String requestId;
+        private String mType;
+        private Map<String, Object> params;
 
         private RequestVoteRequestProto requestVoteRequest;
         private RequestVoteReplyProto requestVoteReply;
@@ -171,6 +173,16 @@ public class InterceptorMessage {
 
         public Builder setFrom(String from) {
             this.from = from;
+            return this;
+        }
+
+        public Builder setType(String type) {
+            this.mType = type;
+            return this;
+        }
+
+        public Builder setParams(Map<String, Object> params) {
+            this.params = params;
             return this;
         }
 
@@ -279,11 +291,17 @@ public class InterceptorMessage {
                 data = InterceptorMessageUtils.fromRaftClientReply(this.raftClientReply);
                 to = this.raftClientReply.getRpcReply().getRequestorId().toStringUtf8();
                 type = InterceptorMessageUtils.MessageType.RaftClientReply.toString();
+            } else if (this.mType.equals("shutdown") || this.mType.equals("crash")) {
+                data = null;
+                to = null;
+                type = this.mType;
             } else {
                 throw new IOException("invalid message type");
             }
-            
-            return new InterceptorMessage(this.from, to, type, data, id, requestId);
+            InterceptorMessage message = new InterceptorMessage(this.from, to, type, data, id, requestId);
+            if (this.params != null)
+                message.setParams(this.params);
+            return message;
         }
 
         public InterceptorMessage buildWithJsonString(String jsonString) {
@@ -299,9 +317,7 @@ public class InterceptorMessage {
                     return null;
                 }
                 InterceptorMessage.Builder builder = new InterceptorMessage.Builder();
-                        // .setFrom(ob.get("from").getAsString())
-                        // .setID(ob.get("id").getAsString())
-                        // TODO: .setRequestId(ob.get("request_id").getAsString());
+
                 LOG.info("Message type: " + ob.get("type").getAsString());
                 InterceptorMessageUtils.MessageType messageType = InterceptorMessageUtils.MessageType.fromString(ob.get("type").getAsString());
                 LOG.info("messageType: " + messageType);
@@ -342,6 +358,12 @@ public class InterceptorMessage {
                         break;
                     case RaftClientReply:
                         builder.setRaftClientReply(InterceptorMessageUtils.toRaftClientReply(data));
+                        break;
+                    case Shutdown:
+                        builder.setType("shutdown");
+                        break;
+                    case Crash:
+                        builder.setType("crash");
                         break;
                     default:
                         break;

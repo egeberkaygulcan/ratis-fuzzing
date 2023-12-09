@@ -29,6 +29,7 @@ import org.apache.ratis.protocol.RaftPeer;
 import org.apache.ratis.protocol.RaftPeerId;
 import org.apache.ratis.server.RaftServer;
 import org.apache.ratis.server.RaftServerConfigKeys;
+import org.apache.ratis.server.RaftServerRpc;
 import org.apache.ratis.util.NetUtils;
 import org.apache.ratis.util.SizeInBytes;
 import org.apache.ratis.util.TimeDuration;
@@ -42,6 +43,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
@@ -65,7 +67,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public final class CounterServer implements Closeable {
   private final RaftServer server;
 
-  public CounterServer(RaftPeer peer, File storageDir, RaftGroup RAFT_GROUP, int fuzzerPort, int interceptorListenerPort) throws IOException {
+  public CounterServer(RaftPeer peer, File storageDir, RaftGroup RAFT_GROUP, int fuzzerPort, int interceptorListenerPort, int restart) throws IOException {
     //create a property object
     final RaftProperties properties = new RaftProperties();
 
@@ -88,6 +90,7 @@ public final class CounterServer implements Closeable {
     InterceptorConfigKeys.Server.setPort(properties, fuzzerPort);
     InterceptorConfigKeys.InterceptorListener.setPort(properties, interceptorListenerPort);
     InterceptorConfigKeys.setEnabled(properties, true);
+    InterceptorConfigKeys.setEnableRegister(properties, restart == 0);
     // GrpcConfigKeys.Server.setPort(properties, port);
 
     //create the counter state machine which holds the counter value
@@ -109,6 +112,10 @@ public final class CounterServer implements Closeable {
   @Override
   public void close() throws IOException {
     server.close();
+  }
+
+  public RaftServerRpc getServerRpc() {
+    return server.getServerRpc();
   }
 
   public static void main(String[] args) {
@@ -152,35 +159,32 @@ public final class CounterServer implements Closeable {
     //get peer and define storage dir
     final RaftPeer currentPeer = PEERS.get(peerIndex-1);
     final File storageDir = new File("./data/" + runId + "/" + currentPeer.getId());
-    //start a counter server
-    try(CounterServer counterServer = new CounterServer(currentPeer, storageDir, RAFT_GROUP, fuzzerPort, interceptorListenerPort)) {
+    // //start a counter server
+    // try(CounterServer counterServer = new CounterServer(currentPeer, storageDir, RAFT_GROUP, fuzzerPort, interceptorListenerPort, restart)) {
+    //   counterServer.start();
+
+    //   // Loop forever
+    //   while(true){}
+    // }
+    
+    try(CounterServer counterServer = new CounterServer(currentPeer, storageDir, RAFT_GROUP, fuzzerPort, interceptorListenerPort, restart)) {
       counterServer.start();
 
-      // Loop forever
-      while(true){}
+      boolean crashFlag;
+      while(counterServer.getServerRpc().getParam("Shutdown")) {
+        crashFlag = counterServer.getServerRpc().getParam("Crash");
+        if (crashFlag) {
+          counterServer.close();
+          break;
+        }
+        TimeUnit.MILLISECONDS.sleep(1);
+      }
+
+      if (!counterServer.getServerRpc().getParam("Crash")) {
+        HashMap<String, Object> eventParams = new HashMap<>();
+        eventParams.put("type", "ShutdownReady");
+        counterServer.getServerRpc().sendEvent(eventParams);
+      }
     }
-    // TODO: New control loop
-  //   try(CounterServer counterServer = new CounterServer(currentPeer, storageDir, RAFT_GROUP)) {
-  //     counterServer.start();
-
-  //     if (restart != 1)
-  //       fuzzerClient.registerServer(Integer.toString(peerIndex));
-  //     boolean crashFlag;
-  //     while(!fuzzerClient.shouldShutdown()) {
-  //       crashFlag = fuzzerClient.getCrash();
-  //       if (crashFlag) {
-  //         counterServer.close();
-  //         fuzzerClient.close();
-  //         fuzzerClient.join();
-  //         break;
-  //       }
-
-  //       fuzzerClient.getAndExecuteMessages();
-  //       TimeUnit.MILLISECONDS.sleep(1);
-  //     }
-  //   }
-
-  //   if (!fuzzerClient.getCrash())
-  //     fuzzerClient.sendShutdownReadyEvent();
   }
 }

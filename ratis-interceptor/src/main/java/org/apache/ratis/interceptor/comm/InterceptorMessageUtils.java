@@ -32,6 +32,8 @@ public class InterceptorMessageUtils {
         StartLeaderElectionReply("start_leader_election_reply"),
         RaftClientRequest("raft_client_request"),
         RaftClientReply("raft_client_reply"),
+        Shutdown("shutdown"),
+        Crash("crash"),
         None("");
 
         private String type;
@@ -65,6 +67,10 @@ public class InterceptorMessageUtils {
                     return RaftClientRequest;
                 case "raft_client_reply":
                     return RaftClientReply;
+                case "shutdown":
+                    return Shutdown;
+                case "crash":
+                    return Crash;
                 default:
                     return None;
             }

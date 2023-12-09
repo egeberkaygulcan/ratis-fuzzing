@@ -41,6 +41,17 @@ public interface InterceptorConfigKeys {
         setTimeDuration(properties::setTimeDuration, REPLY_WAIT_TIMEOUT_KEY, waitTimeout);
     }
 
+    String ENABLE_REGISTER_KEY = PREFIX + "enable_register";
+    boolean ENABLE_REGISTER_DEFAULT = true;
+
+    static boolean enableRegister(RaftProperties properties) {
+        return getBoolean(properties::getBoolean, ENABLE_REGISTER_KEY, ENABLE_REGISTER_DEFAULT, getDefaultLog());
+    }
+
+    static void setEnableRegister(RaftProperties properties, boolean enableRegister) {
+        setBoolean(properties::setBoolean, ENABLE_REGISTER_KEY, enableRegister);
+    }
+
     interface Server {
         Logger LOG = LoggerFactory.getLogger(Server.class);
 

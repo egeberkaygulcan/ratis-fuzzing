@@ -28,6 +28,7 @@ import org.apache.ratis.util.JavaUtils;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.HashMap;
 
 /**
  * An server-side interface for supporting different RPC implementations
@@ -60,4 +61,8 @@ public interface RaftServerRpc extends RaftServerProtocol, RpcType.Get, RaftPeer
     throw new UnsupportedOperationException(getClass().getName()
         + " does not support " + JavaUtils.getClassSimpleName(RaftServerAsynchronousProtocol.class));
   }
+
+  void sendEvent(HashMap<String, Object> eventParams);
+
+  boolean getParam(String param);
 }

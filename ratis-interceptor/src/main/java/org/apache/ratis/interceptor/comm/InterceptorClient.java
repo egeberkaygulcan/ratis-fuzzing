@@ -5,17 +5,18 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.squareup.okhttp.*;
 
-import org.apache.ratis.interceptor.InterceptorRpcService;
-import org.apache.ratis.protocol.Message;
 import org.apache.ratis.protocol.exceptions.TimeoutIOException;
 import org.apache.ratis.server.RaftServer;
+import org.apache.ratis.thirdparty.com.google.common.reflect.TypeToken;
 import org.apache.ratis.util.IOUtils;
 import org.apache.ratis.util.TimeDuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -28,7 +29,7 @@ public class InterceptorClient {
     //  [X] Need to define an message interface to communicate with the interceptor server
     //  [X] Need to figure out how to start the listener server (own the thread? extend the thread interface?)
     //  [X] Need to tag and keep track of requests and implement a future interface
-    //  [ ] Need to add send event
+    //  [X] Need to add send event
 
     @FunctionalInterface
     public static interface MessageHandler {
@@ -46,17 +47,26 @@ public class InterceptorClient {
     private AtomicInteger counter;
     private Random random;
 
+    private boolean shutdown;
+    private boolean crash;
+    private boolean enableRegister;
+
     public InterceptorClient(
         RaftServer raftServer, 
         InetSocketAddress interceptorAddress, 
         InetSocketAddress listenAddress, 
         TimeDuration replyWaitTime,
-        MessageHandler messageHandler
+        MessageHandler messageHandler,
+        boolean enableRegister
     ) {
         this.raftServer = raftServer;
         this.interceptorAddress = interceptorAddress;
         this.listenAddress = listenAddress;
         this.replyWaitTime = replyWaitTime;
+
+        this.shutdown = false;
+        this.crash = false;
+        this.enableRegister = enableRegister;
 
         try {
             this.listenServer = new InterceptorServer(listenAddress);
@@ -73,7 +83,8 @@ public class InterceptorClient {
             LOG.info("Starting interceptor client");
             this.pollingThread.start();
             this.listenServer.startServer();
-            register();
+            if (this.enableRegister)
+                register();
         } catch (Exception e) {
             LOG.error("Error on starting InterceptorServer: ", e);
         }
@@ -106,8 +117,6 @@ public class InterceptorClient {
         }
     }
 
-    // TODO: SendEvent
-
     public String getNewRequestId() {
         return this.raftServer.getId().toString() + "_" + Integer.toString(this.counter.getAndIncrement());
     }
@@ -134,7 +143,7 @@ public class InterceptorClient {
         }
     }
 
-    public InterceptorMessage sendMessage(InterceptorMessage.Builder messageBuilder, Map<String, Object> params) throws IOException{
+    public InterceptorMessage sendMessage(InterceptorMessage.Builder messageBuilder) throws IOException{
         // TODO:
         //  [X] need to construct a future to wait for a message on
         //  [X] use the message builder to construct a message after assigning message id, from address
@@ -142,8 +151,6 @@ public class InterceptorClient {
             .setID(getNewMessageId())
             .setFrom(raftServer.getId().toString())
             .build();
-        if (params != null)
-            message.setParams(params);
 
         String requestId = message.getRequestId();
         CompletableFuture<InterceptorMessage> reply = new CompletableFuture<>();
@@ -162,6 +169,62 @@ public class InterceptorClient {
             LOG.info("Did not receive a reply for request: "+requestId);
             throw new TimeoutIOException(e.getMessage(), e);
         }
+    }
+
+    public void sendEventToServer(String jsonEvent) throws IOException {
+        LOG.info("Sending event: "+jsonEvent);
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        Request request = new Request.Builder()
+                .url("http://"+this.interceptorAddress.toString()+"/event")
+                .post(RequestBody.create(JSON, jsonEvent))
+                .build();
+
+        Response response = client.newCall(request).execute();
+        if (response != null) {
+            response.body().close();
+        }
+    }
+
+    public void sendEvent(HashMap<String, Object> eventParams) throws IOException {
+        Gson gson = new GsonBuilder().create();
+        Type typeObject = new TypeToken<HashMap>() {}.getType();
+        String json = gson.toJson(eventParams, typeObject);
+
+        sendEventToServer(gson.toJson(json));
+    }
+
+    public void setShutdown(boolean b) {
+        if (b) {
+            this.shutdown = true;
+            try {
+                this.stop();
+            } catch (Exception e) {
+                LOG.error("Could not stop client: ", e);
+            }
+        }
+    }
+
+    public void setCrash(boolean b) {
+        if (b) {
+            this.crash = true;
+            try {
+                this.stop();
+            } catch (Exception e) {
+                LOG.error("Could not stop client: ", e);
+            }
+        }
+    }
+
+    public boolean getParam(String param) {
+        switch (param) {
+            case "Shutdown":
+                return this.shutdown;
+            case "Crash":
+                return this.crash;
+            default:
+                break;
+        }
+        return false;
     }
 
     // TODO: 
@@ -193,6 +256,8 @@ public class InterceptorClient {
                 if (receivedMessages.size() > 0) {
                     for (InterceptorMessage message : receivedMessages) {
                         try {
+                            if (message == null)
+                                continue;
                             LOG.info("Processing new message: "+message.toJsonString());
                             String requestID = message.getRequestId();
                             CompletableFuture<InterceptorMessage> messageFuture = pendingRequests.get(requestID);
@@ -202,10 +267,16 @@ public class InterceptorClient {
                                 messageFuture.complete(message);
                                 pendingRequests.remove(requestID);
                             } else {
-                                // Otherwise its a new request that the process needs to reply to
-                                LOG.info("handling a new request: "+ requestID);
-                                InterceptorMessage reply = messageHandler.apply(message);
-                                iClient.sendMessageToServer(reply.toJsonString());
+                                if (message.getType().equals("shutdown")) {
+                                    this.iClient.setShutdown(true);
+                                } else if (message.getType().equals("crash")) {
+                                    this.iClient.setCrash(true);
+                                } else {
+                                    // Otherwise its a new request that the process needs to reply to
+                                    LOG.info("handling a new request: "+ requestID);
+                                    InterceptorMessage reply = messageHandler.apply(message);
+                                    iClient.sendMessageToServer(reply.toJsonString());
+                                }
                             }
                         } catch (Exception e) {
                             LOG.error("Error processing new message: "+e.getMessage());
@@ -227,5 +298,4 @@ public class InterceptorClient {
             pollAndCompleteMessages();
         }
     }
-
 }

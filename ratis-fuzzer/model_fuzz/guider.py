@@ -32,12 +32,12 @@ class TLCGuider:
     def check_new_state(self, trace, event_trace, name, record = False) -> int:
         trace_to_send = event_trace
         trace_to_send.append({"reset": True})
-        logging.debug("Sending trace to TLC: {}".format(trace_to_send))
+        logging.info("Sending trace to TLC: {}".format(trace_to_send))
         try:
             r = requests.post("http://"+self.tlc_addr+"/execute", json=trace_to_send)
             if r.ok:
                 response = r.json()
-                logging.debug("Received response from TLC: {}".format(response))               
+                logging.info("Received response from TLC: {}".format(response))               
                 new_states = 0
                 for i in range(len(response["states"])):
                     tlc_state = {"state": response["states"][i], "key" : response["keys"][i]}

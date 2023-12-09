@@ -118,20 +118,21 @@ class Server(ThreadingHTTPServer):
     
 
 class Message:
-    def __init__(self, fr, to, type, msg, id=None) -> None:
+    def __init__(self, fr, to, type, data, id=None, params=None) -> None:
         self.fr = fr
         self.to = to
         self.type = type
-        self.msg = msg
         self.id = id
+        self.data = data
+        self.params = params
 
     def from_str(m):
         if "from" not in m or "to" not in m or "type" not in m or "data" not in m:
             return None
-        return Message(m["from"], m["to"], m["type"], m["data"], m["id"] if "id" in m else None)
+        return Message(m["from"], m["to"], m["type"], m["data"], m["id"] if "id" in m else None, m["params"] if "id" in m else None)
 
     def __str__(self) -> str:
-        return f'fr: {self.fr}, to: {self.to}, type: {self.type}, msg: {self.msg}, id: {self.id}'
+        return f'fr: {self.fr}, to: {self.to}, type: {self.type}, msg: {self.data}, id: {self.id}, params: {self.params}'
 
 
 class Network:
@@ -220,50 +221,50 @@ class Network:
         if msg.type == "append_entries_request":
             return {
                 "type": "MsgApp",
-                "term": msg.msg["term"],
+                "term": msg.params["term"],
                 "from": int(msg.fr),
                 "to": int(msg.to),
-                "log_term": msg.msg["prev_log_term"], 
-                "entries": [{"Term": msg.msg['entries'][key]["term"], "Data": str(self._get_request_number(msg.msg['entries'][key]["data"]))} for key in msg.msg["entries"].keys() if msg.msg['entries'][key]["data"] != ""],
-                "index": msg.msg["prev_log_idx"],
-                "commit": msg.msg["leader_commit"],
+                "log_term": msg.params["prev_log_term"], 
+                "entries": [{"Term": msg.params['entries'][key]["term"], "Data": str(self._get_request_number(msg.params['entries'][key]["data"]))} for key in msg.params["entries"].keys() if msg.params['entries'][key]["data"] != ""],
+                "index": msg.params["prev_log_idx"],
+                "commit": msg.params["leader_commit"],
                 "reject": False,
             }
         elif msg.type == "append_entries_response":
             return {
                 "type": "MsgAppResp",
-                "term": msg.msg["term"],
+                "term": msg.params["term"],
                 "from": int(msg.fr),
                 "to": int(msg.to),
                 "log_term": 0, 
                 "entries": [],
-                "index": msg.msg["current_idx"],
+                "index": msg.params["current_idx"],
                 "commit": 0,
-                "reject": msg.msg["success"] == 0,
+                "reject": msg.params["success"] == 0,
             }
         elif msg.type == "request_vote_request":
             return {
                 "type": "MsgVote",
-                "term": msg.msg["term"],
+                "term": msg.params["term"],
                 "from": int(msg.fr),
                 "to": int(msg.to),
-                "log_term": msg.msg["last_log_term"],
+                "log_term": msg.params["last_log_term"],
                 "entries": [],
-                "index": msg.msg["last_log_idx"],
+                "index": msg.params["last_log_idx"],
                 "commit": 0,
                 "reject": False,
             }
         elif msg.type == "request_vote_response":
             return {
                 "type": "MsgVoteResp",
-                "term": msg.msg["term"],
+                "term": msg.params["term"],
                 "from": int(msg.fr),
                 "to": int(msg.to),
                 "log_term": 0,
                 "entries": [],
                 "index": 0,
                 "commit": 0,
-                "reject": msg.msg["vote_granted"] == 0,
+                "reject": msg.params["vote_granted"] == 0,
             }
         return {}
 
@@ -274,32 +275,22 @@ class Network:
         content = json.loads(request.content)
         # content['data'] = json.loads(base64.b64decode(content["data"]).decode('utf-8'))
         msg = Message.from_str(content)
-        logging.debug(f'Message received of type {msg.type} from {msg.fr} to {msg.to}.')
+        logging.info(f'Message received of type {msg.type} from {msg.fr} to {msg.to}.')
+        logging.debug(f'Message content: \n {content}')
         if msg is not None:
             if msg.type == 'config_query':
                 return Response.json(HTTPStatus.OK, json.dumps({'nodes': self.config.nodes}))
             try:
                 self.lock.acquire()
-                to = None
-                fr = None
-                if msg.type == 'request_vote_request' or msg.type == 'append_entries_response':
-                    to = msg.to
-                    fr = msg.fr
-                elif msg.type == 'request_vote_response' or msg.type == 'append_entries_request':
-                    to = msg.fr
-                    fr = msg.to
-                else:
-                    to = msg.to
-                    fr = msg.fr
-                # key = f"{to}_{fr}"
-                key = str(to)
-                if to not in self.mailboxes:
+                key = f"{msg.fr}_{msg.to}"
+                # key = str(msg.to)
+                if key not in self.mailboxes:
                     self.mailboxes[key] = []
                 self.mailboxes[key].append(msg)
             finally:
                 if self.lock.locked():
                     self.lock.release()
-            msg.msg = json.loads(base64.b64decode(msg.msg).decode('utf-8'))
+            # msg.params = json.loads(msg.params)
             params = self._get_message_event_params(msg)
             params["node"] = params["from"]
             self.add_event({"name": "SendMessage", "params": params})
@@ -307,8 +298,8 @@ class Network:
         return Response.json(HTTPStatus.OK, json.dumps({"message": "Ok"}))
     
     def _handle_event(self, request: Request) -> Response:
-        logging.debug("Received event: {}".format(request.content))
-        event = json.loads(request.content)
+        event = json.loads(json.loads(request.content))
+        logging.debug("Received event: {} {}".format(event, type(event)))
         try:
             params = self._map_event_params(event)
             e = {"name": event["type"], "params": params}
@@ -332,7 +323,6 @@ class Network:
             if self.log_index < 0:
                 self.negative_log_index = True
             logging.info(f'Log index updated: {self.log_index}')
-            # TODO - Simulate error
             return None
         elif event["type"] == "ClientRequest":
             self.client_request_counter += 1
@@ -400,8 +390,8 @@ class Network:
 
     def schedule_replica(self, replica, replica2, max_messages):
         messages_to_deliver = []
-        # key = f'{replica}_{replica2}'
-        key = str(replica)
+        key = f'{replica}_{replica2}'
+        # key = str(replica)
         logging.debug(f'Scheduling replica-pair {key}')
         try:
             self.lock.acquire()
@@ -424,7 +414,7 @@ class Network:
             params["node"] = params["to"]
             self.add_event({"name": "DeliverMessage", "params": params})
             try:
-                addr = self.replicas[replica]['addr']
+                addr = self.replicas[replica2]['addr']
                 requests.post("http://"+addr+"/message", json=json.dumps(next_msg.__dict__))
             except:
                 pass

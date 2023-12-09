@@ -379,4 +379,16 @@ public final class GrpcService extends RaftServerRpcWithProxy<GrpcServerProtocol
     return getProxies().getProxy(target).startLeaderElection(request);
   }
 
+  @Override
+  public void sendEvent(HashMap<String, Object> eventParams) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'sendEvent'");
+  }
+
+  @Override
+  public boolean getParam(String param) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getParam'");
+  }
+
 }

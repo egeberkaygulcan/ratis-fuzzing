@@ -35,7 +35,6 @@ import org.apache.ratis.util.MemoizedSupplier;
 import org.apache.ratis.util.TimeDuration;
 import org.apache.ratis.proto.RaftProtos.*;
 import org.apache.ratis.protocol.RaftClientReply;
-import org.apache.ratis.protocol.RaftPeer;
 import org.apache.ratis.protocol.RaftPeerId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +43,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Base64;
 
 import static org.apache.ratis.thirdparty.io.netty.handler.codec.http.HttpHeaderNames.*;
 import static org.apache.ratis.thirdparty.io.netty.handler.codec.http.HttpHeaderValues.*;
@@ -126,7 +126,8 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
 
         this.intercept = InterceptorConfigKeys.enabled(server.getProperties());
         TimeDuration replyWaitTimeout = InterceptorConfigKeys.replyWaitTimeout(server.getProperties());
-        this.iClient = this.intercept ? new InterceptorClient(server, this.serverAddress, this.iListenerAddress, replyWaitTimeout, this::handle) : null;
+        boolean enableRegister = InterceptorConfigKeys.enableRegister(server.getProperties());
+        this.iClient = this.intercept ? new InterceptorClient(server, this.serverAddress, this.iListenerAddress, replyWaitTimeout, this::handle, enableRegister) : null;
 
         final ChannelInitializer<SocketChannel> initializer
             = new ChannelInitializer<SocketChannel>() {
@@ -183,13 +184,27 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
     InterceptorMessage handle(InterceptorMessage message) throws IOException{
         InterceptorMessageUtils.MessageType messageType = InterceptorMessageUtils.MessageType.fromString(message.getType());
         LOG.info("Handling message of type " + messageType.toString());
+        HashMap<String, Object> params = new HashMap<>();
         switch (messageType) {
             case RequestVoteRequest:
                 RequestVoteReplyProto reply = this.raftServer.requestVote(message.toRequestVoteRequest());
-                return new InterceptorMessage.Builder().setRequestVoteReply(reply).setRequestId(message.getRequestId()).build();
+ 
+                params.put("term", (double) reply.getTerm());
+                params.put("prevote", message.toRequestVoteRequest().getPreVote());
+                params.put("request_term", (double) reply.getTerm());
+                int vote_granted = reply.getServerReply().getSuccess() ? 1 : 0;
+                params.put("vote_granted", vote_granted);
+
+                return new InterceptorMessage.Builder().setRequestVoteReply(reply).setRequestId(message.getRequestId()).setParams(params).build();
             case AppendEntriesRequest:
                 AppendEntriesReplyProto aEReply = this.raftServer.appendEntries(message.toAppendEntriesRequest());
-                return new InterceptorMessage.Builder().setAppendEntriesReply(aEReply).setRequestId(message.getRequestId()).build();
+
+                int success = aEReply.getServerReply().getSuccess() ? 1 : 0;
+                params.put("success", success);
+                params.put("term", (double) aEReply.getTerm());
+                params.put("current_idx", (double) aEReply.getMatchIndex());
+
+                return new InterceptorMessage.Builder().setAppendEntriesReply(aEReply).setRequestId(message.getRequestId()).setParams(params).build();
             case InstallSnapshotRequest:
                 InstallSnapshotReplyProto iSReply = this.raftServer.installSnapshot(message.toInstallSnapshotRequest());
                 return new InterceptorMessage.Builder().setInstallSnapshotReply(iSReply).setRequestId(message.getRequestId()).build();
@@ -220,10 +235,9 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
             params.put("candidate_id", (double) Integer.parseInt(request.getServerRequest().getRequestorId().toStringUtf8()));
             params.put("last_log_idx", (double) request.getCandidateLastEntry().getIndex());
             params.put("last_log_term", (double) request.getCandidateLastEntry().getTerm());
-
-            // TODO: 
-            //  [ ] Move params to the builder
-            InterceptorMessage message =  iClient.sendMessage(iMessageBuilder, params);
+            iMessageBuilder.setParams(params);
+  
+            InterceptorMessage message =  iClient.sendMessage(iMessageBuilder);
             return message.toRequestVoteReply();
         }
         final RaftPeerId id = RaftPeerId.valueOf(request.getServerRequest().getReplyId());
@@ -246,7 +260,39 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
 
         if(this.intercept) {
             iMessageBuilder.setRequestId(iClient.getNewRequestId());
-            InterceptorMessage message = iClient.sendMessage(iMessageBuilder, null);
+
+            HashMap<String, Object> params = new HashMap<>();
+            params.put("leader_id", request.getServerRequest().getRequestorId().toStringUtf8());
+            params.put("term", (double) request.getLeaderTerm());
+            params.put("prev_log_idx", (double) request.getPreviousLog().getIndex());
+            params.put("prev_log_term", (double) request.getPreviousLog().getTerm());
+            params.put("leader_commit", (double) request.getLeaderCommit());
+
+            HashMap<String, Object> entries = new HashMap<>();
+            int i = 0;
+            String entryStr;
+            for(LogEntryProto entry : request.getEntriesList()) {
+                if (entry.hasStateMachineLogEntry()) {
+                    HashMap<String, Object> e = new HashMap<>();
+                    e.put("term", (double) entry.getTerm());
+                    e.put("id", (int) entry.getIndex());
+                    e.put("session", ""); // Not applicable for Ratis
+                    e.put("type", "int"); // Not applicable for Ratis
+                    entryStr = Base64.getEncoder().encodeToString(entry.getStateMachineLogEntry().getLogData().toByteArray());
+                    e.put("data_len", entryStr.length());
+                    if (entryStr.length() > 0) {
+                        e.put("data", entryStr);
+                    } else {
+                        e.put("data", "");
+                    }
+                    entries.put(Integer.toString(i), e);
+                    i++;
+                }
+            }
+            params.put("entries", entries);
+            iMessageBuilder.setParams(params);
+
+            InterceptorMessage message = iClient.sendMessage(iMessageBuilder);
             return message.toAppendEntriesReply();
         }
 
@@ -269,7 +315,7 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
 
         if(this.intercept) {
             iMessageBuilder.setRequestId(iClient.getNewRequestId());
-            InterceptorMessage message = iClient.sendMessage(iMessageBuilder, null);
+            InterceptorMessage message = iClient.sendMessage(iMessageBuilder);
             return message.toInstallSnapshotReply();
         }
 
@@ -292,7 +338,7 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
 
         if(this.intercept) {
             iMessageBuilder.setRequestId(iClient.getNewRequestId());
-            InterceptorMessage message = iClient.sendMessage(iMessageBuilder, null);
+            InterceptorMessage message = iClient.sendMessage(iMessageBuilder);
             return message.toStartLeaderElectionReply();
         }
 
@@ -305,5 +351,19 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
         }
 
         return reply.toStartLeaderElectionReply();
+    }
+
+    @Override
+    public void sendEvent(HashMap<String, Object> eventParams) {
+        try {
+            this.iClient.sendEvent(eventParams);
+        } catch (Exception e) {
+            LOG.error("Error while sending event: ", e);
+        }
+    }
+
+    @Override
+    public boolean getParam(String param) {
+        return this.iClient.getParam(param);
     }
 }

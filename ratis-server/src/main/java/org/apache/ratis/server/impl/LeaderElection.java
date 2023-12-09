@@ -251,7 +251,13 @@ class LeaderElection implements Runnable {
         if (skipPreVote || askForVotes(Phase.PRE_VOTE, round)) {
           if (askForVotes(Phase.ELECTION, round)) {
             server.changeToLeader();
-            // TODO: BecomeLeader event
+            // BecomeLeader event
+            HashMap<String, Object> eventParams = new HashMap<>();
+            eventParams.put("type", "BecomeLeader");
+            eventParams.put("server_id", server.getId().toString());
+            eventParams.put("node", server.getId().toString());
+            eventParams.put("term", term_);
+            server.getServerRpc().sendEvent(eventParams);
           }
         }
       }

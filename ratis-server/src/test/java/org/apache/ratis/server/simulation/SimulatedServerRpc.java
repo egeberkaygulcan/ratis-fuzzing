@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -218,4 +219,16 @@ class SimulatedServerRpc implements RaftServerRpc {
       return null;
     }
   };
+
+  @Override
+  public void sendEvent(HashMap<String, Object> eventParams) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'sendEvent'");
+  }
+
+  @Override
+  public boolean getParam(String param) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getParam'");
+  }
 }
