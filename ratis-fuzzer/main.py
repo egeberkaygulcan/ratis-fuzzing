@@ -19,6 +19,7 @@ def parse_args():
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-c', '--config', type=str, default='random_state_config.csv')
     parser.add_argument('-l', '--load', action='store_true')
+    parser.add_argument('-cp', '--capture', action='store_true')
     parser.add_argument('-ct', '--control', type=str)
     parser.add_argument('-s', '--seed', type=int, default=123456)
 
@@ -163,9 +164,10 @@ def main():
         pickle.dump(random_seed, f)
     
     load = args.load
+    capture = args.capture
     for index, row in experiment_config.iterrows():
         config = validate_config(row.to_dict())
-        fuzzer = Fuzzer(load, config)
+        fuzzer = Fuzzer(load, capture, config)
         # if args.control is not None:
         #     fuzzer.run_controlled()
         #     break

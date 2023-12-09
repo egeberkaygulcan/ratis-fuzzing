@@ -63,13 +63,13 @@ class SwapMutator:
                 if len(schedule_steps) < 2:
                     return None
                 [first, second] = random.sample(schedule_steps, 2)
-                first_value = {"type": "Schedule", "node": 1, "node2": 2, "step": 101, "max_messages": 5}
-                second_value = {"type": "Schedule", "node": 1, "node2": 2, "step": 102, "max_messages": 5}
+                first_value = {"type": "Schedule", "node": 1, "step": 101, "max_messages": 5}
+                second_value = {"type": "Schedule", "node": 1, "step": 102, "max_messages": 5}
                 for e in trace:
                     if e['type'] == 'Schedule' and e["step"] == first:
-                        first_value = {"type": "Schedule", "node": e["node"], "node2": e["node2"], "step": e["step"], "max_messages": e["max_messages"]}
+                        first_value = {"type": "Schedule", "node": e["node"], "step": e["step"], "max_messages": e["max_messages"]}
                     elif e['type'] == 'Schedule' and e["step"] == second:
-                        second_value = {"type": "Schedule", "node": e["node"], "node2": e["node2"], "step": e["step"], "max_messages": e["max_messages"]}
+                        second_value = {"type": "Schedule", "node": e["node"], "step": e["step"], "max_messages": e["max_messages"]}
                 
                 for e in trace:
                     if e["type"] != "Schedule":

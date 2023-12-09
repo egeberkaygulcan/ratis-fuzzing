@@ -91,8 +91,11 @@ public final class CounterServer implements Closeable {
     InterceptorConfigKeys.InterceptorListener.setPort(properties, interceptorListenerPort);
     InterceptorConfigKeys.setEnabled(properties, true);
     InterceptorConfigKeys.setEnableRegister(properties, restart == 0);
-    RaftServerConfigKeys.Rpc.setFirstElectionTimeoutMin(properties, TimeDuration.valueOf(500, TimeUnit.MILLISECONDS));
-    RaftServerConfigKeys.Rpc.setFirstElectionTimeoutMax(properties, TimeDuration.valueOf(1000, TimeUnit.MILLISECONDS));
+    RaftServerConfigKeys.Rpc.setFirstElectionTimeoutMin(properties, TimeDuration.valueOf(1000, TimeUnit.MILLISECONDS));
+    RaftServerConfigKeys.Rpc.setFirstElectionTimeoutMax(properties, TimeDuration.valueOf(2000, TimeUnit.MILLISECONDS));
+    RaftServerConfigKeys.Rpc.setTimeoutMin(properties, TimeDuration.valueOf(1000, TimeUnit.MILLISECONDS));
+    RaftServerConfigKeys.Rpc.setTimeoutMax(properties, TimeDuration.valueOf(2000, TimeUnit.MILLISECONDS));
+    RaftServerConfigKeys.LeaderElection.setPreVote(properties, false);
     // GrpcConfigKeys.Server.setPort(properties, port);
 
     //create the counter state machine which holds the counter value
@@ -179,6 +182,7 @@ public final class CounterServer implements Closeable {
           counterServer.close();
           break;
         }
+        TimeUnit.MILLISECONDS.sleep(1);
       }
 
       if (!counterServer.getServerRpc().getParam("Crash")) {

@@ -16,7 +16,7 @@ from model_fuzz.client import RatisClient
 class RatisCluster:
     lock = threading.Lock()
 
-    def __init__(self, config, ports, run_id, base_peer_port, group_id) -> None:
+    def __init__(self, config, ports, run_id, base_peer_port, group_id, capture) -> None:
         self.config = config
         self.fuzzer_port = ports[0]
         self.server_client_ports = ports[1:]
@@ -24,6 +24,7 @@ class RatisCluster:
         self.base_peer_port = base_peer_port
         self.group_id = group_id
         self.network_error = False
+        self.capture = capture
 
         try:
             self.network = Network(self.config, ("127.0.0.1", self.fuzzer_port))
@@ -47,7 +48,7 @@ class RatisCluster:
                 self.server_client_ports[i-1],
                 i,
                 self.peer_addresses,
-                self.group_id)
+                self.group_id, self.capture)
         self.clients = []
 
         # os.makedirs(f'dump/{self.run_id}', exist_ok=True)
@@ -105,11 +106,11 @@ class RatisCluster:
 
             client_requests = random.sample(range(self.config.horizon), self.config.test_harness)
             for choice in random.choices(node_ids, k=self.config.horizon):
-                to = random.choice([node for node in node_ids if node != choice])
+                # to = random.choice([node for node in node_ids if node != choice])
                 max_messages = random.randint(0, self.config.max_messages_to_schedule)
-                schedule.append((choice, to, max_messages))
+                schedule.append((choice, max_messages))
         else:
-            schedule = [(1, 1, random.randint(0, self.config.max_messages_to_schedule)) for i in range(self.config.horizon)]
+            schedule = [(1, random.randint(0, self.config.max_messages_to_schedule)) for i in range(self.config.horizon)]
             for ch in mimic:
                 if ch["type"] == "Crash":
                     crash_points[ch["step"]] = ch["node"]
@@ -120,15 +121,22 @@ class RatisCluster:
                 elif ch["type"] == "Schedule":
                     if ch['step'] > len(schedule):
                         continue
-                    schedule[ch["step"]] = (ch["node"], ch["node2"], ch["max_messages"])
+                    schedule[ch["step"]] = (ch["node"], ch["max_messages"])
 
         logging.debug("Starting cluster")
         self.start()
+        # await asyncio.sleep(2)
         while self.network.check_replicas():
             # print('Waiting replicas')
             if self.check_error_flag():
                 break
             await asyncio.sleep(1e-3)
+        
+        while not self.network.first_message:
+            if self.check_error_flag():
+                break
+            await asyncio.sleep(1e-3)
+
         event_trace = []
         try:
             for i in range(self.config.horizon):
@@ -157,12 +165,19 @@ class RatisCluster:
                 
                 # key = f'{schedule[i][0]}_{schedule[i][1]}'
                 key = f'{schedule[i][0]}'
+                # logging.info(f'Scheduling node {key}.')
+                logging.info('---------------------------------------------------------------------')
                 if not self.network.check_mailboxes(key):
-                    await asyncio.sleep(1e-2)
+                    logging.info('Waiting for message.')
+                    await asyncio.sleep(1e-1)
+                else:
+                    logging.info('Message already arrived, did not wait.')
                 if schedule[i][0] not in crashed:
-                    self.network.schedule_replica(schedule[i][0], schedule[i][1], schedule[i][2])
-                    trace.append({"type": "Schedule", "node": schedule[i][0], "node2": schedule[i][1], "step": i, "max_messages": schedule[i][2]})
-                
+                    self.network.schedule_replica(schedule[i][0], schedule[i][1])
+                    trace.append({"type": "Schedule", "node": schedule[i][0], "step": i, "max_messages": schedule[i][1]})
+                else:
+                    logging.info('Node crashed, did not schedule.')
+                logging.info('---------------------------------------------------------------------')
 
                 if i in client_requests:
                     try:

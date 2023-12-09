@@ -157,6 +157,7 @@ class Network:
         self.timeout = False
         self.multiple_leaders = False
         self.cluster_shutdown_ready = False
+        self.first_message = False
 
         self.log_index = None
         self.negative_log_index = False
@@ -180,7 +181,8 @@ class Network:
         try:
             self.lock.acquire()
             if key in self.mailboxes.keys():
-                result = True
+                if len(self.mailboxes[key]) > 0:
+                    result = True
         finally:
             if self.lock.locked():
                 self.lock.release()
@@ -210,7 +212,7 @@ class Network:
         if "id" in replica:
             try:
                 self.lock.acquire()
-                self.replicas[int(replica["id"])] = replica
+                self.replicas[str(replica["id"])] = replica
             finally:
                 if self.lock.locked():
                     self.lock.release()
@@ -284,8 +286,7 @@ class Network:
                 return Response.json(HTTPStatus.OK, json.dumps({'nodes': self.config.nodes}))
             try:
                 self.lock.acquire()
-                key = f"{msg.fr}_{msg.to}"
-                # key = str(msg.fr)
+                key = str(msg.fr)
                 if key not in self.mailboxes:
                     self.mailboxes[key] = []
                 self.mailboxes[key].append(msg)
@@ -296,6 +297,7 @@ class Network:
             params = self._get_message_event_params(msg)
             params["node"] = params["from"]
             self.add_event({"name": "SendMessage", "params": params})
+        self.first_message = True
 
         return Response.json(HTTPStatus.OK, json.dumps({"message": "Ok"}))
     
@@ -338,7 +340,7 @@ class Network:
                     self.multiple_leaders = True
             self.timeout = False
             self.leader_id = event["node"]
-            logging.debug(f'Leader elected: {self.leader_id}')
+            logging.info(f'Leader elected: {self.leader_id}')
             return {
                 "node": int(event["node"]),
                 "term": int(event["term"])
@@ -390,11 +392,12 @@ class Network:
             if self.lock.locked():
                 self.lock.release()
 
-    def schedule_replica(self, replica, replica2, max_messages):
+    def schedule_replica(self, replica, max_messages):
         messages_to_deliver = []
-        key = f'{replica}_{replica2}'
-        # key = str(replica)
-        logging.debug(f'Scheduling replica-pair {key}')
+        # key = f'{replica}_{replica2}'
+        key = str(replica)
+        logging.info(f'Scheduling replica: {replica}, max_messages: {max_messages}')
+        logging.info(self.mailboxes)
         try:
             self.lock.acquire()
             if key in self.mailboxes and len(self.mailboxes[key]) > 0:
@@ -408,18 +411,22 @@ class Network:
         finally:
             if self.lock.locked():
                 self.lock.release()
-
+        logging.info(f'Messages to deliver: {len(messages_to_deliver)}')
         for next_msg in messages_to_deliver:
-            msg_s = json.dumps(next_msg.__dict__)
-            logging.debug("Scheduling message: {}".format(msg_s))
+            dict_ = next_msg.__dict__
+            dict_["from"] = next_msg.fr
+            msg_s = json.dumps(dict_)
+            logging.info("Sending message {} from {} to {}, with replica {}".format(next_msg.type, next_msg.fr, next_msg.to, replica))
+            logging.info(msg_s)
             params = self._get_message_event_params(next_msg)
             params["node"] = params["to"]
             self.add_event({"name": "DeliverMessage", "params": params})
             try:
-                addr = self.replicas[replica2]['addr']
-                requests.post("http://"+addr+"/message", json=json.dumps(next_msg.__dict__))
+                addr = self.replicas[str(next_msg.to)]['addr']
+                logging.info(addr)
+                requests.post("http://"+addr, json=json.dumps(dict_))
             except:
-                pass
+                logging.error(f'Error while sending message, addr: {addr}')
     
     def send_crash(self, replica):
         logging.debug(f'Sending crash to {replica}')

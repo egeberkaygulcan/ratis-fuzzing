@@ -4,7 +4,7 @@ import traceback
 import subprocess
 
 class RatisServer:
-    def __init__(self, config, timeout, run_id, fuzzer_port, server_client_port, peer_index, peer_addresses, group_id) -> None:
+    def __init__(self, config, timeout, run_id, fuzzer_port, server_client_port, peer_index, peer_addresses, group_id, capture) -> None:
         self.config = config
         self.timeout = timeout
         self.run_id = run_id
@@ -16,6 +16,7 @@ class RatisServer:
         self.thread = None
         self.error_flag = False
         self.error_log = None
+        self.capture = capture
 
         # enable assertions -ea
         self.log4j_config = '-Dlog4j.configuration=file:../ratis-examples/src/main/resources/log4j.properties' 
@@ -37,9 +38,9 @@ class RatisServer:
         return cmd
     
     def start(self, restart=False) -> None:
-        def run(cmd, timeout, run_id):
+        def run(cmd, timeout, run_id, capture):
             try:
-                result = subprocess.run(cmd, shell=True, capture_output=True, text=True, check=True, timeout=timeout)
+                result = subprocess.run(cmd, shell=True, capture_output=capture, text=True, check=True, timeout=timeout)
                 logging.debug(result.stdout)
             except subprocess.CalledProcessError as e:
                 if e.stderr is None:
@@ -59,7 +60,7 @@ class RatisServer:
             return
 
         self.cmd = self.get_cmd(restart)
-        self.thread = threading.Thread(target=run, args=(self.cmd, self.timeout, self.run_id))
+        self.thread = threading.Thread(target=run, args=(self.cmd, self.timeout, self.run_id, self.capture))
         self.thread.start()
         logging.debug(f'RatisServer {self.peer_index} started.\n{self.get_cmd(False)}')
 

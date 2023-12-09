@@ -10,7 +10,7 @@ from itertools import cycle
 from model_fuzz.workers import WorkerUtil
 
 class Fuzzer:
-    def __init__(self, load, config = {}) -> None:
+    def __init__(self, load, capture, config = {}) -> None:
         self.config = config
         self.guider = self.config.guider
         self.mutator = self.config.mutator
@@ -23,6 +23,7 @@ class Fuzzer:
             "bug_iterations" : []
         }
         self.prev_iters = 0
+        self.capture = capture
 
         self.group_ids = cycle([
             '02511d47-d67c-49a3-9011-abb3109a44c1',
@@ -114,9 +115,8 @@ class Fuzzer:
 
             client_requests = random.sample(range(self.config.horizon), self.config.test_harness)
             for choice in random.choices(node_ids, k=self.config.horizon):
-                to = random.choice([node for node in node_ids if node != choice])
                 max_messages = random.randint(0, self.config.max_messages_to_schedule)
-                schedule.append((choice, to, max_messages))
+                schedule.append((choice, max_messages))
 
             crashed = set()
             trace = []
@@ -132,7 +132,7 @@ class Fuzzer:
                 if j in client_requests:
                     trace.append({"type": "ClientRequest", "step": j})
 
-                trace.append({"type": "Schedule", "node": schedule[j][0], "node2": schedule[j][1], "step": j, "max_messages": schedule[j][2]})
+                trace.append({"type": "Schedule", "node": schedule[j][0], "step": j, "max_messages": schedule[j][1]})
 
             self.sch_queue.append(([e for e in trace], 0))
         logging.info("Finished seeding")
@@ -145,7 +145,7 @@ class Fuzzer:
         return ports
 
     
-    def generate_coros(self, iterations, mimics, run_ids):
+    def generate_coros(self, iterations, mimics, run_ids, capture):
         coros = []
         for i in range(self.config.num_workers):
             ports = self.generate_ports(i)
@@ -155,6 +155,7 @@ class Fuzzer:
                                                                  self.config.base_peer_port + (i * self.config.nodes),
                                                                  next(self.group_ids),
                                                                  iterations[i],
+                                                                 capture,
                                                                  mimics[i]))
 
         return coros
@@ -190,7 +191,7 @@ class Fuzzer:
                 # results = loop.run_until_complete(asyncio.wait(self.generate_coros(range(iters, iters+self.config.num_workers, 1), mimics),
                 #                                             return_when=asyncio.ALL_COMPLETED))
                 run_ids = [iters+j for j in range(self.config.num_workers)]
-                results = await asyncio.gather(*self.generate_coros(range(iters, iters+self.config.num_workers, 1), mimics, run_ids))
+                results = await asyncio.gather(*self.generate_coros(range(iters, iters+self.config.num_workers, 1), mimics, run_ids, self.capture))
                 k = 0
                 # await asyncio.sleep(1)
                 for trace, event_trace, is_buggy in results:
