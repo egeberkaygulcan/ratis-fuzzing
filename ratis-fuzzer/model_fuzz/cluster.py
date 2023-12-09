@@ -139,7 +139,7 @@ class RatisCluster:
                     break
                 if i in start_points and start_points[i] in crashed:
                     node_id = start_points[i]
-                    logging.info(f"Starting crashed node {node_id}")
+                    logging.debug(f"Starting crashed node {node_id}")
                     self.servers[node_id].start(True)
                     trace.append({"type": "Start", "node": node_id, "step": i})
                     self.network.add_event({"name": "Add", "params": {"i": node_id, "node": node_id}})
@@ -147,7 +147,7 @@ class RatisCluster:
                 
                 if i in crash_points:
                     node_id = crash_points[i]
-                    logging.info(f"Crashing node {node_id}")
+                    logging.debug(f"Crashing node {node_id}")
                     if node_id not in crashed:
                         # self.network.send_crash(node_id)
                         self.servers[node_id].shutdown()
@@ -158,7 +158,7 @@ class RatisCluster:
                 # key = f'{schedule[i][0]}_{schedule[i][1]}'
                 key = f'{schedule[i][0]}'
                 if not self.network.check_mailboxes(key):
-                    await asyncio.sleep(5e-2)
+                    await asyncio.sleep(1e-2)
                 if schedule[i][0] not in crashed:
                     self.network.schedule_replica(schedule[i][0], schedule[i][1], schedule[i][2])
                     trace.append({"type": "Schedule", "node": schedule[i][0], "node2": schedule[i][1], "step": i, "max_messages": schedule[i][2]})
