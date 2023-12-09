@@ -156,7 +156,7 @@ public class InterceptorClient {
         CompletableFuture<InterceptorMessage> reply = new CompletableFuture<>();
         this.pollingThread.addPendingRequests(requestId, reply);
 
-        LOG.info("Sending message from " + message.getFrom() + " to " + message.getTo() + " of type " + message.getType());
+        LOG.debug("Sending message from " + message.getFrom() + " to " + message.getTo() + " of type " + message.getType());
 
         sendMessageToServer(message.toJsonString());
 
@@ -253,7 +253,7 @@ public class InterceptorClient {
 
         public void pollAndCompleteMessages() {
             while(!this.isInterrupted()) {
-                LOG.info("Polling for messages.");
+                LOG.debug("Polling for messages.");
                 List<InterceptorMessage> receivedMessages = this.listenServer.getReceivedMessages();
 
                 if (receivedMessages.size() > 0) {
@@ -262,7 +262,7 @@ public class InterceptorClient {
                             if (message == null)
                                 continue;
                             LOG.debug("Processing new message: "+message.toJsonString());
-                            LOG.info("Processing new message from " + message.getFrom() + " to " + message.getTo() + " of type " + message.getType());
+                            LOG.debug("Processing new message from " + message.getFrom() + " to " + message.getTo() + " of type " + message.getType());
                             String requestID = message.getRequestId();
                             CompletableFuture<InterceptorMessage> messageFuture = pendingRequests.get(requestID);
                             if(messageFuture != null) {
@@ -281,7 +281,7 @@ public class InterceptorClient {
                                     InterceptorMessage reply = messageHandler.apply(message);
                                     if (reply == null)
                                         continue;
-                                    LOG.info("Sending message from " + reply.getFrom() + " to " + reply.getTo() + " of type " + reply.getType());
+                                    LOG.debug("Sending message from " + reply.getFrom() + " to " + reply.getTo() + " of type " + reply.getType());
                                     iClient.sendMessageToServer(reply.toJsonString());
                                 }
                             }
