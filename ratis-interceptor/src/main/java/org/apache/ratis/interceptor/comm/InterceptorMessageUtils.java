@@ -80,7 +80,6 @@ public class InterceptorMessageUtils {
 
     public static byte[] fromRequestVoteRequest(RequestVoteRequestProto request) throws IOException{
         String out = JsonFormat.printer().print(request);
-        // LOG.info("Out: " + out);
         return out.getBytes(StandardCharsets.UTF_8);
     }
 
@@ -132,7 +131,6 @@ public class InterceptorMessageUtils {
     public static RequestVoteRequestProto toRequestVoteRequest(byte[] data) throws IOException{
         try {
             String jsonData = new String(data, StandardCharsets.UTF_8);
-            // LOG.info("jsonData: " + jsonData);
 
             RequestVoteRequestProto.Builder builder = RequestVoteRequestProto.newBuilder();
             JsonFormat.parser().ignoringUnknownFields().merge(jsonData, builder);

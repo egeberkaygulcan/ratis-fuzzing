@@ -230,7 +230,7 @@ class Network:
                 "commit": msg.params["leader_commit"],
                 "reject": False,
             }
-        elif msg.type == "append_entries_response":
+        elif msg.type == "append_entries_reply":
             return {
                 "type": "MsgAppResp",
                 "term": msg.params["term"],
@@ -254,7 +254,7 @@ class Network:
                 "commit": 0,
                 "reject": False,
             }
-        elif msg.type == "request_vote_response":
+        elif msg.type == "request_vote_reply":
             return {
                 "type": "MsgVoteResp",
                 "term": msg.params["term"],
@@ -275,7 +275,9 @@ class Network:
         content = json.loads(request.content)
         # content['data'] = json.loads(base64.b64decode(content["data"]).decode('utf-8'))
         msg = Message.from_str(content)
-        logging.info(f'Message received of type {msg.type} from {msg.fr} to {msg.to}.')
+        if msg == None:
+            return
+        logging.debug(f'Message received of type {msg.type} from {msg.fr} to {msg.to}.')
         logging.debug(f'Message content: \n {content}')
         if msg is not None:
             if msg.type == 'config_query':
@@ -283,7 +285,7 @@ class Network:
             try:
                 self.lock.acquire()
                 key = f"{msg.fr}_{msg.to}"
-                # key = str(msg.to)
+                # key = str(msg.fr)
                 if key not in self.mailboxes:
                     self.mailboxes[key] = []
                 self.mailboxes[key].append(msg)
@@ -409,7 +411,7 @@ class Network:
 
         for next_msg in messages_to_deliver:
             msg_s = json.dumps(next_msg.__dict__)
-            logging.debug("Sending message: {}".format(msg_s))
+            logging.debug("Scheduling message: {}".format(msg_s))
             params = self._get_message_event_params(next_msg)
             params["node"] = params["to"]
             self.add_event({"name": "DeliverMessage", "params": params})
@@ -436,7 +438,7 @@ class Network:
         logging.debug(f'Sending shutdown to cluster.')
         try:
             self.lock.acquire()
-            msg = Message(0, 1, "shutdown", '0')
+            msg = Message(0, 1, "shutdown", base64.b64encode('shutting_down'))
             for replica in self.replicas.keys():
                 addr = self.replicas[replica]['addr']
                 requests.post("http://"+addr+"/message", json=json.dumps(msg.__dict__))

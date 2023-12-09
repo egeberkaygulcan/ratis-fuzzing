@@ -37,14 +37,16 @@ public class InterceptorServer extends NanoHTTPD {
     public Response serve(IHTTPSession session) {
         if (session.getMethod() == Method.POST) {
             try {
-                LOG.info("Received a message http request");
+                LOG.debug("Received a message http request");
                 HashMap<String, String> body = new HashMap<>();
                 session.parseBody(body);
                 String requestBody = body.get("postData");
-                LOG.info("Received a new message: "+requestBody);
+                requestBody = requestBody.replaceAll("\\\\", "");
+                requestBody = requestBody.substring(1, requestBody.length()-1);
+                LOG.debug("Received a new message: " + requestBody);
                 InterceptorMessage message = (new InterceptorMessage.Builder()).buildWithJsonString(requestBody);
                 this.receivedMessages.add(message);
-                return newFixedLengthResponse("Ok\n");
+                return newFixedLengthResponse(Response.Status.OK, MIME_PLAINTEXT, "200 OK");
             } catch (IOException | ResponseException e) {
                 LOG.error("Exception while receiving POST.", e);
             }

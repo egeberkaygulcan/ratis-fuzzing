@@ -317,16 +317,14 @@ public class InterceptorMessage {
                     return null;
                 }
                 InterceptorMessage.Builder builder = new InterceptorMessage.Builder();
-
-                LOG.info("Message type: " + ob.get("type").getAsString());
                 InterceptorMessageUtils.MessageType messageType = InterceptorMessageUtils.MessageType.fromString(ob.get("type").getAsString());
-                LOG.info("messageType: " + messageType);
+                LOG.debug("messageType: " + messageType);
                 JsonObject compositeData = JsonParser.parseString(new String(Base64.getDecoder().decode(ob.get("data").getAsString()), StandardCharsets.ISO_8859_1)).getAsJsonObject();
                 byte[] data = Base64.getDecoder().decode(compositeData.get("data").getAsString());
                 if(compositeData.has("request_id")){
                     String requestId = compositeData.get("request_id").getAsString();
                     builder.setRequestId(requestId);
-                    LOG.info("Request id: "+requestId);
+                    LOG.debug("Request id: "+requestId);
                 }
                 switch (messageType) {
                     case RequestVoteRequest:
@@ -370,7 +368,7 @@ public class InterceptorMessage {
                 }
 
                 InterceptorMessage message = builder.build();
-                LOG.info("Message built.");
+                LOG.debug("Message built.");
                 return message;
             } catch (Exception e) {
                 LOG.error("Error while building with Json string: ", e);

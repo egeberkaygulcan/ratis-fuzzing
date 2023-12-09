@@ -130,7 +130,7 @@ public class InterceptorClient {
     }
 
     private void sendMessageToServer(String message) throws IOException {
-        LOG.info("Sending message: "+message);
+        LOG.debug("Sending message: "+message);
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         Request request = new Request.Builder()
                 .url("http://"+this.interceptorAddress.toString()+"/message")
@@ -166,13 +166,13 @@ public class InterceptorClient {
         } catch (ExecutionException e) {
             throw IOUtils.toIOException(e);
         } catch (TimeoutException e) {
-            LOG.info("Did not receive a reply for request: "+requestId);
+            LOG.error("Did not receive a reply for request: "+requestId);
             throw new TimeoutIOException(e.getMessage(), e);
         }
     }
 
     public void sendEventToServer(String jsonEvent) throws IOException {
-        LOG.info("Sending event: "+jsonEvent);
+        LOG.debug("Sending event: "+jsonEvent);
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         Request request = new Request.Builder()
                 .url("http://"+this.interceptorAddress.toString()+"/event")
@@ -258,12 +258,12 @@ public class InterceptorClient {
                         try {
                             if (message == null)
                                 continue;
-                            LOG.info("Processing new message: "+message.toJsonString());
+                            LOG.debug("Processing new message: "+message.toJsonString());
                             String requestID = message.getRequestId();
                             CompletableFuture<InterceptorMessage> messageFuture = pendingRequests.get(requestID);
                             if(messageFuture != null) {
                                 // Then this is a reply message to a request that is sent
-                                LOG.info("received a response for id: "+requestID);
+                                LOG.debug("received a response for id: "+requestID);
                                 messageFuture.complete(message);
                                 pendingRequests.remove(requestID);
                             } else {
@@ -273,8 +273,10 @@ public class InterceptorClient {
                                     this.iClient.setCrash(true);
                                 } else {
                                     // Otherwise its a new request that the process needs to reply to
-                                    LOG.info("handling a new request: "+ requestID);
+                                    LOG.debug("handling a new request: "+ requestID);
                                     InterceptorMessage reply = messageHandler.apply(message);
+                                    if (reply == null)
+                                        continue;
                                     iClient.sendMessageToServer(reply.toJsonString());
                                 }
                             }
@@ -285,11 +287,11 @@ public class InterceptorClient {
                     }
                 }
 
-                try {
-                    Thread.sleep(1);
-                } catch (Exception e) {
-                    LOG.error("Error while trying to sleep: ", e);
-                }
+                // try {
+                //     Thread.sleep(1);
+                // } catch (Exception e) {
+                //     LOG.error("Error while trying to sleep: ", e);
+                // }
             }
         }
 

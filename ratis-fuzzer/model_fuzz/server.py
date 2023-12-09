@@ -39,9 +39,11 @@ class RatisServer:
     def start(self, restart=False) -> None:
         def run(cmd, timeout, run_id):
             try:
-                result = subprocess.run(cmd, shell=True, capture_output=False, text=True, check=True, timeout=timeout)
+                result = subprocess.run(cmd, shell=True, capture_output=True, text=True, check=True, timeout=timeout)
                 logging.debug(result.stdout)
             except subprocess.CalledProcessError as e:
+                if e.stderr is None:
+                    return
                 if len(e.stderr) > 0:
                     logging.error(f'CalledProcessError {run_id}.')
                     self.error_flag = True
