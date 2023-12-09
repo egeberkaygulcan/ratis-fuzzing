@@ -166,18 +166,18 @@ class RatisCluster:
                 # key = f'{schedule[i][0]}_{schedule[i][1]}'
                 key = f'{schedule[i][0]}'
                 # logging.info(f'Scheduling node {key}.')
-                logging.info('---------------------------------------------------------------------')
+                logging.debug('---------------------------------------------------------------------')
                 if not self.network.check_mailboxes(key):
-                    logging.info('Waiting for message.')
+                    logging.debug('Waiting for message.')
                     await asyncio.sleep(1e-1)
                 else:
-                    logging.info('Message already arrived, did not wait.')
+                    logging.debug('Message already arrived, did not wait.')
                 if schedule[i][0] not in crashed:
                     self.network.schedule_replica(schedule[i][0], schedule[i][1])
                     trace.append({"type": "Schedule", "node": schedule[i][0], "step": i, "max_messages": schedule[i][1]})
                 else:
-                    logging.info('Node crashed, did not schedule.')
-                logging.info('---------------------------------------------------------------------')
+                    logging.debug('Node crashed, did not schedule.')
+                logging.debug('---------------------------------------------------------------------')
 
                 if i in client_requests:
                     try:
@@ -279,7 +279,7 @@ class RatisCluster:
             log_index = self.network.log_index
 
             if log_index is not None:
-                if log_index >2 or log_index < 0:
+                if log_index > 12 or log_index < 0:
                     self.error_flag = True
                     err = f'Large LogIndex: {log_index}' if not self.network.negative_log_index else 'Negative LogIndex!'
                     self.error_logs.append((err, ''))
