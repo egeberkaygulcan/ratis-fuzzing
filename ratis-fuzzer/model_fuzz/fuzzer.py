@@ -217,7 +217,7 @@ class Fuzzer:
                             finally:
                                 pass
                     k += 1
-                self.sch_queue.sort(key=lambda x: x[1])
+                # self.sch_queue.sort(key=lambda x: x[1])
 
             self.stats["runtime"] = time.time() - start
             logging.info(self.stats)

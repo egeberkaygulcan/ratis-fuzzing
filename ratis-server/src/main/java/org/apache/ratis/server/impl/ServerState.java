@@ -445,6 +445,13 @@ class ServerState implements Closeable {
   boolean updateCommitIndex(long majorityIndex, long curTerm, boolean isLeader) {
     if (getLog().updateCommitIndex(majorityIndex, curTerm, isLeader)) {
       getStateMachineUpdater().notifyUpdater();
+
+      // AdvanceCommitIndex Event
+      HashMap<String, Object> eventParams = new HashMap<>();
+      eventParams.put("type", "AdvanceCommitIndex");
+      eventParams.put("server_id", this.getMemberId().getPeerId().toString());
+      this.server.getServerRpc().sendEvent(eventParams);
+
       return true;
     }
     return false;
@@ -458,6 +465,14 @@ class ServerState implements Closeable {
     getStateMachineUpdater().reloadStateMachine();
 
     getLog().onSnapshotInstalled(snapshotTermIndex.getIndex());
+
+    // UpdateSnapshot Event
+    HashMap<String, Object> eventParams = new HashMap<>();
+    eventParams.put("type", "UpdateSnapshot");
+    eventParams.put("server_id", this.memberId.getPeerId().toString());
+    eventParams.put("snapshot_index", snapshotTermIndex.getIndex());
+    this.server.getServerRpc().sendEvent(eventParams);
+
     latestInstalledSnapshot.set(snapshotTermIndex);
   }
 

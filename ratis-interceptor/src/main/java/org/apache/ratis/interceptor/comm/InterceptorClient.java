@@ -42,7 +42,7 @@ public class InterceptorClient {
     private InetSocketAddress listenAddress;
     private InterceptorServer listenServer;
     private TimeDuration replyWaitTime;
-    private OkHttpClient client = new OkHttpClient();
+    private OkHttpClient client;
     private MessagePollingThread pollingThread; 
     private AtomicInteger counter;
     private Random random;
@@ -63,6 +63,9 @@ public class InterceptorClient {
         this.interceptorAddress = interceptorAddress;
         this.listenAddress = listenAddress;
         this.replyWaitTime = replyWaitTime;
+
+        this.client = new OkHttpClient();
+        this.client.setConnectTimeout(60, TimeUnit.SECONDS);
 
         this.shutdown = false;
         this.crash = false;

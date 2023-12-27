@@ -284,7 +284,7 @@ public class InterceptorRpcService extends RaftServerRpcWithProxy<InterceptorRpc
         InterceptorMessage.Builder iMessageBuilder = new InterceptorMessage.Builder()
                 .setAppendEntriesRequest(request);
 
-        if(this.intercept) {
+        if(this.intercept && request.getEntriesCount() > 0) {
             iMessageBuilder.setRequestId(iClient.getNewRequestId());
 
             HashMap<String, Object> params = new HashMap<>();

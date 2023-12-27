@@ -157,7 +157,7 @@ def main():
         logging.basicConfig(level=logging.INFO)
     
     experiment_config = read_csv(args.config, index_col=False)
-    random_seed = + time.time_ns()
+    random_seed = time.time_ns()
     random.seed(random_seed)
     os.makedirs('output/saved', exist_ok=True)
     with open('output/saved/random_seed.pkl', 'wb') as f:

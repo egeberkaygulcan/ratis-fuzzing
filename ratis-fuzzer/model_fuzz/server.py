@@ -47,8 +47,9 @@ class RatisServer:
                     return
                 if len(e.stderr) > 0:
                     logging.error(f'CalledProcessError {run_id}.')
-                    self.error_flag = True
-                    self.error_log = (e.stderr, e.stdout)
+                    if not "Connect timed out" in e.stderr:
+                        self.error_flag = True
+                        self.error_log = (e.stderr, e.stdout)
             except subprocess.TimeoutExpired as e:
                 pass
                 # logging.error('TimeoutExpired.')

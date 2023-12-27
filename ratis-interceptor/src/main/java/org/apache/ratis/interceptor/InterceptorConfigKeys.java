@@ -31,7 +31,7 @@ public interface InterceptorConfigKeys {
     }
 
     String REPLY_WAIT_TIMEOUT_KEY = PREFIX+".reply_wait_timeout";
-    TimeDuration REPLY_WAIT_TIMEOUT_DEFAULT = TimeDuration.ONE_SECOND;
+    TimeDuration REPLY_WAIT_TIMEOUT_DEFAULT = TimeDuration.ONE_MINUTE;
 
     static TimeDuration replyWaitTimeout(RaftProperties properties) {
         return getTimeDuration(properties.getTimeDuration(REPLY_WAIT_TIMEOUT_DEFAULT.getUnit()), REPLY_WAIT_TIMEOUT_KEY, REPLY_WAIT_TIMEOUT_DEFAULT, getDefaultLog());

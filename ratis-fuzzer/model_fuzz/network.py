@@ -357,8 +357,12 @@ class Network:
             }
         elif event["type"] == "UpdateSnapshot":
             return {
-                "node": int(event["node"]),
-                "snapshot_index": int(event["snapshot_index"]),
+                "node": int(event["server_id"]),
+                "snapshot_index": int(event["snapshot_index"])
+            }
+        elif event["type"] == "AdvanceCommitIndex":
+            return {
+                "i": int(event["server_id"])
             }
         else:
             return None

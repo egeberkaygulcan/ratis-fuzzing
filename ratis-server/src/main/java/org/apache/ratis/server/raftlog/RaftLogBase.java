@@ -33,6 +33,7 @@ import org.apache.ratis.util.Preconditions;
 import org.apache.ratis.util.TimeDuration;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -124,6 +125,7 @@ public abstract class RaftLogBase implements RaftLog {
       if (oldCommittedIndex < newCommitIndex) {
         if (!isLeader) {
           commitIndex.updateIncreasingly(newCommitIndex, traceIndexChange);
+          // TODO: AdvanceCommitIndexEvent
           return true;
         }
 
@@ -131,6 +133,7 @@ public abstract class RaftLogBase implements RaftLog {
         final TermIndex entry = getTermIndex(newCommitIndex);
         if (entry != null && entry.getTerm() == currentTerm) {
           commitIndex.updateIncreasingly(newCommitIndex, traceIndexChange);
+          // TODO: AdvanceCommitIndexEvent
           return true;
         }
       }

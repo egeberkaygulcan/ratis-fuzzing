@@ -279,9 +279,9 @@ class RatisCluster:
             log_index = self.network.log_index
 
             if log_index is not None:
-                if log_index > 12 or log_index < 0:
+                if log_index < 0:
                     self.error_flag = True
-                    err = f'Large LogIndex: {log_index}' if not self.network.negative_log_index else 'Negative LogIndex!'
+                    err = 'Negative LogIndex!'
                     self.error_logs.append((err, ''))
 
             if self.error_flag:
